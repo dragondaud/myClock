@@ -10,7 +10,7 @@
 
 //#define WIFI_SSID "SSID"    // define in userconfig.h
 //#define WIFI_PASS "PASS"    //
-//#define tzKey "5HQJGFTNS2O4"//
+//#define tzKey "APIKEY"      // from https://timezonedb.com/register
 
 const char* UserAgent = "myClock/1.0 (Arduino ESP8266)";
 
