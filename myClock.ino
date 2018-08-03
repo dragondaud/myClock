@@ -1,3 +1,8 @@
+/*   myClock -- ESP8266 WiFi NTP Clock for pixel displays
+ *   Copyright (c) 2018 David M Denney <dragondaud@gmail.com>
+ *   distributed under the terms of the MIT License
+*/
+
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
@@ -138,8 +143,8 @@ void setup() {
   display.begin(16);
   display_ticker.attach(0.002, display_updater);
   display.clearDisplay();
-  display.setTextColor(myColor);
   display.setCursor(2, row1);
+  display.setTextColor(myGREEN);
   display.print("Connecting");
 
   Serial.print(F("\r\nsetup: WiFi connecting to "));
@@ -153,21 +158,26 @@ void setup() {
   }
   Serial.println(" OK");
 
+  if (timezone == "") {
+    timezone = getIPlocation();
+  }
+
   display.clearDisplay();
   display.setFont(&Picopixel);
   display.setTextWrap(false);
   display.setCursor(2, row1);
+  display.setTextColor(myGREEN);
   display.print(WiFi.hostname());
   display.setCursor(2, row2);
+  display.setTextColor(myBLUE);
   display.print(WiFi.localIP());
-
-  if (timezone == "") {
-    timezone = getIPlocation();
-  }
   display.setCursor(2, row3);
+  display.setTextColor(myCYAN);
   display.print(timezone);
   display.setCursor(2, row4);
+  display.setTextColor(myRED);
   display.print("waiting for ntp");
+
   setNTP(timezone);
 
   ArduinoOTA.onStart([]() {

@@ -26,12 +26,19 @@ void display_updater() {
 }
 
 #include "Digit.h"
-const byte row1 = 2 + 1 * 6;
-const byte row2 = 2 + 2 * 6;
-const byte row3 = 2 + 3 * 6;
-const byte row4 = 2 + 4 * 6;
-uint16_t myBlack = display.color565(0, 0, 0);
-uint16_t myColor = display.color565(255, 0, 0);
+const byte row1 = 8;
+const byte row2 = 15;
+const byte row3 = 22;
+const byte row4 = 29;
+const uint16_t myRED = display.color565(255, 0, 0);
+const uint16_t myGREEN = display.color565(0, 255, 0);
+const uint16_t myBLUE = display.color565(0, 0, 255);
+const uint16_t myWHITE = display.color565(255, 255, 255);
+const uint16_t myYELLOW = display.color565(255, 255, 0);
+const uint16_t myCYAN = display.color565(0, 255, 255);
+const uint16_t myMAGENTA = display.color565(255, 0, 255);
+const uint16_t myBLACK = display.color565(0, 0, 0);
+const uint16_t myColor = myGREEN;
 Digit digit0(&display, 0, 63 - 1 - 9 * 1, 8, myColor);
 Digit digit1(&display, 0, 63 - 1 - 9 * 2, 8, myColor);
 Digit digit2(&display, 0, 63 - 4 - 9 * 3, 8, myColor);
