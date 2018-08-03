@@ -1,6 +1,6 @@
 /*   myClock -- ESP8266 WiFi NTP Clock for pixel displays
- *   Copyright (c) 2018 David M Denney <dragondaud@gmail.com>
- *   distributed under the terms of the MIT License
+     Copyright (c) 2018 David M Denney <dragondaud@gmail.com>
+     distributed under the terms of the MIT License
 */
 
 #include <ESP8266WiFi.h>
@@ -16,12 +16,13 @@
 //#define WIFI_SSID "SSID"    // define in userconfig.h
 //#define WIFI_PASS "PASS"    //
 //#define tzKey "APIKEY"      // from https://timezonedb.com/register
+//#define owKey "APIKEY"      // from https://home.openweathermap.org/api_keys
 
 const char* UserAgent = "myClock/1.0 (Arduino ESP8266)";
 
-time_t TWOAM, pNow;
+time_t TWOAM, pNow, fiveM;
 int pHH, pMM, pSS;
-String timezone;
+String timezone, latitude, longitude;
 
 String UrlEncode(const String url) {
   String e;
@@ -46,7 +47,7 @@ String getIPlocation() { // Using ip-api.com to discover public IP's time zone
   String payload;
   http.setUserAgent(UserAgent);
   if (!http.begin(URL)) {
-    Serial.println(F("getIPlocation: [HTTP] connect failed!"));
+    Serial.println(F("getIPlocation: HTTP failed"));
   } else {
     int stat = http.GET();
     if (stat > 0) {
@@ -59,6 +60,10 @@ String getIPlocation() { // Using ip-api.com to discover public IP's time zone
           String region = root["regionName"];
           String country = root["countryCode"];
           String tz = root["timezone"];
+          String lat = root["lat"];
+          String lon = root["lon"];
+          latitude = lat;
+          longitude = lon;
           http.end();
           Serial.println("getIPlocation: " + isp + ", " + region + ", " + country + ", " + tz);
           return tz;
@@ -84,7 +89,7 @@ long getOffset(const String timezone) { // using timezonedb.com, return offset f
   long offset;
   http.setUserAgent(UserAgent);
   if (!http.begin(URL)) {
-    Serial.println(F("getOffset: [HTTP] connect failed!"));
+    Serial.println(F("getOffset: HTTP failed"));
   } else {
     int stat = http.GET();
     if (stat > 0) {
@@ -135,6 +140,47 @@ void setNTP(const String timezone) {
   Serial.print("setNTP: next timezone check @ ");
   Serial.println(t);
 } // setNTP
+
+void getWeather() { // Using openweasthermap.org
+  fiveM = pNow + 300; // 5minutes between weather updates
+  display.setCursor(6, row1);
+  display.setTextColor(myRED, myBLACK);
+  HTTPClient http;
+  String URL = "http://api.openweathermap.org/data/2.5/weather?lat=" + latitude
+               + "&lon=" + longitude + "&units=imperial&appid=" + String(owKey);
+  String payload;
+  long offset;
+  http.setUserAgent(UserAgent);
+  if (!http.begin(URL)) {
+    display.print("http fail");
+    Serial.println(F("getOffset: HTTP failed"));
+  } else {
+    int stat = http.GET();
+    if (stat == HTTP_CODE_OK) {
+      payload = http.getString();
+      DynamicJsonBuffer jsonBuffer;
+      JsonObject& root = jsonBuffer.parseObject(payload);
+      if (root.success()) {
+        String name = root["name"];
+        JsonObject& weather = root["weather"][0];
+        String description = weather["description"];
+        JsonObject& main = root["main"];
+        float temperature = main["temp"];
+        int humidity = main["humidity"];
+        display.printf("%2dF %2d%% %s", round(temperature), humidity, description.c_str());
+        Serial.printf("%s, %2dF, %2d%%, %s", name.c_str(), round(temperature), humidity, description.c_str());
+      } else {
+        display.print("json fail");
+        Serial.println(F("getOffset: JSON parse failed!"));
+        Serial.println(payload);
+      }
+    } else {
+      display.print(stat);
+      Serial.printf("getOffset: GET failed: %d %s\r\n", stat, http.errorToString(stat).c_str());
+    }
+  }
+  http.end();
+} // getWeather
 
 void setup() {
   Serial.begin(115200);
@@ -235,6 +281,7 @@ void setup() {
   digit4.Draw(hh % 10);
   digit5.Draw(hh / 10);
   pNow = now;
+  getWeather();
 } // setup
 
 void loop() {
@@ -269,6 +316,7 @@ void loop() {
       pHH = hh;
     }
     pNow = now;
+    if (now > fiveM) getWeather();
   }
 }
 

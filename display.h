@@ -39,11 +39,11 @@ const uint16_t myCYAN = display.color565(0, 255, 255);
 const uint16_t myMAGENTA = display.color565(255, 0, 255);
 const uint16_t myBLACK = display.color565(0, 0, 0);
 const uint16_t myColor = myGREEN;
-Digit digit0(&display, 0, 63 - 1 - 9 * 1, 8, myColor);
-Digit digit1(&display, 0, 63 - 1 - 9 * 2, 8, myColor);
-Digit digit2(&display, 0, 63 - 4 - 9 * 3, 8, myColor);
-Digit digit3(&display, 0, 63 - 4 - 9 * 4, 8, myColor);
-Digit digit4(&display, 0, 63 - 7 - 9 * 5, 8, myColor);
-Digit digit5(&display, 0, 63 - 7 - 9 * 6, 8, myColor);
+Digit digit0(&display, 0, 63 - 1 - 9 * 1, 5, myColor);
+Digit digit1(&display, 0, 63 - 1 - 9 * 2, 5, myColor);
+Digit digit2(&display, 0, 63 - 4 - 9 * 3, 5, myColor);
+Digit digit3(&display, 0, 63 - 4 - 9 * 4, 5, myColor);
+Digit digit4(&display, 0, 63 - 7 - 9 * 5, 5, myColor);
+Digit digit5(&display, 0, 63 - 7 - 9 * 6, 5, myColor);
 
 #endif

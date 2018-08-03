@@ -1,0 +1,148 @@
+warning: LF will be replaced by CRLF in display.h.
+The file will have its original line endings in your working directory.
+warning: LF will be replaced by CRLF in myClock.ino.
+The file will have its original line endings in your working directory.
+[1mdiff --git a/display.h b/display.h[m
+[1mindex 2b8014b..d2b1bcb 100644[m
+[1m--- a/display.h[m
+[1m+++ b/display.h[m
+[36m@@ -39,11 +39,11 @@[m [mconst uint16_t myCYAN = display.color565(0, 255, 255);[m
+ const uint16_t myMAGENTA = display.color565(255, 0, 255);[m
+ const uint16_t myBLACK = display.color565(0, 0, 0);[m
+ const uint16_t myColor = myGREEN;[m
+[31m-Digit digit0(&display, 0, 63 - 1 - 9 * 1, 8, myColor);[m
+[31m-Digit digit1(&display, 0, 63 - 1 - 9 * 2, 8, myColor);[m
+[31m-Digit digit2(&display, 0, 63 - 4 - 9 * 3, 8, myColor);[m
+[31m-Digit digit3(&display, 0, 63 - 4 - 9 * 4, 8, myColor);[m
+[31m-Digit digit4(&display, 0, 63 - 7 - 9 * 5, 8, myColor);[m
+[31m-Digit digit5(&display, 0, 63 - 7 - 9 * 6, 8, myColor);[m
+[32m+[m[32mDigit digit0(&display, 0, 63 - 1 - 9 * 1, 5, myColor);[m
+[32m+[m[32mDigit digit1(&display, 0, 63 - 1 - 9 * 2, 5, myColor);[m
+[32m+[m[32mDigit digit2(&display, 0, 63 - 4 - 9 * 3, 5, myColor);[m
+[32m+[m[32mDigit digit3(&display, 0, 63 - 4 - 9 * 4, 5, myColor);[m
+[32m+[m[32mDigit digit4(&display, 0, 63 - 7 - 9 * 5, 5, myColor);[m
+[32m+[m[32mDigit digit5(&display, 0, 63 - 7 - 9 * 6, 5, myColor);[m
+ [m
+ #endif[m
+[1mdiff --git a/myClock.ino b/myClock.ino[m
+[1mindex dbd0da2..99d64cf 100644[m
+[1m--- a/myClock.ino[m
+[1m+++ b/myClock.ino[m
+[36m@@ -1,6 +1,6 @@[m
+ /*   myClock -- ESP8266 WiFi NTP Clock for pixel displays[m
+[31m- *   Copyright (c) 2018 David M Denney <dragondaud@gmail.com>[m
+[31m- *   distributed under the terms of the MIT License[m
+[32m+[m[32m     Copyright (c) 2018 David M Denney <dragondaud@gmail.com>[m
+[32m+[m[32m     distributed under the terms of the MIT License[m
+ */[m
+ [m
+ #include <ESP8266WiFi.h>[m
+[36m@@ -16,12 +16,13 @@[m
+ //#define WIFI_SSID "SSID"    // define in userconfig.h[m
+ //#define WIFI_PASS "PASS"    //[m
+ //#define tzKey "APIKEY"      // from https://timezonedb.com/register[m
+[32m+[m[32m//#define owKey "APIKEY"      // from https://home.openweathermap.org/api_keys[m
+ [m
+ const char* UserAgent = "myClock/1.0 (Arduino ESP8266)";[m
+ [m
+[31m-time_t TWOAM, pNow;[m
+[32m+[m[32mtime_t TWOAM, pNow, fiveM;[m
+ int pHH, pMM, pSS;[m
+[31m-String timezone;[m
+[32m+[m[32mString timezone, latitude, longitude;[m
+ [m
+ String UrlEncode(const String url) {[m
+   String e;[m
+[36m@@ -46,7 +47,7 @@[m [mString getIPlocation() { // Using ip-api.com to discover public IP's time zone[m
+   String payload;[m
+   http.setUserAgent(UserAgent);[m
+   if (!http.begin(URL)) {[m
+[31m-    Serial.println(F("getIPlocation: [HTTP] connect failed!"));[m
+[32m+[m[32m    Serial.println(F("getIPlocation: HTTP failed"));[m
+   } else {[m
+     int stat = http.GET();[m
+     if (stat > 0) {[m
+[36m@@ -59,6 +60,10 @@[m [mString getIPlocation() { // Using ip-api.com to discover public IP's time zone[m
+           String region = root["regionName"];[m
+           String country = root["countryCode"];[m
+           String tz = root["timezone"];[m
+[32m+[m[32m          String lat = root["lat"];[m
+[32m+[m[32m          String lon = root["lon"];[m
+[32m+[m[32m          latitude = lat;[m
+[32m+[m[32m          longitude = lon;[m
+           http.end();[m
+           Serial.println("getIPlocation: " + isp + ", " + region + ", " + country + ", " + tz);[m
+           return tz;[m
+[36m@@ -84,7 +89,7 @@[m [mlong getOffset(const String timezone) { // using timezonedb.com, return offset f[m
+   long offset;[m
+   http.setUserAgent(UserAgent);[m
+   if (!http.begin(URL)) {[m
+[31m-    Serial.println(F("getOffset: [HTTP] connect failed!"));[m
+[32m+[m[32m    Serial.println(F("getOffset: HTTP failed"));[m
+   } else {[m
+     int stat = http.GET();[m
+     if (stat > 0) {[m
+[36m@@ -136,6 +141,47 @@[m [mvoid setNTP(const String timezone) {[m
+   Serial.println(t);[m
+ } // setNTP[m
+ [m
+[32m+[m[32mvoid getWeather() { // Using openweasthermap.org[m
+[32m+[m[32m  fiveM = pNow + 300; // 5minutes between weather updates[m
+[32m+[m[32m  display.setCursor(6, row1);[m
+[32m+[m[32m  display.setTextColor(myRED, myBLACK);[m
+[32m+[m[32m  HTTPClient http;[m
+[32m+[m[32m  String URL = "http://api.openweathermap.org/data/2.5/weather?lat=" + latitude[m
+[32m+[m[32m               + "&lon=" + longitude + "&units=imperial&appid=" + String(owKey);[m
+[32m+[m[32m  String payload;[m
+[32m+[m[32m  long offset;[m
+[32m+[m[32m  http.setUserAgent(UserAgent);[m
+[32m+[m[32m  if (!http.begin(URL)) {[m
+[32m+[m[32m    display.print("http fail");[m
+[32m+[m[32m    Serial.println(F("getOffset: HTTP failed"));[m
+[32m+[m[32m  } else {[m
+[32m+[m[32m    int stat = http.GET();[m
+[32m+[m[32m    if (stat == HTTP_CODE_OK) {[m
+[32m+[m[32m      payload = http.getString();[m
+[32m+[m[32m      DynamicJsonBuffer jsonBuffer;[m
+[32m+[m[32m      JsonObject& root = jsonBuffer.parseObject(payload);[m
+[32m+[m[32m      if (root.success()) {[m
+[32m+[m[32m        String name = root["name"];[m
+[32m+[m[32m        JsonObject& weather = root["weather"][0];[m
+[32m+[m[32m        String description = weather["description"];[m
+[32m+[m[32m        JsonObject& main = root["main"];[m
+[32m+[m[32m        float temperature = main["temp"];[m
+[32m+[m[32m        int humidity = main["humidity"];[m
+[32m+[m[32m        display.printf("%2dF %2d%% %s", round(temperature), humidity, description.c_str());[m
+[32m+[m[32m        Serial.printf("%s, %2dF, %2d%%, %s", name.c_str(), round(temperature), humidity, description.c_str());[m
+[32m+[m[32m      } else {[m
+[32m+[m[32m        display.print("json fail");[m
+[32m+[m[32m        Serial.println(F("getOffset: JSON parse failed!"));[m
+[32m+[m[32m        Serial.println(payload);[m
+[32m+[m[32m      }[m
+[32m+[m[32m    } else {[m
+[32m+[m[32m      display.print(stat);[m
+[32m+[m[32m      Serial.printf("getOffset: GET failed: %d %s\r\n", stat, http.errorToString(stat).c_str());[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+[32m+[m[32m  http.end();[m
+[32m+[m[32m} // getWeather[m
+[32m+[m
+ void setup() {[m
+   Serial.begin(115200);[m
+   //Serial.setDebugOutput(true);[m
+[36m@@ -235,6 +281,7 @@[m [mvoid setup() {[m
+   digit4.Draw(hh % 10);[m
+   digit5.Draw(hh / 10);[m
+   pNow = now;[m
+[32m+[m[32m  getWeather();[m
+ } // setup[m
+ [m
+ void loop() {[m
+[36m@@ -269,6 +316,7 @@[m [mvoid loop() {[m
+       pHH = hh;[m
+     }[m
+     pNow = now;[m
+[32m+[m[32m    if (now > fiveM) getWeather();[m
+   }[m
+ }[m
+ [m
