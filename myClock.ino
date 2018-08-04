@@ -143,8 +143,9 @@ void setNTP(const String timezone) {
 
 void getWeather() { // Using openweasthermap.org
   fiveM = pNow + 300; // 5minutes between weather updates
-  display.setCursor(6, row1);
-  display.setTextColor(myRED, myBLACK);
+  display.fillRect(0, 0, 64, 10, myBLACK);
+  display.setCursor(2, row1);
+  display.setTextColor(myRED);
   HTTPClient http;
   String URL = "http://api.openweathermap.org/data/2.5/weather?lat=" + latitude
                + "&lon=" + longitude + "&units=imperial&appid=" + String(owKey);
@@ -163,7 +164,14 @@ void getWeather() { // Using openweasthermap.org
       if (root.success()) {
         String name = root["name"];
         JsonObject& weather = root["weather"][0];
-        String description = weather["description"];
+        String description = weather["main"];
+        if (description == "Thunderstorm") display.setTextColor(myCYAN);
+        if (description == "Drizzle") display.setTextColor(myYELLOW);
+        if (description == "Rain") display.setTextColor(myORANGE);
+        if (description == "Snow") display.setTextColor(myWHITE);
+        if (description == "Mist") display.setTextColor(myMAGENTA);
+        if (description == "Clear") display.setTextColor(myBLUE);
+        if (description == "Clouds") display.setTextColor(myGREEN);
         JsonObject& main = root["main"];
         float temperature = main["temp"];
         int humidity = main["humidity"];

@@ -35,6 +35,7 @@ const uint16_t myGREEN = display.color565(0, 255, 0);
 const uint16_t myBLUE = display.color565(0, 0, 255);
 const uint16_t myWHITE = display.color565(255, 255, 255);
 const uint16_t myYELLOW = display.color565(255, 255, 0);
+const uint16_t myORANGE = display.color565(255,165,0);
 const uint16_t myCYAN = display.color565(0, 255, 255);
 const uint16_t myMAGENTA = display.color565(255, 0, 255);
 const uint16_t myBLACK = display.color565(0, 0, 0);
