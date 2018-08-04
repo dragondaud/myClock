@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 #define double_buffer
-#include <PxMatrix.h>
+#include <PxMatrix.h> // https://github.com/2dom/PxMatrix
 #include <gfxfont.h>
 #include <Fonts/Picopixel.h>
 

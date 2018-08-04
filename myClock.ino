@@ -22,7 +22,7 @@ const char* UserAgent = "myClock/1.0 (Arduino ESP8266)";
 
 time_t TWOAM, pNow, fiveM;
 int pHH, pMM, pSS;
-String timezone, latitude, longitude;
+String timezone, location;
 
 String UrlEncode(const String url) {
   String e;
@@ -41,7 +41,7 @@ String UrlEncode(const String url) {
   return e;
 }
 
-String getIPlocation() { // Using ip-api.com to discover public IP's time zone
+String getIPlocation() { // Using ip-api.com to discover public IP's location and timezone
   HTTPClient http;
   String URL = "http://ip-api.com/json";
   String payload;
@@ -60,31 +60,29 @@ String getIPlocation() { // Using ip-api.com to discover public IP's time zone
           String region = root["regionName"];
           String country = root["countryCode"];
           String tz = root["timezone"];
-          String lat = root["lat"];
-          String lon = root["lon"];
-          latitude = lat;
-          longitude = lon;
+          String zip = root["zip"];
+          timezone = tz;
           http.end();
           Serial.println("getIPlocation: " + isp + ", " + region + ", " + country + ", " + tz);
-          return tz;
+          return zip;
         } else {
           Serial.println(F("getIPlocation: JSON parse failed!"));
           Serial.println(payload);
         }
       } else {
-        Serial.printf("getIPlocation: [HTTP] GET reply %d\r\n", stat);
+        Serial.printf("getIPlocation: GET reply %d\r\n", stat);
       }
     } else {
-      Serial.printf("getIPlocation: [HTTP] GET failed: %s\r\n", http.errorToString(stat).c_str());
+      Serial.printf("getIPlocation: GET failed: %s\r\n", http.errorToString(stat).c_str());
     }
   }
   http.end();
 } // getIPlocation
 
-long getOffset(const String timezone) { // using timezonedb.com, return offset for zone name
+long getOffset(const String tz) { // using timezonedb.com, return offset for zone name
   HTTPClient http;
   String URL = "http://api.timezonedb.com/v2/list-time-zone?key=" + String(tzKey)
-               + "&format=json&zone=" + UrlEncode(timezone);
+               + "&format=json&zone=" + UrlEncode(tz);
   String payload;
   long offset;
   http.setUserAgent(UserAgent);
@@ -107,18 +105,18 @@ long getOffset(const String timezone) { // using timezonedb.com, return offset f
           Serial.println(payload);
         }
       } else {
-        Serial.printf("getOffset: [HTTP] GET reply %d\r\n", stat);
+        Serial.printf("getOffset: GET reply %d\r\n", stat);
       }
     } else {
-      Serial.printf("getOffset: [HTTP] GET failed: %s\r\n", http.errorToString(stat).c_str());
+      Serial.printf("getOffset: GET failed: %s\r\n", http.errorToString(stat).c_str());
     }
   }
   http.end();
   return offset;
 } // getOffset
 
-void setNTP(const String timezone) {
-  long offset = getOffset(timezone);
+void setNTP(const String tz) {
+  long offset = getOffset(tz);
   Serial.print(F("setNTP: configure NTP ..."));
   configTime(offset, 0, "pool.ntp.org", "time.nist.gov");
   while (time(nullptr) < (30 * 365 * 24 * 60 * 60)) {
@@ -147,8 +145,8 @@ void getWeather() { // Using openweasthermap.org
   display.setCursor(2, row1);
   display.setTextColor(myRED);
   HTTPClient http;
-  String URL = "http://api.openweathermap.org/data/2.5/weather?lat=" + latitude
-               + "&lon=" + longitude + "&units=imperial&appid=" + String(owKey);
+  String URL = "http://api.openweathermap.org/data/2.5/weather?zip="
+               + location + "&units=imperial&appid=" + String(owKey);
   String payload;
   long offset;
   http.setUserAgent(UserAgent);
@@ -212,9 +210,7 @@ void setup() {
   }
   Serial.println(" OK");
 
-  if (timezone == "") {
-    timezone = getIPlocation();
-  }
+  location = getIPlocation();
 
   display.clearDisplay();
   display.setFont(&Picopixel);
@@ -226,10 +222,10 @@ void setup() {
   display.setTextColor(myBLUE);
   display.print(WiFi.localIP());
   display.setCursor(2, row3);
-  display.setTextColor(myCYAN);
+  display.setTextColor(myORANGE);
   display.print(timezone);
   display.setCursor(2, row4);
-  display.setTextColor(myRED);
+  display.setTextColor(myCYAN);
   display.print("waiting for ntp");
 
   setNTP(timezone);
