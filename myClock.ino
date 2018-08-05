@@ -173,7 +173,7 @@ void getWeather() { // Using openweasthermap.org
         JsonObject& main = root["main"];
         float temperature = main["temp"];
         int humidity = main["humidity"];
-        display.printf("%2dF %2d%% %s", round(temperature), humidity, description.c_str());
+        display.printf("%2dF %2d%% %13s", round(temperature), humidity, description.c_str());
         Serial.printf("%s, %2dF, %2d%%, %s", name.c_str(), round(temperature), humidity, description.c_str());
       } else {
         display.print("json fail");
