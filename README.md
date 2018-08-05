@@ -18,8 +18,12 @@ Get current weather data from https://openweathermap.org/api which requires an A
 
 Built on Arduino core for ESP8266: https://github.com/esp8266/Arduino
 
-Requires
+###Requires
+
 https://github.com/bblanchon/ArduinoJson/releases/tag/v5.13.2
+
 https://github.com/2dom/PxMatrix
+
 https://github.com/adafruit/Adafruit-GFX-Library
+
 https://github.com/tzapu/WiFiManager
