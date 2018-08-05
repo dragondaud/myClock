@@ -1,5 +1,5 @@
 # myClock
-## v0.9.0 EXPERIMENTAL
+## v0.9.1 EXPERIMENTAL
 ### Copyright 2018 by David M Denney <dragondaud@gmail.com>
 
 Master repository: https://github.com/dragondaud/myClock
@@ -22,3 +22,4 @@ Requires
 https://github.com/bblanchon/ArduinoJson/releases/tag/v5.13.2
 https://github.com/2dom/PxMatrix
 https://github.com/adafruit/Adafruit-GFX-Library
+https://github.com/tzapu/WiFiManager
