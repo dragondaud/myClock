@@ -3,18 +3,18 @@
      distributed under the terms of the MIT License
 */
 
-#include <ESP8266WiFi.h>
+#include <ESP8266WiFi.h>        //https://github.com/esp8266/Arduino
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
 #include <ESP8266HTTPClient.h>
 #include <ArduinoOTA.h>
 #include <time.h>
-#include <ArduinoJson.h>          // https://github.com/bblanchon/ArduinoJson/
+#include <ArduinoJson.h>        // https://github.com/bblanchon/ArduinoJson/
+#include <WiFiManager.h>        //https://github.com/tzapu/WiFiManager
 #include "display.h"
 #include "userconfig.h"
 
-//#define WIFI_SSID "SSID"    // define in userconfig.h
-//#define WIFI_PASS "PASS"    //
+// define these in userconfig.h or uncomment here
 //#define tzKey "APIKEY"      // from https://timezonedb.com/register
 //#define owKey "APIKEY"      // from https://home.openweathermap.org/api_keys
 
@@ -23,6 +23,17 @@ const char* UserAgent = "myClock/1.0 (Arduino ESP8266)";
 time_t TWOAM, pNow, fiveM;
 int pHH, pMM, pSS;
 String timezone, location;
+
+void configModeCallback (WiFiManager *myWiFiManager) {
+  display.clearDisplay();
+  display.setFont(&Picopixel);
+  display.setCursor(2, row1);
+  display.print("AP: myClock");
+  display.setCursor(2, row2);
+  display.print("Pass: ConFigMe");
+  display.setCursor(2, row3);
+  display.print("IP: 192.168.11.1");
+}
 
 String UrlEncode(const String url) {
   String e;
@@ -142,7 +153,7 @@ void setNTP(const String tz) {
 void getWeather() { // Using openweasthermap.org
   fiveM = pNow + 300; // 5minutes between weather updates
   display.fillRect(0, 0, 64, 10, myBLACK);
-  display.setCursor(2, row1);
+  display.setCursor(3, row1);
   display.setTextColor(myRED);
   HTTPClient http;
   String URL = "http://api.openweathermap.org/data/2.5/weather?zip="
@@ -163,17 +174,26 @@ void getWeather() { // Using openweasthermap.org
         String name = root["name"];
         JsonObject& weather = root["weather"][0];
         String description = weather["main"];
-        if (description == "Thunderstorm") display.setTextColor(myCYAN);
-        if (description == "Drizzle") display.setTextColor(myYELLOW);
-        if (description == "Rain") display.setTextColor(myORANGE);
-        if (description == "Snow") display.setTextColor(myWHITE);
-        if (description == "Mist") display.setTextColor(myMAGENTA);
-        if (description == "Clear") display.setTextColor(myBLUE);
-        if (description == "Clouds") display.setTextColor(myGREEN);
+        if (description.startsWith("Thunder")) {
+          display.setTextColor(myCYAN);
+          description = "Thunder";
+        }
+        if (description.startsWith("Driz")) display.setTextColor(myYELLOW);
+        if (description.startsWith("Rain")) display.setTextColor(myORANGE);
+        if (description.startsWith("Snow")) display.setTextColor(myWHITE);
+        if (description.startsWith("Mist")) display.setTextColor(myMAGENTA);
+        if (description.startsWith("Clear")) display.setTextColor(myBLUE);
+        if (description.startsWith("Clouds")) display.setTextColor(myGREEN);
         JsonObject& main = root["main"];
         float temperature = main["temp"];
         int humidity = main["humidity"];
-        display.printf("%2dF %2d%% %13s", round(temperature), humidity, description.c_str());
+        display.printf("%2dF %2d%%", round(temperature), humidity);
+        int16_t  x1, y1, ww;
+        uint16_t w, h;
+        display.getTextBounds(description, 0, 0, &x1, &y1, &w, &h);
+        if (w > 32) w = 32;
+        display.setCursor(64 - w, row1);
+        display.print(description);
         Serial.printf("%s, %2dF, %2d%%, %s", name.c_str(), round(temperature), humidity, description.c_str());
       } else {
         display.print("json fail");
@@ -199,16 +219,11 @@ void setup() {
   display.setTextColor(myGREEN);
   display.print("Connecting");
 
-  Serial.print(F("\r\nsetup: WiFi connecting to "));
-  Serial.print(WIFI_SSID);
-  Serial.print(F("..."));
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASS);
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print(F("."));
-    delay(500);
-  }
-  Serial.println(" OK");
+  WiFiManager wifiManager;
+  wifiManager.setAPCallback(configModeCallback);
+  wifiManager.setDebugOutput(false);
+  wifiManager.setMinimumSignalQuality(10);
+  if (!wifiManager.autoConnect("myClock", "ConFigMe")) ESP.reset();
 
   location = getIPlocation();
 
@@ -222,7 +237,7 @@ void setup() {
   display.setTextColor(myBLUE);
   display.print(WiFi.localIP());
   display.setCursor(2, row3);
-  display.setTextColor(myORANGE);
+  display.setTextColor(myMAGENTA);
   display.print(timezone);
   display.setCursor(2, row4);
   display.setTextColor(myCYAN);
