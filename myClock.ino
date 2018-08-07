@@ -20,7 +20,7 @@
 
 const char* UserAgent = "myClock/1.0 (Arduino ESP8266)";
 
-time_t TWOAM, pNow, fiveM;
+time_t TWOAM, pNow, wDelay;
 int pHH, pMM, pSS;
 String timezone, location;
 
@@ -151,7 +151,7 @@ void setNTP(const String tz) {
 } // setNTP
 
 void getWeather() { // Using openweasthermap.org
-  fiveM = pNow + 300; // 5minutes between weather updates
+  wDelay = pNow + 300; // delay between weather updates
   display.fillRect(0, 0, 64, 10, myBLACK);
   display.setCursor(3, row1);
   display.setTextColor(myRED);
@@ -182,6 +182,7 @@ void getWeather() { // Using openweasthermap.org
         if (description.startsWith("Rain")) display.setTextColor(myORANGE);
         if (description.startsWith("Snow")) display.setTextColor(myWHITE);
         if (description.startsWith("Mist")) display.setTextColor(myMAGENTA);
+        if (description.startsWith("Haze")) display.setTextColor(myMAGENTA);
         if (description.startsWith("Clear")) display.setTextColor(myBLUE);
         if (description.startsWith("Clouds")) display.setTextColor(myGREEN);
         JsonObject& main = root["main"];
@@ -335,7 +336,7 @@ void loop() {
       pHH = hh;
     }
     pNow = now;
-    if (now > fiveM) getWeather();
+    if (now > wDelay) getWeather();
   }
 }
 
