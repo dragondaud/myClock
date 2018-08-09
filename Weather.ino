@@ -1,6 +1,5 @@
 void getWeather() { // Using openweasthermap.org
   wDelay = pNow + 600; // delay between weather updates
-  display.fillRect(0, 0, 64, 6, myBLACK);
   display.setCursor(0, row4);
   display.setTextColor(myRED);
   HTTPClient http;
@@ -27,8 +26,13 @@ void getWeather() { // Using openweasthermap.org
         int humidity = main["humidity"];
         float wind = root["wind"]["speed"];
         display.setCursor(8, row1);
-        display.setTextColor(myColor);
-        display.printf("%2dF  %2d%%  %dmph", round(temperature), humidity, round(wind));
+        if (temperature < 60) display.setTextColor(myBLUE);
+        else if (temperature < 40) display.setTextColor(myWHITE);
+        else if (temperature > 80) display.setTextColor(myORANGE);
+        else if (temperature > 90) display.setTextColor(myRED);
+        else display.setTextColor(myColor);
+        display.fillRect(0, 0, 64, 6, myBLACK);
+        display.printf("%2dF  %2d%%  %2d mph", round(temperature), humidity, round(wind));
         String description = weather["main"];
         int id = weather["id"];
         int i = round(id/100);
@@ -54,7 +58,8 @@ void getWeather() { // Using openweasthermap.org
         }
         int16_t  x1, y1, ww;
         uint16_t w, h;
-        display.getTextBounds(description, 0, 0, &x1, &y1, &w, &h);
+        display.getTextBounds(description, 0, row4, &x1, &y1, &w, &h);
+        display.fillRect(x1, y1, 64, 6, myBLACK);
         if (w > 64) w = 0;
         else w = round((64 - w) / 2);
         display.setCursor(w, row4);
