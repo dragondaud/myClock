@@ -20,6 +20,7 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
   String URL = "http://ip-api.com/json";
   String payload;
   http.setUserAgent(UserAgent);
+  Serial.printf("[%d] ", ESP.getFreeHeap());
   if (!http.begin(URL)) {
     Serial.println(F("getIPlocation: HTTP failed"));
   } else {
@@ -60,6 +61,7 @@ long getOffset(const String tz) { // using timezonedb.com, return offset for zon
   String payload;
   long offset;
   http.setUserAgent(UserAgent);
+  Serial.printf("[%d] ", ESP.getFreeHeap());
   if (!http.begin(URL)) {
     Serial.println(F("getOffset: HTTP failed"));
   } else {
@@ -72,8 +74,7 @@ long getOffset(const String tz) { // using timezonedb.com, return offset for zon
         if (root.success()) {
           JsonObject& zones = root["zones"][0];
           offset = zones["gmtOffset"];
-          Serial.print(F("getOffset: "));
-          Serial.println(offset);
+          Serial.printf("getOffset: %d (%d)\r\n", int(offset/3600), offset);
         } else {
           Serial.println(F("getOffset: JSON parse failed!"));
           Serial.println(payload);

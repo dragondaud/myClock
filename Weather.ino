@@ -1,7 +1,7 @@
 void getWeather() { // Using openweasthermap.org
-  wDelay = pNow + 300; // delay between weather updates
-  display.fillRect(0, 0, 64, 10, myBLACK);
-  display.setCursor(3, row1);
+  wDelay = pNow + 600; // delay between weather updates
+  display.fillRect(0, 0, 64, 6, myBLACK);
+  display.setCursor(0, row4);
   display.setTextColor(myRED);
   HTTPClient http;
   String URL = "http://api.openweathermap.org/data/2.5/weather?zip="
@@ -9,6 +9,7 @@ void getWeather() { // Using openweasthermap.org
   String payload;
   long offset;
   http.setUserAgent(UserAgent);
+  Serial.printf("[%d] ", ESP.getFreeHeap());
   if (!http.begin(URL)) {
     display.print("http fail");
     Serial.println(F("getWeather: HTTP failed"));
@@ -21,29 +22,44 @@ void getWeather() { // Using openweasthermap.org
       if (root.success()) {
         String name = root["name"];
         JsonObject& weather = root["weather"][0];
-        String description = weather["main"];
-        if (description.startsWith("Thunder")) {
-          display.setTextColor(myCYAN);
-          description = "Thunder";
-        }
-        if (description.startsWith("Driz")) display.setTextColor(myYELLOW);
-        if (description.startsWith("Rain")) display.setTextColor(myORANGE);
-        if (description.startsWith("Snow")) display.setTextColor(myWHITE);
-        if (description.startsWith("Mist")) display.setTextColor(myMAGENTA);
-        if (description.startsWith("Haze")) display.setTextColor(myGRAY);
-        if (description.startsWith("Clear")) display.setTextColor(myBLUE);
-        if (description.startsWith("Clouds")) display.setTextColor(myGREEN);
         JsonObject& main = root["main"];
         float temperature = main["temp"];
         int humidity = main["humidity"];
-        display.printf("%2dF %2d%%", round(temperature), humidity);
+        float wind = root["wind"]["speed"];
+        display.setCursor(8, row1);
+        display.setTextColor(myColor);
+        display.printf("%2dF  %2d%%  %dmph", round(temperature), humidity, round(wind));
+        String description = weather["main"];
+        int id = weather["id"];
+        int i = round(id/100);
+        switch (i) {
+          case 2: // Thunderstorms
+            display.setTextColor(myORANGE);
+            break;
+          case 3: // Drizzle
+            display.setTextColor(myBLUE);
+            break;
+          case 5: // Rain
+            display.setTextColor(myBLUE);
+            break;
+          case 6: // Snow
+            display.setTextColor(myWHITE);
+            break;
+          case 7: // Atmosphere
+            display.setTextColor(myYELLOW);
+            break;
+          case 8: // Clear/Clouds
+            display.setTextColor(myGRAY);
+            break;
+        }
         int16_t  x1, y1, ww;
         uint16_t w, h;
         display.getTextBounds(description, 0, 0, &x1, &y1, &w, &h);
-        if (w > 32) w = 32;
-        display.setCursor(64 - w, row1);
+        if (w > 64) w = 0;
+        else w = round((64 - w) / 2);
+        display.setCursor(w, row4);
         display.print(description);
-        Serial.printf("%s, %2dF, %2d%%, %s\r\n", name.c_str(), round(temperature), humidity, description.c_str());
+        Serial.printf("%d, %2dF, %2d%%, %s\r\n", id, round(temperature), humidity, description.c_str());
       } else {
         display.print("json fail");
         Serial.println(F("getWeather: JSON parse failed!"));

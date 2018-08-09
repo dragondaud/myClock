@@ -10,7 +10,7 @@
 #include <ArduinoOTA.h>
 #include <time.h>
 #include <ArduinoJson.h>        // https://github.com/bblanchon/ArduinoJson/
-#include <WiFiManager.h>        //https://github.com/tzapu/WiFiManager
+#include <WiFiManager.h>        // https://github.com/tzapu/WiFiManager
 
 #include "display.h"
 #include "userconfig.h"

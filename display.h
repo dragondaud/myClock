@@ -26,10 +26,10 @@ void display_updater() {
 }
 
 #include "Digit.h"
-const byte row1 = 8;
-const byte row2 = 15;
+const byte row1 = 4;
+const byte row2 = 13;
 const byte row3 = 22;
-const byte row4 = 29;
+const byte row4 = 30;
 const uint16_t myRED = display.color565(255, 0, 0);
 const uint16_t myGREEN = display.color565(0, 255, 0);
 const uint16_t myBLUE = display.color565(0, 0, 255);
@@ -38,14 +38,14 @@ const uint16_t myYELLOW = display.color565(255, 255, 0);
 const uint16_t myORANGE = display.color565(255,165,0);
 const uint16_t myCYAN = display.color565(0, 255, 255);
 const uint16_t myMAGENTA = display.color565(255, 0, 255);
-const uint16_t myGRAY = display.color565(96, 96, 96);
+const uint16_t myGRAY = display.color565(102, 102, 102);
 const uint16_t myBLACK = display.color565(0, 0, 0);
 const uint16_t myColor = myGREEN;
-Digit digit0(&display, 0, 63 - 1 - 9 * 1, 5, myColor);
-Digit digit1(&display, 0, 63 - 1 - 9 * 2, 5, myColor);
-Digit digit2(&display, 0, 63 - 4 - 9 * 3, 5, myColor);
-Digit digit3(&display, 0, 63 - 4 - 9 * 4, 5, myColor);
-Digit digit4(&display, 0, 63 - 7 - 9 * 5, 5, myColor);
-Digit digit5(&display, 0, 63 - 7 - 9 * 6, 5, myColor);
+Digit digit0(&display, 0, 63 - 1 - 9 * 1, 9, myColor);
+Digit digit1(&display, 0, 63 - 1 - 9 * 2, 9, myColor);
+Digit digit2(&display, 0, 63 - 4 - 9 * 3, 9, myColor);
+Digit digit3(&display, 0, 63 - 4 - 9 * 4, 9, myColor);
+Digit digit4(&display, 0, 63 - 7 - 9 * 5, 9, myColor);
+Digit digit5(&display, 0, 63 - 7 - 9 * 6, 9, myColor);
 
 #endif
