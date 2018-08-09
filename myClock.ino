@@ -27,16 +27,18 @@ String timezone, location;
 
 void setup() {
   Serial.begin(115200);
-  //Serial.setDebugOutput(true);
+  //Serial.setDebugOutput(true); //uncomment for extra debugging
   while (!Serial);
   Serial.println();
+
   display.begin(16);
   display_ticker.attach(0.002, display_updater);
   display.clearDisplay();
-  display.setCursor(2, row1);
-  display.setTextColor(myGREEN);
+  display.setCursor(2, row2);
+  display.setTextColor(myColor);
   display.print("Connecting");
 
+  // if WiFi does not connect, establish AP for configuration
   WiFiManager wifiManager;
   wifiManager.setAPCallback(configModeCallback);
   wifiManager.setDebugOutput(false);
@@ -64,7 +66,7 @@ void setup() {
   setNTP(timezone);
 
   ArduinoOTA.onStart([]() {
-    display.clearDisplay();
+    display.clearDisplay();   // turn off display during update
     display_ticker.detach();
     Serial.println("\nOTA: Start");
   } );

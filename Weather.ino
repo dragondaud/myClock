@@ -25,6 +25,8 @@ void getWeather() { // Using openweasthermap.org
         float temperature = main["temp"];
         int humidity = main["humidity"];
         float wind = root["wind"]["speed"];
+        int deg = root["wind"]["deg"];
+        String dir = degreeDir(deg);
         display.setCursor(8, row1);
         if (temperature < 60) display.setTextColor(myBLUE);
         else if (temperature < 40) display.setTextColor(myWHITE);
@@ -32,10 +34,10 @@ void getWeather() { // Using openweasthermap.org
         else if (temperature > 90) display.setTextColor(myRED);
         else display.setTextColor(myColor);
         display.fillRect(0, 0, 64, 6, myBLACK);
-        display.printf("%2dF  %2d%%  %2d mph", round(temperature), humidity, round(wind));
+        display.printf("%2dF  %2d%%  %2d %s", round(temperature), humidity, round(wind), dir.c_str());
         String description = weather["main"];
         int id = weather["id"];
-        int i = round(id/100);
+        int i = round(id / 100);
         switch (i) {
           case 2: // Thunderstorms
             display.setTextColor(myORANGE);
@@ -64,7 +66,8 @@ void getWeather() { // Using openweasthermap.org
         else w = round((64 - w) / 2);
         display.setCursor(w, row4);
         display.print(description);
-        Serial.printf("%d, %2dF, %2d%%, %s\r\n", id, round(temperature), humidity, description.c_str());
+        Serial.printf("%2dF, %2d%%, %d %s (%d), %s (%d)\r\n",
+                      round(temperature), humidity, round(wind), dir.c_str(), deg, description.c_str(), id);
       } else {
         display.print("json fail");
         Serial.println(F("getWeather: JSON parse failed!"));
@@ -77,4 +80,9 @@ void getWeather() { // Using openweasthermap.org
   }
   http.end();
 } // getWeather
+
+String degreeDir(int degrees) {
+  char* caridnals[] = { "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N" };
+  return caridnals[round((degrees % 360) / 45)];
+} // degreeDir
 
