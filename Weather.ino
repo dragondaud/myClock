@@ -11,7 +11,7 @@ void getWeather() { // Using openweasthermap.org
   http.setUserAgent(UserAgent);
   if (!http.begin(URL)) {
     display.print("http fail");
-    Serial.println(F("getOffset: HTTP failed"));
+    Serial.println(F("getWeather: HTTP failed"));
   } else {
     int stat = http.GET();
     if (stat == HTTP_CODE_OK) {
@@ -46,12 +46,12 @@ void getWeather() { // Using openweasthermap.org
         Serial.printf("%s, %2dF, %2d%%, %s\r\n", name.c_str(), round(temperature), humidity, description.c_str());
       } else {
         display.print("json fail");
-        Serial.println(F("getOffset: JSON parse failed!"));
+        Serial.println(F("getWeather: JSON parse failed!"));
         Serial.println(payload);
       }
     } else {
       display.print(stat);
-      Serial.printf("getOffset: GET failed: %d %s\r\n", stat, http.errorToString(stat).c_str());
+      Serial.printf("getWeather: GET failed: %d %s\r\n", stat, http.errorToString(stat).c_str());
     }
   }
   http.end();
