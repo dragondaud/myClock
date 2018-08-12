@@ -1,6 +1,6 @@
 void getWeather() { // Using openweasthermap.org
   wDelay = pNow + 600; // delay between weather updates
-  display.setCursor(0, row4);
+  display.setCursor(0, row4);   // any error displayed in red on bottom row
   display.setTextColor(myRED);
   HTTPClient http;
   String URL = "http://api.openweathermap.org/data/2.5/weather?zip="
@@ -27,11 +27,13 @@ void getWeather() { // Using openweasthermap.org
         float wind = root["wind"]["speed"];
         int deg = root["wind"]["deg"];
         String dir = degreeDir(deg);
-        display.setCursor(8, row1);
-        if (temperature < 60) display.setTextColor(myBLUE);
-        else if (temperature < 40) display.setTextColor(myWHITE);
-        else if (temperature > 80) display.setTextColor(myORANGE);
-        else if (temperature > 90) display.setTextColor(myRED);
+        display.setCursor(12, row1);
+        if (temperature < 40) display.setTextColor(myBLUE);
+        else if (temperature < 50) display.setTextColor(myCYAN);
+        else if (temperature < 60) display.setTextColor(myYELLOW);
+        else if (temperature < 80) display.setTextColor(myGREEN);
+        else if (temperature >= 80) display.setTextColor(myORANGE);
+        else if (temperature >= 90) display.setTextColor(myRED);
         else display.setTextColor(myColor);
         display.fillRect(0, 0, 64, 6, myBLACK);
         display.printf("%2dF  %2d%%  %2d %s", round(temperature), humidity, round(wind), dir.c_str());

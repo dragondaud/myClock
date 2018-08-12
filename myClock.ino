@@ -26,8 +26,8 @@ int pHH, pMM, pSS;
 String timezone, location;
 
 void setup() {
-  Serial.begin(115200);
-  //Serial.setDebugOutput(true); //uncomment for extra debugging
+  Serial.begin(74880);            // match ESP bootload speed
+  //Serial.setDebugOutput(true);  // uncomment for extra debugging
   while (!Serial);
   Serial.println();
 
