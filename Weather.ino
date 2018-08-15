@@ -68,8 +68,10 @@ void getWeather() { // Using openweasthermap.org
         else w = round((64 - w) / 2);
         display.setCursor(w, row4);
         display.print(description);
+#ifdef SYSLOG_SERVER
         syslog.logf(LOG_INFO, "%2dF, %2d%%RH, %d %s, %s",
                     round(temperature), humidity, round(wind), dir.c_str(), description.c_str());
+#endif
         Serial.printf("%2dF, %2d%%, %d %s (%d), %s (%d)\r\n",
                       round(temperature), humidity, round(wind), dir.c_str(), deg, description.c_str(), id);
       } else {

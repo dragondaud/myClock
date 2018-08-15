@@ -9,7 +9,6 @@
 #include <ESP8266HTTPClient.h>
 #include <ArduinoOTA.h>
 #include <time.h>
-#include <Syslog.h>             // https://github.com/arcao/Syslog
 #include <ArduinoJson.h>        // https://github.com/bblanchon/ArduinoJson/
 #include <WiFiManager.h>        // https://github.com/tzapu/WiFiManager
 
@@ -20,13 +19,16 @@
 // define these in userconfig.h or uncomment here
 //#define tzKey "APIKEY"      // from https://timezonedb.com/register
 //#define owKey "APIKEY"      // from https://home.openweathermap.org/api_keys
-//#define SYSLOG_SERVER "syslog-server"
+//#define SYSLOG_SERVER "syslog-server" // don't define to disable syslog
 //#define SYSLOG_PORT 514
 //#define SOFTAP_PASS "ConFigMe"
 
 // Syslog
+#ifdef SYSLOG_SERVER
+#include <Syslog.h>             // https://github.com/arcao/Syslog
 WiFiUDP udpClient;
 Syslog syslog(udpClient, SYSLOG_SERVER, SYSLOG_PORT, SYSLOG_PROTO_IETF);
+#endif
 
 const char* UserAgent = "myClock/1.0 (Arduino ESP8266)";
 
@@ -77,12 +79,17 @@ void setup() {
   display.setTextColor(myCYAN);
   display.print("waiting for ntp");
 
+#ifdef SYSLOG_SERVER
   syslog.deviceHostname(host.c_str());
   syslog.appName(APPNAME);
+#endif
+
   setNTP(timezone);
 
   ArduinoOTA.onStart([]() {
+#ifdef SYSLOG_SERVER
     syslog.log(LOG_DAEMON, "OTA Update");
+#endif
     display.clearDisplay();   // turn off display during update
     display_ticker.detach();
     Serial.println("\nOTA: Start");

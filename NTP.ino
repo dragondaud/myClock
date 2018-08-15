@@ -112,6 +112,8 @@ void setNTP(const String tz) {
   t.trim();
   Serial.print("setNTP: next timezone check @ ");
   Serial.println(t);
+#ifdef SYSLOG_SERVER
   syslog.logf(LOG_INFO, "%s, %s (%d), %s", location.c_str(), timezone.c_str(), int(offset / 3600), t.c_str());
+#endif
 } // setNTP
 
