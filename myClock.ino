@@ -9,15 +9,24 @@
 #include <ESP8266HTTPClient.h>
 #include <ArduinoOTA.h>
 #include <time.h>
+#include <Syslog.h>             // https://github.com/arcao/Syslog
 #include <ArduinoJson.h>        // https://github.com/bblanchon/ArduinoJson/
 #include <WiFiManager.h>        // https://github.com/tzapu/WiFiManager
 
 #include "display.h"
 #include "userconfig.h"
+#define APPNAME "myClock"
 
 // define these in userconfig.h or uncomment here
 //#define tzKey "APIKEY"      // from https://timezonedb.com/register
 //#define owKey "APIKEY"      // from https://home.openweathermap.org/api_keys
+//#define SYSLOG_SERVER "syslog-server"
+//#define SYSLOG_PORT 514
+//#define SOFTAP_PASS "ConFigMe"
+
+// Syslog
+WiFiUDP udpClient;
+Syslog syslog(udpClient, SYSLOG_SERVER, SYSLOG_PORT, SYSLOG_PROTO_IETF);
 
 const char* UserAgent = "myClock/1.0 (Arduino ESP8266)";
 
@@ -26,7 +35,7 @@ int pHH, pMM, pSS;
 String timezone, location;
 
 void setup() {
-  Serial.begin(74880);            // match ESP bootload speed
+  Serial.begin(74880);            // match ESP bootloader speed
   //Serial.setDebugOutput(true);  // uncomment for extra debugging
   while (!Serial);
   Serial.println();
@@ -38,12 +47,17 @@ void setup() {
   display.setTextColor(myColor);
   display.print("Connecting");
 
+  String t = WiFi.macAddress();
+  String host = String(APPNAME) + "-" + t.substring(9, 11) + t.substring(12, 14) + t.substring(15, 17);
+  WiFi.hostname(host);
+
   // if WiFi does not connect, establish AP for configuration
   WiFiManager wifiManager;
   wifiManager.setAPCallback(configModeCallback);
   wifiManager.setDebugOutput(false);
   wifiManager.setMinimumSignalQuality(10);
-  if (!wifiManager.autoConnect("myClock", "ConFigMe")) ESP.reset();
+  if (!wifiManager.autoConnect(host.c_str(), SOFTAP_PASS)) ESP.reset();
+  MDNS.begin(host.c_str());
 
   location = getIPlocation();
 
@@ -52,7 +66,7 @@ void setup() {
   display.setTextWrap(false);
   display.setCursor(2, row1);
   display.setTextColor(myGREEN);
-  display.print(WiFi.hostname());
+  display.print(host);
   display.setCursor(2, row2);
   display.setTextColor(myBLUE);
   display.print(WiFi.localIP());
@@ -63,9 +77,12 @@ void setup() {
   display.setTextColor(myCYAN);
   display.print("waiting for ntp");
 
+  syslog.deviceHostname(host.c_str());
+  syslog.appName(APPNAME);
   setNTP(timezone);
 
   ArduinoOTA.onStart([]() {
+    syslog.log(LOG_DAEMON, "OTA Update");
     display.clearDisplay();   // turn off display during update
     display_ticker.detach();
     Serial.println("\nOTA: Start");
@@ -86,24 +103,6 @@ void setup() {
     else Serial.println(F("unknown error"));
   });
   ArduinoOTA.begin();
-
-  Serial.println();
-  Serial.print(F("Last reset reason: "));
-  Serial.println(ESP.getResetReason());
-  Serial.print(F("WiFi Hostname: "));
-  Serial.println(WiFi.hostname());
-  Serial.print(F("WiFi IP addr: "));
-  Serial.println(WiFi.localIP());
-  Serial.print(F("WiFi gw addr: "));
-  Serial.println(WiFi.gatewayIP());
-  Serial.print(F("WiFi MAC addr: "));
-  Serial.println(WiFi.macAddress());
-  Serial.print(F("ESP Sketch size: "));
-  Serial.println(ESP.getSketchSize());
-  Serial.print(F("ESP Flash free: "));
-  Serial.println(ESP.getFreeSketchSpace());
-  Serial.print(F("ESP Flash Size: "));
-  Serial.println(ESP.getFlashChipRealSize());
 
   delay(1000);
   display.clearDisplay();

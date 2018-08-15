@@ -74,7 +74,7 @@ long getOffset(const String tz) { // using timezonedb.com, return offset for zon
         if (root.success()) {
           JsonObject& zones = root["zones"][0];
           offset = zones["gmtOffset"];
-          Serial.printf("getOffset: %d (%d)\r\n", int(offset/3600), offset);
+          Serial.printf("getOffset: %d (%d)\r\n", int(offset / 3600), offset);
         } else {
           Serial.println(F("getOffset: JSON parse failed!"));
           Serial.println(payload);
@@ -112,5 +112,6 @@ void setNTP(const String tz) {
   t.trim();
   Serial.print("setNTP: next timezone check @ ");
   Serial.println(t);
+  syslog.logf(LOG_INFO, "%s, %s (%d), %s", location.c_str(), timezone.c_str(), int(offset / 3600), t.c_str());
 } // setNTP
 
