@@ -34,6 +34,7 @@ const char* UserAgent = "myClock/1.0 (Arduino ESP8266)";
 
 time_t TWOAM, pNow, wDelay;
 int pHH, pMM, pSS;
+long offset;
 String timezone, location;
 char HOST[20];
 
@@ -63,6 +64,11 @@ void setup() {
   if (!wifiManager.autoConnect(HOST, SOFTAP_PASS)) ESP.reset();
   MDNS.begin(HOST);
 
+#ifdef SYSLOG_SERVER
+  syslog.deviceHostname(HOST);
+  syslog.appName(APPNAME);
+#endif
+
   location = getIPlocation();
 
   display.clearDisplay();
@@ -80,11 +86,6 @@ void setup() {
   display.setCursor(2, row4);
   display.setTextColor(myCYAN);
   display.print("waiting for ntp");
-
-#ifdef SYSLOG_SERVER
-  syslog.deviceHostname(HOST);
-  syslog.appName(APPNAME);
-#endif
 
   setNTP(timezone);
 

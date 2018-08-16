@@ -10,6 +10,9 @@ void getWeather() { // Using openweasthermap.org
   http.setUserAgent(UserAgent);
   Serial.printf("[%d] ", ESP.getFreeHeap());
   if (!http.begin(URL)) {
+#ifdef SYSLOG_SERVER
+    syslog.log(LOG_INFO, F("getWeather HTTP failed"));
+#endif
     display.print("http fail");
     Serial.println(F("getWeather: HTTP failed"));
   } else {
@@ -69,17 +72,24 @@ void getWeather() { // Using openweasthermap.org
         display.setCursor(w, row4);
         display.print(description);
 #ifdef SYSLOG_SERVER
-        syslog.logf(LOG_INFO, "%2dF, %2d%%RH, %d %s, %s",
+        syslog.logf(LOG_INFO, "getWeather: %2dF, %2d%%RH, %d %s, %s",
                     round(temperature), humidity, round(wind), dir.c_str(), description.c_str());
 #endif
         Serial.printf("%2dF, %2d%%, %d %s (%d), %s (%d)\r\n",
                       round(temperature), humidity, round(wind), dir.c_str(), deg, description.c_str(), id);
       } else {
         display.print("json fail");
+#ifdef SYSLOG_SERVER
+        syslog.log(LOG_INFO, F("getWeather JSON parse failed"));
+        syslog.log(LOG_INFO, payload);
+#endif
         Serial.println(F("getWeather: JSON parse failed!"));
         Serial.println(payload);
       }
     } else {
+#ifdef SYSLOG_SERVER
+      syslog.logf(LOG_INFO, "getWeather failed, GET reply %d", stat);
+#endif
       display.print(stat);
       Serial.printf("getWeather: GET failed: %d %s\r\n", stat, http.errorToString(stat).c_str());
     }

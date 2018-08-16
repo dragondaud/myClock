@@ -1,19 +1,4 @@
-String UrlEncode(const String url) {
-  String e;
-  for (int i = 0; i < url.length(); i++) {
-    char c = url.charAt(i);
-    if (c == 0x20) {
-      e += "%20";
-    } else if (isalnum(c)) {
-      e += c;
-    } else {
-      e += "%";
-      if (c < 0x10) e += "0";
-      e += String(c, HEX);
-    }
-  }
-  return e;
-}
+//  NTP and location functions
 
 String getIPlocation() { // Using ip-api.com to discover public IP's location and timezone
   HTTPClient http;
@@ -22,11 +7,13 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
   http.setUserAgent(UserAgent);
   Serial.printf("[%d] ", ESP.getFreeHeap());
   if (!http.begin(URL)) {
+#ifdef SYSLOG_SERVER
+    syslog.log(LOG_INFO, F("getIPlocation HTTP failed"));
+#endif
     Serial.println(F("getIPlocation: HTTP failed"));
   } else {
     int stat = http.GET();
-    if (stat > 0) {
-      if (stat == HTTP_CODE_OK) {
+    if (stat == HTTP_CODE_OK) {
         payload = http.getString();
         DynamicJsonBuffer jsonBuffer;
         JsonObject& root = jsonBuffer.parseObject(payload);
@@ -38,17 +25,24 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
           String zip = root["zip"];
           timezone = tz;
           http.end();
+#ifdef SYSLOG_SERVER
+          syslog.logf(LOG_INFO, "getIPlocation: %s, %s, %s, %s", isp.c_str(), region.c_str(), country.c_str(), tz.c_str());
+#endif
           Serial.println("getIPlocation: " + isp + ", " + region + ", " + country + ", " + tz);
           return zip;
         } else {
+#ifdef SYSLOG_SERVER
+          syslog.log(LOG_INFO, F("getIPlocation JSON parse failed"));
+          syslog.log(LOG_INFO, payload);
+#endif
           Serial.println(F("getIPlocation: JSON parse failed!"));
           Serial.println(payload);
         }
       } else {
+#ifdef SYSLOG_SERVER
+        syslog.logf(LOG_INFO, "getIPlocation failed, GET reply %d", stat);
+#endif
         Serial.printf("getIPlocation: GET reply %d\r\n", stat);
-      }
-    } else {
-      Serial.printf("getIPlocation: GET failed: %s\r\n", http.errorToString(stat).c_str());
     }
   }
   http.end();
@@ -57,41 +51,50 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
 long getOffset(const String tz) { // using timezonedb.com, return offset for zone name
   HTTPClient http;
   String URL = "http://api.timezonedb.com/v2/list-time-zone?key=" + String(tzKey)
-               + "&format=json&zone=" + UrlEncode(tz);
+               + "&format=json&zone=" + tz;
   String payload;
-  long offset;
+  long tzo = offset;
   http.setUserAgent(UserAgent);
   Serial.printf("[%d] ", ESP.getFreeHeap());
   if (!http.begin(URL)) {
+#ifdef SYSLOG_SERVER
+    syslog.log(LOG_INFO, F("getOffset HTTP failed"));
+#endif
     Serial.println(F("getOffset: HTTP failed"));
   } else {
     int stat = http.GET();
-    if (stat > 0) {
-      if (stat == HTTP_CODE_OK) {
+    if (stat == HTTP_CODE_OK) {
         payload = http.getString();
         DynamicJsonBuffer jsonBuffer;
         JsonObject& root = jsonBuffer.parseObject(payload);
         if (root.success()) {
           JsonObject& zones = root["zones"][0];
-          offset = zones["gmtOffset"];
-          Serial.printf("getOffset: %d (%d)\r\n", int(offset / 3600), offset);
+          tzo = zones["gmtOffset"];
+#ifdef SYSLOG_SERVER
+          syslog.logf(LOG_INFO, "getOffset: %d (%d)", int(tzo / 3600), tzo);
+#endif
+          Serial.printf("getOffset: %d (%d)\r\n", int(tzo / 3600), tzo);
         } else {
+#ifdef SYSLOG_SERVER
+          syslog.log(LOG_INFO, F("getOffset JSON parse failed"));
+          syslog.log(LOG_INFO, payload);
+#endif
           Serial.println(F("getOffset: JSON parse failed!"));
           Serial.println(payload);
         }
       } else {
+#ifdef SYSLOG_SERVER
+      syslog.logf(LOG_INFO, "getOffset failed, GET reply %d", stat);
+#endif
         Serial.printf("getOffset: GET reply %d\r\n", stat);
-      }
-    } else {
-      Serial.printf("getOffset: GET failed: %s\r\n", http.errorToString(stat).c_str());
     }
   }
   http.end();
-  return offset;
+  return tzo;
 } // getOffset
 
 void setNTP(const String tz) {
-  long offset = getOffset(tz);
+  offset = getOffset(tz);
   Serial.print(F("setNTP: configure NTP ..."));
   configTime(offset, 0, "pool.ntp.org", "time.nist.gov");
   while (time(nullptr) < (30 * 365 * 24 * 60 * 60)) {
@@ -113,7 +116,7 @@ void setNTP(const String tz) {
   Serial.print("setNTP: next timezone check @ ");
   Serial.println(t);
 #ifdef SYSLOG_SERVER
-  syslog.logf(LOG_INFO, "%s, %s (%d), %s", location.c_str(), timezone.c_str(), int(offset / 3600), t.c_str());
+  syslog.logf(LOG_INFO, "setNTP: %s, %s (%d), %s", location.c_str(), timezone.c_str(), int(offset / 3600), t.c_str());
 #endif
 } // setNTP
 
