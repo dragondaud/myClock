@@ -13,7 +13,7 @@ void getWeather() { // Using openweasthermap.org
 #ifdef SYSLOG_SERVER
     syslog.log(LOG_INFO, F("getWeather HTTP failed"));
 #endif
-    display.print("http fail");
+    display.print(F("http fail"));
     Serial.println(F("getWeather: HTTP failed"));
   } else {
     int stat = http.GET();
@@ -66,7 +66,7 @@ void getWeather() { // Using openweasthermap.org
         int16_t  x1, y1, ww;
         uint16_t w, h;
         display.getTextBounds(description, 0, row4, &x1, &y1, &w, &h);
-        display.fillRect(x1, y1, 64, 6, myBLACK);
+        display.fillRect(0, y1, 64, 6, myBLACK);
         if (w > 64) w = 0;
         else w = round((64 - w) / 2);
         display.setCursor(w, row4);
@@ -78,7 +78,7 @@ void getWeather() { // Using openweasthermap.org
         Serial.printf("%2dF, %2d%%, %d %s (%d), %s (%d)\r\n",
                       round(temperature), humidity, round(wind), dir.c_str(), deg, description.c_str(), id);
       } else {
-        display.print("json fail");
+        display.print(F("json fail"));
 #ifdef SYSLOG_SERVER
         syslog.log(LOG_INFO, F("getWeather JSON parse failed"));
         syslog.log(LOG_INFO, payload);

@@ -49,7 +49,7 @@ void setup() {
   display.clearDisplay();
   display.setCursor(2, row2);
   display.setTextColor(myColor);
-  display.print("Connecting");
+  display.print(F("Connecting"));
 
   String t = WiFi.macAddress();
   t = String(APPNAME) + "-" + t.substring(9, 11) + t.substring(12, 14) + t.substring(15, 17);
@@ -85,7 +85,7 @@ void setup() {
   display.print(timezone);
   display.setCursor(2, row4);
   display.setTextColor(myCYAN);
-  display.print("waiting for ntp");
+  display.print(F("waiting for ntp"));
 
   setNTP(timezone);
 
