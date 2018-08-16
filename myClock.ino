@@ -21,7 +21,7 @@
 //#define owKey "APIKEY"      // from https://home.openweathermap.org/api_keys
 //#define SYSLOG_SERVER "syslog-server" // don't define to disable syslog
 //#define SYSLOG_PORT 514
-//#define SOFTAP_PASS "ConFigMe"
+//#define SOFTAP_PASS "ConFigMe"  // password for SoftAP config
 
 // Syslog
 #ifdef SYSLOG_SERVER
@@ -35,6 +35,7 @@ const char* UserAgent = "myClock/1.0 (Arduino ESP8266)";
 time_t TWOAM, pNow, wDelay;
 int pHH, pMM, pSS;
 String timezone, location;
+char HOST[20];
 
 void setup() {
   Serial.begin(74880);            // match ESP bootloader speed
@@ -50,16 +51,17 @@ void setup() {
   display.print("Connecting");
 
   String t = WiFi.macAddress();
-  String host = String(APPNAME) + "-" + t.substring(9, 11) + t.substring(12, 14) + t.substring(15, 17);
-  WiFi.hostname(host);
+  t = String(APPNAME) + "-" + t.substring(9, 11) + t.substring(12, 14) + t.substring(15, 17);
+  t.toCharArray(HOST, 20);
+  WiFi.hostname(HOST);
 
   // if WiFi does not connect, establish AP for configuration
   WiFiManager wifiManager;
   wifiManager.setAPCallback(configModeCallback);
   wifiManager.setDebugOutput(false);
   wifiManager.setMinimumSignalQuality(10);
-  if (!wifiManager.autoConnect(host.c_str(), SOFTAP_PASS)) ESP.reset();
-  MDNS.begin(host.c_str());
+  if (!wifiManager.autoConnect(HOST, SOFTAP_PASS)) ESP.reset();
+  MDNS.begin(HOST);
 
   location = getIPlocation();
 
@@ -68,7 +70,7 @@ void setup() {
   display.setTextWrap(false);
   display.setCursor(2, row1);
   display.setTextColor(myGREEN);
-  display.print(host);
+  display.print(HOST);
   display.setCursor(2, row2);
   display.setTextColor(myBLUE);
   display.print(WiFi.localIP());
@@ -80,7 +82,7 @@ void setup() {
   display.print("waiting for ntp");
 
 #ifdef SYSLOG_SERVER
-  syslog.deviceHostname(host.c_str());
+  syslog.deviceHostname(HOST);
   syslog.appName(APPNAME);
 #endif
 
@@ -88,7 +90,7 @@ void setup() {
 
   ArduinoOTA.onStart([]() {
 #ifdef SYSLOG_SERVER
-    syslog.log(LOG_DAEMON, "OTA Update");
+    syslog.log(LOG_INFO, "OTA Update");
 #endif
     display.clearDisplay();   // turn off display during update
     display_ticker.detach();
