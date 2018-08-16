@@ -47,6 +47,7 @@ void setup() {
   display.begin(16);
   display_ticker.attach(0.002, display_updater);
   display.clearDisplay();
+  display.setTextWrap(false);
   display.setCursor(2, row2);
   display.setTextColor(myColor);
   display.print(F("Connecting"));
@@ -73,7 +74,6 @@ void setup() {
 
   display.clearDisplay();
   display.setFont(&Picopixel);
-  display.setTextWrap(false);
   display.setCursor(2, row1);
   display.setTextColor(myGREEN);
   display.print(HOST);
