@@ -68,10 +68,6 @@ int getOffset(const String tz) { // using timezonedb.com, return offset for zone
       if (root.success()) {
         JsonObject& zones = root["zones"][0];
         offset = zones["gmtOffset"];
-#ifdef SYSLOG_SERVER
-        syslog.logf(LOG_INFO, "getOffset: %d (%d)", int(offset / 3600), offset);
-#endif
-        Serial.printf("getOffset: %d (%d)\r\n", int(offset / 3600), offset);
       } else {
 #ifdef SYSLOG_SERVER
         syslog.log(LOG_INFO, F("getOffset JSON parse failed"));
@@ -101,7 +97,6 @@ void setNTP(const String tz) {
     delay(1000);
     Serial.print(F("."));
   }
-  delay(5000);
   Serial.println(" OK");
   time_t now = time(nullptr);
   struct tm * calendar;
@@ -116,8 +111,8 @@ void setNTP(const String tz) {
   Serial.print("setNTP: next timezone check @ ");
   Serial.println(t);
 #ifdef SYSLOG_SERVER
-  syslog.logf(LOG_INFO, "setNTP: %s/%s(%d)/%s/%d", location.c_str(),
-              timezone.c_str(), int(offset / 3600), t.c_str(), ESP.getFreeHeap());
+  syslog.logf(LOG_INFO, "setNTP: %d|%s|%d|%s|%d", ESP.getFreeHeap(),
+              timezone.c_str(), int(offset / 3600), location.c_str(), t.c_str());
 #endif
 } // setNTP
 
