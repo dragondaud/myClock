@@ -39,7 +39,7 @@ String timezone, location;
 char HOST[20];
 
 void setup() {
-  Serial.begin(74880);            // match ESP bootloader speed
+  Serial.begin(74880);            // match nodemcu bootloader speed
   //Serial.setDebugOutput(true);  // uncomment for extra debugging
   while (!Serial);
   Serial.println();
@@ -52,18 +52,7 @@ void setup() {
   display.setTextColor(myColor);
   display.print(F("Connecting"));
 
-  String t = WiFi.macAddress();
-  t = String(APPNAME) + "-" + t.substring(9, 11) + t.substring(12, 14) + t.substring(15, 17);
-  t.toCharArray(HOST, 20);
-  WiFi.hostname(HOST);
-
-  // if WiFi does not connect, establish AP for configuration
-  WiFiManager wifiManager;
-  wifiManager.setAPCallback(configModeCallback);
-  wifiManager.setDebugOutput(false);
-  wifiManager.setMinimumSignalQuality(10);
-  if (!wifiManager.autoConnect(HOST, SOFTAP_PASS)) ESP.reset();
-  MDNS.begin(HOST);
+  startWiFi();
 
 #ifdef SYSLOG_SERVER
   syslog.deviceHostname(HOST);

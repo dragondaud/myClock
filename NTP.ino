@@ -5,7 +5,6 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
   String URL = "http://ip-api.com/json";
   String payload;
   http.setUserAgent(UserAgent);
-  Serial.printf("[%d] ", ESP.getFreeHeap());
   if (!http.begin(URL)) {
 #ifdef SYSLOG_SERVER
     syslog.log(LOG_INFO, F("getIPlocation HTTP failed"));
@@ -55,7 +54,6 @@ int getOffset(const String tz) { // using timezonedb.com, return offset for zone
   String payload;
   int stat;
   http.setUserAgent(UserAgent);
-  Serial.printf("[%d] ", ESP.getFreeHeap());
   if (!http.begin(URL)) {
 #ifdef SYSLOG_SERVER
     syslog.log(LOG_INFO, F("getOffset HTTP failed"));
@@ -118,7 +116,8 @@ void setNTP(const String tz) {
   Serial.print("setNTP: next timezone check @ ");
   Serial.println(t);
 #ifdef SYSLOG_SERVER
-  syslog.logf(LOG_INFO, "setNTP: %s, %s (%d), %s", location.c_str(), timezone.c_str(), int(offset / 3600), t.c_str());
+  syslog.logf(LOG_INFO, "setNTP: %s/%s(%d)/%s/%d", location.c_str(),
+              timezone.c_str(), int(offset / 3600), t.c_str(), ESP.getFreeHeap());
 #endif
 } // setNTP
 

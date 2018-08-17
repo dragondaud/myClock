@@ -1,5 +1,5 @@
 void getWeather() { // Using openweasthermap.org
-  wDelay = pNow + 600; // delay between weather updates
+  wDelay = pNow + 900; // delay between weather updates
   display.setCursor(0, row4);   // any error displayed in red on bottom row
   display.setTextColor(myRED);
   HTTPClient http;
@@ -8,7 +8,6 @@ void getWeather() { // Using openweasthermap.org
   String payload;
   long offset;
   http.setUserAgent(UserAgent);
-  Serial.printf("[%d] ", ESP.getFreeHeap());
   if (!http.begin(URL)) {
 #ifdef SYSLOG_SERVER
     syslog.log(LOG_INFO, F("getWeather HTTP failed"));
