@@ -29,7 +29,6 @@ void getWeather() { // Using openweasthermap.org
         float wind = root["wind"]["speed"];
         int deg = root["wind"]["deg"];
         String dir = degreeDir(deg);
-        display.setCursor(12, row1);
         if (temperature < 40) display.setTextColor(myBLUE);
         else if (temperature < 50) display.setTextColor(myCYAN);
         else if (temperature < 60) display.setTextColor(myYELLOW);
@@ -38,6 +37,7 @@ void getWeather() { // Using openweasthermap.org
         else if (temperature >= 90) display.setTextColor(myRED);
         else display.setTextColor(myColor);
         display.fillRect(0, 0, 64, 6, myBLACK);
+        display.setCursor(10, row1);
         display.printf("%2dF  %2d%%  %2d %s", round(temperature), humidity, round(wind), dir.c_str());
         String description = weather["main"];
         int id = weather["id"];
