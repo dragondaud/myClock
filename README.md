@@ -1,5 +1,5 @@
 # myClock
-## v0.9.1 EXPERIMENTAL
+## v0.9.2 PRE-RELEASE
 ### Copyright 2018 by David M Denney &lt;dragondaud@gmail.com&gt;
 
 Master repository: https://github.com/dragondaud/myClock

@@ -14,6 +14,7 @@
 #include "display.h"
 #include "userconfig.h"
 #define APPNAME "myClock"
+#define VERSION "0.9.2"
 
 // define in userconfig.h or uncomment here
 //#undef DEBUG
