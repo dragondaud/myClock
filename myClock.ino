@@ -4,11 +4,10 @@
 */
 
 #include <ESP8266WiFi.h>        //https://github.com/esp8266/Arduino
-#include <ESP8266mDNS.h>
-#include <WiFiUdp.h>
 #include <ESP8266HTTPClient.h>
 #include <ArduinoOTA.h>
 #include <time.h>
+#include "FS.h"
 #include <ArduinoJson.h>        // https://github.com/bblanchon/ArduinoJson/
 #include <WiFiManager.h>        // https://github.com/tzapu/WiFiManager
 
@@ -16,18 +15,19 @@
 #include "userconfig.h"
 #define APPNAME "myClock"
 
-// define these in userconfig.h or uncomment here
-//#define tzKey "APIKEY"      // from https://timezonedb.com/register
-//#define owKey "APIKEY"      // from https://home.openweathermap.org/api_keys
-//#define SYSLOG_SERVER "syslog-server" // don't define to disable syslog
-//#define SYSLOG_PORT 514
-//#define SOFTAP_PASS "ConFigMe"  // password for SoftAP config
+// define in userconfig.h or uncomment here
+//#undef DEBUG
+//#define SYSLOG
+//String syslogSrv = "daud-thinkpad";
+//String tzKey = "APIKEY"           // from https://timezonedb.com/register
+//String owKey = "APIKEY"           // from https://home.openweathermap.org/api_keys
+//String softAPpass = "ConFigMe";  // password for SoftAP config
 
 // Syslog
-#ifdef SYSLOG_SERVER
+#ifdef SYSLOG
 #include <Syslog.h>             // https://github.com/arcao/Syslog
 WiFiUDP udpClient;
-Syslog syslog(udpClient, SYSLOG_SERVER, SYSLOG_PORT, SYSLOG_PROTO_IETF);
+Syslog syslog(udpClient, SYSLOG_PROTO_IETF);
 #endif
 
 const char* UserAgent = "myClock/1.0 (Arduino ESP8266)";
@@ -37,12 +37,14 @@ int pHH, pMM, pSS;
 long offset;
 String timezone, location;
 char HOST[20];
+bool saveConfig = false;
 
 void setup() {
   Serial.begin(74880);            // match nodemcu bootloader speed
   //Serial.setDebugOutput(true);  // uncomment for extra debugging
   while (!Serial);
   Serial.println();
+  readSPIFFS();
 
   display.begin(16);
   display_ticker.attach(0.002, display_updater);
@@ -53,13 +55,16 @@ void setup() {
   display.print(F("Connecting"));
 
   startWiFi();
+  if (saveConfig) writeSPIFFS();
 
-#ifdef SYSLOG_SERVER
+#ifdef SYSLOG
+  syslog.server(syslogSrv.c_str(), syslogPort);
   syslog.deviceHostname(HOST);
   syslog.appName(APPNAME);
+  syslog.defaultPriority(LOG_INFO);
 #endif
 
-  location = getIPlocation();
+  if (timezone == "") location = getIPlocation();
 
   display.clearDisplay();
   display.setFont(&Picopixel);
@@ -77,31 +82,6 @@ void setup() {
   display.print(F("waiting for ntp"));
 
   setNTP(timezone);
-
-  ArduinoOTA.onStart([]() {
-#ifdef SYSLOG_SERVER
-    syslog.log(LOG_INFO, "OTA Update");
-#endif
-    display.clearDisplay();   // turn off display during update
-    display_ticker.detach();
-    Serial.println("\nOTA: Start");
-  } );
-  ArduinoOTA.onEnd([]() {
-    Serial.println("\nOTA: End");
-  } );
-  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    Serial.print("OTA Progress: " + String((progress / (total / 100))) + " \r");
-  });
-  ArduinoOTA.onError([](ota_error_t error) {
-    Serial.print("\nError[" + String(error) + "]: ");
-    if (error == OTA_AUTH_ERROR) Serial.println(F("Auth Failed"));
-    else if (error == OTA_BEGIN_ERROR) Serial.println(F("Begin Failed"));
-    else if (error == OTA_CONNECT_ERROR) Serial.println(F("Connect Failed"));
-    else if (error == OTA_RECEIVE_ERROR) Serial.println(F("Receive Failed"));
-    else if (error == OTA_END_ERROR) Serial.println(F("End Failed"));
-    else Serial.println(F("unknown error"));
-  });
-  ArduinoOTA.begin();
 
   delay(1000);
   display.clearDisplay();
@@ -156,4 +136,3 @@ void loop() {
     if (now > wDelay) getWeather();
   }
 }
-

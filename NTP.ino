@@ -6,7 +6,7 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
   String payload;
   http.setUserAgent(UserAgent);
   if (!http.begin(URL)) {
-#ifdef SYSLOG_SERVER
+#ifdef SYSLOG
     syslog.log(LOG_INFO, F("getIPlocation HTTP failed"));
 #endif
     Serial.println(F("getIPlocation: HTTP failed"));
@@ -24,13 +24,13 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
         String zip = root["zip"];
         timezone = tz;
         http.end();
-#ifdef SYSLOG_SERVER
+#ifdef SYSLOG
         syslog.logf(LOG_INFO, "getIPlocation: %s, %s, %s, %s", isp.c_str(), region.c_str(), country.c_str(), tz.c_str());
 #endif
         Serial.println("getIPlocation: " + isp + ", " + region + ", " + country + ", " + tz);
         return zip;
       } else {
-#ifdef SYSLOG_SERVER
+#ifdef SYSLOG
         syslog.log(LOG_INFO, F("getIPlocation JSON parse failed"));
         syslog.log(LOG_INFO, payload);
 #endif
@@ -38,7 +38,7 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
         Serial.println(payload);
       }
     } else {
-#ifdef SYSLOG_SERVER
+#ifdef SYSLOG
       syslog.logf(LOG_INFO, "getIPlocation failed, GET reply %d", stat);
 #endif
       Serial.printf("getIPlocation: GET reply %d\r\n", stat);
@@ -49,13 +49,12 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
 
 int getOffset(const String tz) { // using timezonedb.com, return offset for zone name
   HTTPClient http;
-  String URL = "http://api.timezonedb.com/v2/list-time-zone?key=" + String(tzKey)
-               + "&format=json&zone=" + tz;
+  String URL = "http://api.timezonedb.com/v2/list-time-zone?key=" + tzKey + "&format=json&zone=" + tz;
   String payload;
   int stat;
   http.setUserAgent(UserAgent);
   if (!http.begin(URL)) {
-#ifdef SYSLOG_SERVER
+#ifdef SYSLOG
     syslog.log(LOG_INFO, F("getOffset HTTP failed"));
 #endif
     Serial.println(F("getOffset: HTTP failed"));
@@ -69,7 +68,7 @@ int getOffset(const String tz) { // using timezonedb.com, return offset for zone
         JsonObject& zones = root["zones"][0];
         offset = zones["gmtOffset"];
       } else {
-#ifdef SYSLOG_SERVER
+#ifdef SYSLOG
         syslog.log(LOG_INFO, F("getOffset JSON parse failed"));
         syslog.log(LOG_INFO, payload);
 #endif
@@ -77,7 +76,7 @@ int getOffset(const String tz) { // using timezonedb.com, return offset for zone
         Serial.println(payload);
       }
     } else {
-#ifdef SYSLOG_SERVER
+#ifdef SYSLOG
       syslog.logf(LOG_INFO, "getOffset failed, GET reply %d", stat);
 #endif
       Serial.printf("getOffset: GET reply %d\r\n", stat);
@@ -97,7 +96,7 @@ void setNTP(const String tz) {
     delay(1000);
     Serial.print(F("."));
   }
-  Serial.println(" OK");
+  Serial.println(F(" OK"));
   time_t now = time(nullptr);
   struct tm * calendar;
   calendar = localtime(&now);
@@ -108,11 +107,9 @@ void setNTP(const String tz) {
   TWOAM = mktime(calendar);
   String t = ctime(&TWOAM);
   t.trim();
-  Serial.print("setNTP: next timezone check @ ");
+  Serial.print(F("setNTP: next timezone check @ "));
   Serial.println(t);
-#ifdef SYSLOG_SERVER
-  syslog.logf(LOG_INFO, "setNTP: %s|%d|%s|%d", timezone.c_str(),
-              int(offset / 3600), location.c_str(), ESP.getFreeHeap());
+#ifdef SYSLOG
+  syslog.logf(LOG_INFO, "setNTP: %s|%d|%s|%d", timezone.c_str(), int(offset / 3600), location.c_str(), ESP.getFreeHeap());
 #endif
 } // setNTP
-

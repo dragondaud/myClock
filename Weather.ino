@@ -1,15 +1,16 @@
+// obtain and display weather information from openweathermap.org
+
 void getWeather() { // Using openweasthermap.org
   wDelay = pNow + 900; // delay between weather updates
   display.setCursor(0, row4);   // any error displayed in red on bottom row
   display.setTextColor(myRED);
   HTTPClient http;
-  String URL = "http://api.openweathermap.org/data/2.5/weather?zip="
-               + location + "&units=imperial&appid=" + String(owKey);
+  String URL = "http://api.openweathermap.org/data/2.5/weather?zip=" + location + "&units=imperial&appid=" + owKey;
   String payload;
   long offset;
   http.setUserAgent(UserAgent);
   if (!http.begin(URL)) {
-#ifdef SYSLOG_SERVER
+#ifdef SYSLOG
     syslog.log(LOG_INFO, F("getWeather HTTP failed"));
 #endif
     display.print(F("http fail"));
@@ -37,7 +38,7 @@ void getWeather() { // Using openweasthermap.org
         else if (temperature >= 90) display.setTextColor(myRED);
         else display.setTextColor(myColor);
         display.fillRect(0, 0, 64, 6, myBLACK);
-        display.setCursor(10, row1);
+        display.setCursor(11, row1);
         display.printf("%2dF  %2d%%  %2d %s", round(temperature), humidity, round(wind), dir.c_str());
         String description = weather["main"];
         int id = weather["id"];
@@ -70,7 +71,7 @@ void getWeather() { // Using openweasthermap.org
         else w = round((64 - w) / 2);
         display.setCursor(w, row4);
         display.print(description);
-#ifdef SYSLOG_SERVER
+#ifdef SYSLOG
         syslog.logf(LOG_INFO, "getWeather: %2dF, %2d%%RH, %d %s, %s",
                     round(temperature), humidity, round(wind), dir.c_str(), description.c_str());
 #endif
@@ -78,7 +79,7 @@ void getWeather() { // Using openweasthermap.org
                       round(temperature), humidity, round(wind), dir.c_str(), deg, description.c_str(), id);
       } else {
         display.print(F("json fail"));
-#ifdef SYSLOG_SERVER
+#ifdef SYSLOG
         syslog.log(LOG_INFO, F("getWeather JSON parse failed"));
         syslog.log(LOG_INFO, payload);
 #endif
@@ -86,7 +87,7 @@ void getWeather() { // Using openweasthermap.org
         Serial.println(payload);
       }
     } else {
-#ifdef SYSLOG_SERVER
+#ifdef SYSLOG
       syslog.logf(LOG_INFO, "getWeather failed, GET reply %d", stat);
 #endif
       display.print(stat);
@@ -100,4 +101,3 @@ String degreeDir(int degrees) {
   char* caridnals[] = { "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N" };
   return caridnals[round((degrees % 360) / 45)];
 } // degreeDir
-
