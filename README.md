@@ -1,6 +1,6 @@
 # myClock
 ## v0.9.1 EXPERIMENTAL
-### Copyright 2018 by David M Denney <dragondaud@gmail.com>
+### Copyright 2018 by David M Denney &lt;dragondaud@gmail.com&gt;
 
 Master repository: https://github.com/dragondaud/myClock
 
@@ -16,14 +16,17 @@ Lookup Offset from TimeZone using: https://timezonedb.com/ which requires an API
 
 Get current weather data from https://openweathermap.org/api which requires an API key to use.
 
-Built on Arduino core for ESP8266: https://github.com/esp8266/Arduino
-
 ### Requires
+
+Arduino core for ESP8266: https://github.com/esp8266/Arduino
 
 https://github.com/bblanchon/ArduinoJson/releases/tag/v5.13.2
 
-https://github.com/2dom/PxMatrix
-
 https://github.com/adafruit/Adafruit-GFX-Library
 
+https://github.com/2dom/PxMatrix
+
 https://github.com/tzapu/WiFiManager
+
+https://github.com/arcao/Syslog
+
