@@ -19,6 +19,7 @@ void readSPIFFS() {
         tzKey = tk;
         String ow = json["owKey"];
         owKey = ow;
+        brightness = json["brightness"];
 #ifdef SYSLOG
         String sl = json["syslogSrv"];
         syslogSrv = sl;
@@ -43,6 +44,7 @@ void writeSPIFFS() {
   json["timezone"] = timezone;
   json["tzKey"] = tzKey;
   json["owKey"] = owKey;
+  json["brightness"] = brightness;
 #ifdef SYSLOG
   json["syslogSrv"] = syslogSrv;
   json["syslogPort"] = syslogPort;

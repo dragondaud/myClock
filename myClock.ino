@@ -16,13 +16,14 @@
 #define APPNAME "myClock"
 #define VERSION "0.9.2"
 
-// define in userconfig.h or uncomment here
+// define these in userconfig.h or uncomment here
 //#undef DEBUG
 //#define SYSLOG
 //String syslogSrv = "daud-thinkpad";
 //String tzKey = "APIKEY"           // from https://timezonedb.com/register
 //String owKey = "APIKEY"           // from https://home.openweathermap.org/api_keys
-//String softAPpass = "ConFigMe";  // password for SoftAP config
+//String softAPpass = "ConFigMe";   // password for SoftAP config
+//uint8_t brightness = 255;         // 0-255 display brightness
 
 // Syslog
 #ifdef SYSLOG
@@ -83,23 +84,8 @@ void setup() {
   display.print(F("waiting for ntp"));
 
   setNTP(timezone);
-
   delay(1000);
-  display.clearDisplay();
-  time_t now = time(nullptr);
-  int ss = now % 60;
-  int mm = (now / 60) % 60;
-  int hh = (now / (60 * 60)) % 24;
-  digit1.DrawColon(myColor);
-  digit3.DrawColon(myColor);
-  digit0.Draw(ss % 10);
-  digit1.Draw(ss / 10);
-  digit2.Draw(mm % 10);
-  digit3.Draw(mm / 10);
-  digit4.Draw(hh % 10);
-  digit5.Draw(hh / 10);
-  pNow = now;
-  getWeather();
+  displayDraw(brightness);
 } // setup
 
 void loop() {
@@ -136,4 +122,23 @@ void loop() {
     pNow = now;
     if (now > wDelay) getWeather();
   }
+}
+
+void displayDraw(uint8_t b) {
+  display.clearDisplay();
+  display.setBrightness(b);
+  time_t now = time(nullptr);
+  int ss = now % 60;
+  int mm = (now / 60) % 60;
+  int hh = (now / (60 * 60)) % 24;
+  digit1.DrawColon(myColor);
+  digit3.DrawColon(myColor);
+  digit0.Draw(ss % 10);
+  digit1.Draw(ss / 10);
+  digit2.Draw(mm % 10);
+  digit3.Draw(mm / 10);
+  digit4.Draw(hh % 10);
+  digit5.Draw(hh / 10);
+  pNow = now;
+  getWeather();
 }

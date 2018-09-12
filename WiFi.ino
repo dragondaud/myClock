@@ -33,6 +33,8 @@ void startWiFi() {    // if WiFi does not connect, establish AP for configuratio
   wifiManager.addParameter(&tzKeyParameter);
   WiFiManagerParameter owKeyParameter("owKey", "openweather API key", owKey.c_str(), 32);
   wifiManager.addParameter(&owKeyParameter);
+  WiFiManagerParameter brightnessParameter("brightness", "Display Brightness", String(brightness).c_str(), 4);
+  wifiManager.addParameter(&brightnessParameter);
 #ifdef SYSLOG
   WiFiManagerParameter syslogServerParameter("syslogSrv", "SysLog Server", syslogSrv.c_str(), 20);
   wifiManager.addParameter(&syslogServerParameter);
