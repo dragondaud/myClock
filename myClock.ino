@@ -80,7 +80,7 @@ void setup() {
   display.print(WiFi.localIP());
   display.setCursor(2, row3);
   display.setTextColor(myMAGENTA);
-  display.print(location);
+  display.print(timezone);
   display.setCursor(2, row4);
   display.setTextColor(myCYAN);
   display.print(F("waiting for ntp"));
