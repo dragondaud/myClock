@@ -2,7 +2,7 @@
 
 String getIPlocation() { // Using ip-api.com to discover public IP's location and timezone
   HTTPClient http;
-  String URL = "http://ip-api.com/json";
+  static const char URL[] PROGMEM = "http://ip-api.com/json";
   String payload;
   http.setUserAgent(UserAgent);
   if (!http.begin(URL)) {

@@ -14,7 +14,7 @@
 #include "display.h"
 #include "userconfig.h"
 #define APPNAME "myClock"
-#define VERSION "0.9.3"
+#define VERSION "0.9.4"
 
 // define these in userconfig.h or uncomment here
 //#undef DEBUG
@@ -24,6 +24,8 @@
 //String owKey = "APIKEY"           // from https://home.openweathermap.org/api_keys
 //String softAPpass = "ConFigMe";   // password for SoftAP config
 //uint8_t brightness = 255;         // 0-255 display brightness
+//bool milTime = true;              // set false for 12hour clock
+//String location = "zipcode";      // leave blank for geoIP location
 
 // Syslog
 #ifdef SYSLOG
@@ -32,18 +34,17 @@ WiFiUDP udpClient;
 Syslog syslog(udpClient, SYSLOG_PROTO_IETF);
 #endif
 
-const char* UserAgent = "myClock/1.0 (Arduino ESP8266)";
+static const char* UserAgent PROGMEM = "myClock/1.0 (Arduino ESP8266)";
 
 time_t TWOAM, pNow, wDelay;
 int pHH, pMM, pSS;
 long offset;
-String timezone, location;
+String timezone;
 char HOST[20];
 bool saveConfig = false;
 
 void setup() {
-  Serial.begin(74880);            // match nodemcu bootloader speed
-  //Serial.setDebugOutput(true);  // uncomment for extra debugging
+  Serial.begin(115200);
   while (!Serial);
   Serial.println();
   readSPIFFS();
@@ -52,9 +53,9 @@ void setup() {
   display_ticker.attach(0.002, display_updater);
   display.clearDisplay();
   display.setTextWrap(false);
-  display.setCursor(2, row2);
   display.setTextColor(myColor);
-  display.print(F("Connecting"));
+
+  drawImage(0, 0); // display splash image while connecting
 
   startWiFi();
   if (saveConfig) writeSPIFFS();
@@ -66,7 +67,8 @@ void setup() {
   syslog.defaultPriority(LOG_INFO);
 #endif
 
-  if (timezone == "") location = getIPlocation();
+  if (location == "") location = getIPlocation();
+  else getIPlocation();
 
   display.clearDisplay();
   display.setFont(&Picopixel);
@@ -78,13 +80,14 @@ void setup() {
   display.print(WiFi.localIP());
   display.setCursor(2, row3);
   display.setTextColor(myMAGENTA);
-  display.print(timezone);
+  display.print(location);
   display.setCursor(2, row4);
   display.setTextColor(myCYAN);
   display.print(F("waiting for ntp"));
 
   setNTP(timezone);
   delay(1000);
+  Serial.printf("setup: %s, %s, %d, %d\r\n", location.c_str(), timezone.c_str(), brightness, milTime);
   displayDraw(brightness);
 } // setup
 
@@ -96,6 +99,7 @@ void loop() {
     int ss = now % 60;
     int mm = (now / 60) % 60;
     int hh = (now / (60 * 60)) % 24;
+    if ((!milTime) && (hh > 12)) hh -= 12;
     if (ss != pSS) {
       int s0 = ss % 10;
       int s1 = ss / 10;
@@ -110,6 +114,7 @@ void loop() {
       if (m0 != digit2.Value()) digit2.Morph(m0);
       if (m1 != digit3.Value()) digit3.Morph(m1);
       pMM = mm;
+      Serial.printf("%02d:%02d\r", hh, mm);
     }
 
     if (hh != pHH) {
@@ -131,6 +136,8 @@ void displayDraw(uint8_t b) {
   int ss = now % 60;
   int mm = (now / 60) % 60;
   int hh = (now / (60 * 60)) % 24;
+  if ((!milTime) && (hh > 12)) hh -= 12;
+  Serial.printf("%02d:%02d\r", hh, mm);
   digit1.DrawColon(myColor);
   digit3.DrawColon(myColor);
   digit0.Draw(ss % 10);

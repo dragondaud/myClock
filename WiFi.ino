@@ -25,27 +25,41 @@ void startWiFi() {    // if WiFi does not connect, establish AP for configuratio
   t.toCharArray(HOST, 20);
   WiFi.hostname(HOST);
   WiFiManager wifiManager;
-  WiFiManagerParameter softAPpassParameter("softAPpass", "Config Password", softAPpass.c_str(), 20);
-  wifiManager.addParameter(&softAPpassParameter);
-  WiFiManagerParameter timeZoneParameter("timeZone", "Time Zone Name", timezone.c_str(), 20);
-  wifiManager.addParameter(&timeZoneParameter);
-  WiFiManagerParameter tzKeyParameter("tzKey", "timezonedb API key", tzKey.c_str(), 20);
-  wifiManager.addParameter(&tzKeyParameter);
-  WiFiManagerParameter owKeyParameter("owKey", "openweather API key", owKey.c_str(), 32);
-  wifiManager.addParameter(&owKeyParameter);
-  WiFiManagerParameter brightnessParameter("brightness", "Display Brightness", String(brightness).c_str(), 4);
-  wifiManager.addParameter(&brightnessParameter);
+  WiFiManagerParameter softAPpassP("softAPpass", "Config Password", softAPpass.c_str(), 20);
+  wifiManager.addParameter(&softAPpassP);
+  WiFiManagerParameter locationP("location", "Time Zone Name", location.c_str(), 20);
+  wifiManager.addParameter(&locationP);
+  WiFiManagerParameter tzKeyP("tzKey", "timezonedb API key", tzKey.c_str(), 20);
+  wifiManager.addParameter(&tzKeyP);
+  WiFiManagerParameter owKeyP("owKey", "openweather API key", owKey.c_str(), 32);
+  wifiManager.addParameter(&owKeyP);
+  WiFiManagerParameter brightnessP("brightness", "Brightness (0-255)", String(brightness).c_str(), 4);
+  wifiManager.addParameter(&brightnessP);
+  WiFiManagerParameter milTimeP("milTime", "24-hour Time (0/1)", String(milTime).c_str(), 4);
+  wifiManager.addParameter(&milTimeP);
 #ifdef SYSLOG
-  WiFiManagerParameter syslogServerParameter("syslogSrv", "SysLog Server", syslogSrv.c_str(), 20);
-  wifiManager.addParameter(&syslogServerParameter);
-  WiFiManagerParameter syslogPortParameter("syslogPort", "SysLog Port", String(syslogPort).c_str(), 6);
-  wifiManager.addParameter(&syslogPortParameter);
+  WiFiManagerParameter syslogServerP("syslogSrv", "SysLog Server", syslogSrv.c_str(), 20);
+  wifiManager.addParameter(&syslogServerP);
+  WiFiManagerParameter syslogPortP("syslogPort", "SysLog Port", String(syslogPort).c_str(), 6);
+  wifiManager.addParameter(&syslogPortP);
 #endif
   wifiManager.setAPCallback(configModeCallback);
   wifiManager.setSaveConfigCallback(saveConfigCallback);
   wifiManager.setDebugOutput(false);
   wifiManager.setMinimumSignalQuality(20);
   if (!wifiManager.autoConnect(HOST, softAPpass.c_str())) ESP.restart();
+  if (saveConfig) {
+    softAPpass = softAPpassP.getValue();
+    location = locationP.getValue();
+    tzKey = tzKeyP.getValue();
+    owKey = owKeyP.getValue();
+    brightness = int(brightnessP.getValue());
+    milTime = int(milTimeP.getValue());
+#ifdef SYSLOG
+    syslogSrv = syslogServerP.getValue();
+    syslogPort = int(syslogPortP.getValue());
+#endif
+  }
   ArduinoOTA.setHostname(HOST);
   ArduinoOTA.onStart([]() {
 #ifdef SYSLOG

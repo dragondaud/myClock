@@ -12,17 +12,18 @@ void readSPIFFS() {
       JsonObject& json = jsonBuffer.parseObject(buf.get());
       if (json.success()) {
         String sp = json["softAPpass"];
-        softAPpass = sp;
-        String tz = json["timezone"];
-        timezone = tz;
+        if (sp != "") softAPpass = sp;
+        String lo = json["location"];
+        if (lo != "") location = lo;
         String tk = json["tzKey"];
-        tzKey = tk;
+        if (tk != "") tzKey = tk;
         String ow = json["owKey"];
-        owKey = ow;
+        if (ow != "") owKey = ow;
         brightness = json["brightness"];
+        milTime = json["milTime"];
 #ifdef SYSLOG
         String sl = json["syslogSrv"];
-        syslogSrv = sl;
+        if (sl != "") syslogSrv = sl;
         syslogPort = json["syslogPort"];
 #endif
       }
@@ -41,10 +42,11 @@ void writeSPIFFS() {
   DynamicJsonBuffer jsonBuffer;
   JsonObject& json = jsonBuffer.createObject();
   json["softAPpass"] = softAPpass;
-  json["timezone"] = timezone;
+  json["location"] = location;
   json["tzKey"] = tzKey;
   json["owKey"] = owKey;
   json["brightness"] = brightness;
+  json["milTime"] = milTime;
 #ifdef SYSLOG
   json["syslogSrv"] = syslogSrv;
   json["syslogPort"] = syslogPort;
@@ -54,8 +56,7 @@ void writeSPIFFS() {
     display.setCursor(2, row2);
     display.print(F("config failed"));
     Serial.println(F("failed to open config.json for writing"));
-    delay(5000);
-    SPIFFS.format();
+    if (SPIFFS.format()) Serial.println(F("SPIFFS formated"));
     delay(5000);
     ESP.restart();
   } else {
@@ -63,8 +64,10 @@ void writeSPIFFS() {
     syslog.log(LOG_INFO, F("save config"));
 #endif
     json.prettyPrintTo(Serial);
+    Serial.println();
     json.printTo(configFile);
     configFile.close();
     saveConfig = false;
+    delay(1000);
   }
 }
