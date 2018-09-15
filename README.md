@@ -4,7 +4,7 @@
 
 Master repository: https://github.com/dragondaud/myClock
 
-Displays accurate time and current weather on a 64x32 pixel display. Sets timezone automatically from geoIP, uses the ESP's native NTP for time, and accepts OTA updates.
+Displays accurate time and current weather on a 64x32 pixel display. Sets timezone automatically from geoIP, uses the ESP's native NTP for time, and accepts OTA updates. Uses LDR on analog input to set display brightness.
 
 Display wired following https://www.instructables.com/id/Morphing-Digital-Clock/
 
