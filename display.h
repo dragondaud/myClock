@@ -40,7 +40,8 @@ const uint16_t myCYAN = display.color565(0, 255, 255);
 const uint16_t myMAGENTA = display.color565(255, 0, 255);
 const uint16_t myGRAY = display.color565(102, 102, 102);
 const uint16_t myBLACK = display.color565(0, 0, 0);
-const uint16_t myColor = myGREEN;
+uint16_t myColor = myGREEN;
+
 Digit digit0(&display, 0, 63 - 1 - 9 * 1, 9, myColor);
 Digit digit1(&display, 0, 63 - 1 - 9 * 2, 9, myColor);
 Digit digit2(&display, 0, 63 - 4 - 9 * 3, 9, myColor);

@@ -14,12 +14,12 @@
 #include "display.h"
 #include "userconfig.h"
 #define APPNAME "myClock"
-#define VERSION "0.9.4"
+#define VERSION "0.9.5"
 
 // define these in userconfig.h or uncomment here
 //#undef DEBUG
 //#define SYSLOG
-//String syslogSrv = "daud-thinkpad";
+//String syslogSrv = "syslog";
 //String tzKey = "APIKEY"           // from https://timezonedb.com/register
 //String owKey = "APIKEY"           // from https://home.openweathermap.org/api_keys
 //String softAPpass = "ConFigMe";   // password for SoftAP config
@@ -34,14 +34,17 @@ WiFiUDP udpClient;
 Syslog syslog(udpClient, SYSLOG_PROTO_IETF);
 #endif
 
+ESP8266WebServer server(80);
+
 static const char* UserAgent PROGMEM = "myClock/1.0 (Arduino ESP8266)";
 
 time_t TWOAM, pNow, wDelay;
-int pHH, pMM, pSS;
+int pHH, pMM, pSS, light;
 long offset;
 String timezone;
 char HOST[20];
 bool saveConfig = false;
+uint8_t dim;
 
 void setup() {
   Serial.begin(115200);
@@ -84,15 +87,21 @@ void setup() {
   display.setCursor(2, row4);
   display.setTextColor(myCYAN);
   display.print(F("waiting for ntp"));
-
+  light = analogRead(A0);
+  Serial.printf("setup: %s, %s, %s, %d, %d \r\n",
+                location.c_str(), timezone.c_str(), milTime ? "true" : "false", brightness, light);
+  syslog.logf(LOG_INFO, "setup: %s|%s|%s|%d|%d",
+              location.c_str(), timezone.c_str(), milTime ? "true" : "false", brightness, light);
   setNTP(timezone);
   delay(1000);
-  Serial.printf("setup: %s, %s, %d, %d\r\n", location.c_str(), timezone.c_str(), brightness, milTime);
+  startWebServer();
   displayDraw(brightness);
+  getWeather();
 } // setup
 
 void loop() {
   ArduinoOTA.handle();
+  server.handleClient();
   time_t now = time(nullptr);
   if (now != pNow) {
     if (now > TWOAM) setNTP(timezone);
@@ -114,7 +123,8 @@ void loop() {
       if (m0 != digit2.Value()) digit2.Morph(m0);
       if (m1 != digit3.Value()) digit3.Morph(m1);
       pMM = mm;
-      Serial.printf("%02d:%02d\r", hh, mm);
+      getLight();
+      Serial.printf("%02d:%02d %3d %3d \r", hh, mm, light, dim);
     }
 
     if (hh != pHH) {
@@ -132,6 +142,7 @@ void loop() {
 void displayDraw(uint8_t b) {
   display.clearDisplay();
   display.setBrightness(b);
+  dim = b;
   time_t now = time(nullptr);
   int ss = now % 60;
   int mm = (now / 60) % 60;
@@ -140,12 +151,24 @@ void displayDraw(uint8_t b) {
   Serial.printf("%02d:%02d\r", hh, mm);
   digit1.DrawColon(myColor);
   digit3.DrawColon(myColor);
-  digit0.Draw(ss % 10);
-  digit1.Draw(ss / 10);
-  digit2.Draw(mm % 10);
-  digit3.Draw(mm / 10);
-  digit4.Draw(hh % 10);
-  digit5.Draw(hh / 10);
+  digit0.Draw(ss % 10, myColor);
+  digit1.Draw(ss / 10, myColor);
+  digit2.Draw(mm % 10, myColor);
+  digit3.Draw(mm / 10, myColor);
+  digit4.Draw(hh % 10, myColor);
+  digit5.Draw(hh / 10, myColor);
   pNow = now;
-  getWeather();
+}
+
+int getLight() {
+  int lt = analogRead(A0);
+  if (lt > 20) {
+    light = (light + lt) >> 1;
+    if (light > 500) dim = brightness;
+    if (light < 400) dim = brightness >> 1;
+    if (light < 300) dim = brightness >> 2;
+    if (light < 200) dim = brightness >> 3;
+    if (light < 100) dim = brightness >> 4;
+    display.setBrightness(dim);
+  }
 }

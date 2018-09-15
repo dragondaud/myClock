@@ -9,7 +9,7 @@ class Digit {
 
   public:
     Digit(PxMATRIX* d, byte value, uint16_t xo, uint16_t yo, uint16_t color);
-    void Draw(byte value);
+    void Draw(byte value, uint16_t c);
     void Morph(byte newValue);
     byte Value();
     void DrawColon(uint16_t c);

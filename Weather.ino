@@ -72,10 +72,10 @@ void getWeather() { // Using openweasthermap.org
         display.setCursor(w, row4);
         display.print(description);
 #ifdef SYSLOG
-        syslog.logf(LOG_INFO, "getWeather: %2dF, %2d%%RH, %d %s, %s",
+        syslog.logf(LOG_INFO, "getWeather: %dF|%d%%RH|%d%s|%s",
                     round(temperature), humidity, round(wind), dir.c_str(), description.c_str());
 #endif
-        Serial.printf("%2dF, %2d%%, %d %s (%d), %s (%d)\r\n",
+        Serial.printf("%2dF, %2d%%, %d %s (%d), %s (%d) \r\n",
                       round(temperature), humidity, round(wind), dir.c_str(), deg, description.c_str(), id);
       } else {
         display.print(F("json fail"));

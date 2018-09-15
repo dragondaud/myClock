@@ -1,16 +1,17 @@
 void readSPIFFS() {
   if (SPIFFS.begin()) {
-    Serial.println(F("readSPIFFS: mounted SPIFFS"));
+    Serial.println(F("readSPIFFS: mounted"));
     if (SPIFFS.exists("/config.json")) {
       File configFile = SPIFFS.open("/config.json", "r");
       if (!configFile) return;
-      Serial.println(F("opened config file"));
       size_t size = configFile.size();
       std::unique_ptr<char[]> buf(new char[size]);
       configFile.readBytes(buf.get(), size);
       DynamicJsonBuffer jsonBuffer;
       JsonObject& json = jsonBuffer.parseObject(buf.get());
       if (json.success()) {
+        json.prettyPrintTo(Serial);
+        Serial.println();
         String sp = json["softAPpass"];
         if (sp != "") softAPpass = sp;
         String lo = json["location"];
@@ -21,6 +22,8 @@ void readSPIFFS() {
         if (ow != "") owKey = ow;
         brightness = json["brightness"];
         milTime = json["milTime"];
+        uint16_t c = json["myColor"];
+        if (c > 0) myColor = c;
 #ifdef SYSLOG
         String sl = json["syslogSrv"];
         if (sl != "") syslogSrv = sl;
@@ -47,6 +50,7 @@ void writeSPIFFS() {
   json["owKey"] = owKey;
   json["brightness"] = brightness;
   json["milTime"] = milTime;
+  json["myColor"] = myColor;
 #ifdef SYSLOG
   json["syslogSrv"] = syslogSrv;
   json["syslogPort"] = syslogPort;
