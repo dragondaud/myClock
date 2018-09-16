@@ -2,11 +2,9 @@
 #define DIGIT_H
 
 #include <Arduino.h>
-
 #include <PxMatrix.h>
 
 class Digit {
-
   public:
     Digit(PxMATRIX* d, byte value, uint16_t xo, uint16_t yo, uint16_t color);
     void Draw(byte value, uint16_t c);
@@ -19,7 +17,6 @@ class Digit {
     byte _value;
     uint16_t _color, _bg, xOffset, yOffset;
     int animSpeed = 30;
-
     void drawPixel(uint16_t x, uint16_t y, uint16_t c);
     void drawFillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t c);
     void drawLine(uint16_t x, uint16_t y, uint16_t x2, uint16_t y2, uint16_t c);
@@ -35,5 +32,4 @@ class Digit {
     void Morph0();
     void Morph1();
 };
-
 #endif

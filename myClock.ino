@@ -16,7 +16,7 @@
 #define VERSION "0.9.6"
 
 #include "userconfig.h"
-// define these in userconfig.h or uncomment
+// define these in userconfig.h or uncomment here
 //#undef DEBUG
 //#define SYSLOG
 //String syslogSrv = "syslog";
@@ -57,6 +57,7 @@ void setup() {
   display.clearDisplay();
   display.setTextWrap(false);
   display.setTextColor(myColor);
+  display.setBrightness(brightness);
 
   drawImage(0, 0); // display splash image while connecting
 
