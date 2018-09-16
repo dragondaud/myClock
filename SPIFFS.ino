@@ -1,3 +1,6 @@
+// SPIFFS config file
+// auto format if unable to write
+
 void readSPIFFS() {
   if (SPIFFS.begin()) {
     Serial.println(F("readSPIFFS: mounted"));

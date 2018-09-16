@@ -10,13 +10,13 @@
 #include "FS.h"
 #include <ArduinoJson.h>        // https://github.com/bblanchon/ArduinoJson/
 #include <WiFiManager.h>        // https://github.com/tzapu/WiFiManager
-
 #include "display.h"
-#include "userconfig.h"
+
 #define APPNAME "myClock"
 #define VERSION "0.9.6"
 
-// define these in userconfig.h or uncomment here
+#include "userconfig.h"
+// define these in userconfig.h or uncomment
 //#undef DEBUG
 //#define SYSLOG
 //String syslogSrv = "syslog";
@@ -25,7 +25,7 @@
 //String softAPpass = "ConFigMe";   // password for SoftAP config
 //uint8_t brightness = 255;         // 0-255 display brightness
 //bool milTime = true;              // set false for 12hour clock
-//String location = "zipcode";      // leave blank for geoIP location
+//String location = "";             // zipcode or empty for geoIP location
 
 // Syslog
 #ifdef SYSLOG
@@ -115,6 +115,7 @@ void loop() {
       if (s0 != digit0.Value()) digit0.Morph(s0);
       if (s1 != digit1.Value()) digit1.Morph(s1);
       pSS = ss;
+      getLight();
     }
 
     if (mm != pMM) {
@@ -123,7 +124,6 @@ void loop() {
       if (m0 != digit2.Value()) digit2.Morph(m0);
       if (m1 != digit3.Value()) digit3.Morph(m1);
       pMM = mm;
-      getLight();
       Serial.printf("%02d:%02d %3d %3d \r", hh, mm, light, dim);
     }
 
@@ -165,10 +165,10 @@ int getLight() {
   if (lt > 20) {
     light = (light + lt) >> 1;
     if (light > 500) dim = brightness;
-    if (light < 400) dim = brightness >> 1;
-    if (light < 300) dim = brightness >> 2;
-    if (light < 200) dim = brightness >> 3;
     if (light < 100) dim = brightness >> 4;
+    if (light < 200) dim = brightness >> 3;
+    if (light < 300) dim = brightness >> 2;
+    if (light < 400) dim = brightness >> 1;
     display.setBrightness(dim);
   }
 }
