@@ -84,7 +84,6 @@ void writeSPIFFS() {
 
 String getSPIFFS() {
   String payload;
-  Serial.println(F("readSPIFFS: mounted"));
   if (SPIFFS.exists("/config.json")) {
     File configFile = SPIFFS.open("/config.json", "r");
     if (configFile) {

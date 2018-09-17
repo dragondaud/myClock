@@ -4,13 +4,18 @@
 #include <ESP8266mDNS.h>
 
 static const char* serverRoot PROGMEM =
-  "<!DOCTYPE HTML><html><head><style>"
+  "<!DOCTYPE HTML><html><head><title>myClock</title><style>"
   "body {background-color: black; color: White;}"
   "</style></head><body><h1>myClock " VERSION "</h1>"
   "<h2>Update Firmware</h2><form method='POST' action='/update' enctype='multipart/form-data'>"
   "<input type='file' name='update'><input type='submit' value='Update'></form>"
-  "<p><form method='GET' action='/format'><input type='submit' value='ERASE CONFIG'></form>"
-  "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form>";
+  "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form>&nbsp;"
+  "<form method='GET' action='/format'><input type='submit' value='ERASE CONFIG'></form>";
+
+static const char* serverConfig PROGMEM =
+  "<p><form method='post' action='/save' id='configForm' name='configForm'>"
+  "<input type='submit' value='SAVE'> <input type='reset'>"
+  "<p><textarea id='json' rows='13' cols='50' name='json' form='configForm'>";
 
 static const char* serverTail PROGMEM = "</body></html>";
 
@@ -27,6 +32,57 @@ void handleNotFound() {
   server.send(301);
 }
 
+void handleError() {
+  String message = "FAIL\n\n";
+  message += "URI: ";
+  message += server.uri();
+  message += "\nMethod: ";
+  message += (server.method() == HTTP_GET)?"GET":"POST";
+  message += "\nArguments: ";
+  message += server.args();
+  message += "\n";
+  for (uint8_t i=0; i<server.args(); i++){
+    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
+  }
+  server.send(500, "text/plain", message);
+}
+
+void handleSave() {
+  if (!server.hasArg("json")) return handleError();
+  syslog.log(LOG_INFO, F("webServer: save"));
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& json = jsonBuffer.parseObject(server.arg("json"));
+  if (json.success()) {
+    json.prettyPrintTo(Serial);
+    Serial.println();
+    String sp = json["softAPpass"];
+    if (sp != "") softAPpass = sp;
+    String lo = json["location"];
+    if (lo != "") location = lo;
+    String tz = json["timezone"];
+    if (tz != "") timezone = tz;
+    String tk = json["tzKey"];
+    if (tk != "") tzKey = tk;
+    String ow = json["owKey"];
+    if (ow != "") owKey = ow;
+    brightness = json["brightness"];
+    milTime = json["milTime"];
+    uint16_t c = json["myColor"];
+    if (c > 0) myColor = c;
+#ifdef SYSLOG
+    String sl = json["syslogSrv"];
+    if (sl != "") syslogSrv = sl;
+    syslogPort = json["syslogPort"];
+#endif
+  }
+  writeSPIFFS();
+  String payload = String(serverReboot) + String(serverTail);
+  server.send(200, F("text/html"), payload);
+  server.close();
+  delay(1000);
+  ESP.restart();
+}
+
 void startWebServer() {
   server.on(F("/"), HTTP_GET, []() {
     syslog.log(LOG_INFO, F("webServer: index"));
@@ -35,9 +91,11 @@ void startWebServer() {
     String t = ctime(&now);
     String payload = String(serverRoot) + F("<h3>") + t + F("</h3><p>Free Heap: ") + String(ESP.getFreeHeap());
     if (LIGHT) payload = payload + F("<p>Light Level: ") + String(light);
-    payload = payload + F("<p><pre>") + getSPIFFS() + String(serverTail);
+    payload += String(serverConfig) + getSPIFFS() + F("</textarea></form>");
+    payload += String(serverTail);
     server.send(200, F("text/html"), payload);
   });
+  server.on(F("/save"), handleSave);
   server.on(F("/reset"), HTTP_GET, []() {
     syslog.log(LOG_INFO, F("webServer: reset"));
     Serial.println(F("webServer: reset"));
