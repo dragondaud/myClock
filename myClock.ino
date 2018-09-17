@@ -13,19 +13,20 @@
 #include "display.h"
 
 #define APPNAME "myClock"
-#define VERSION "0.9.6"
+#define VERSION "0.9.7"
 
 #include "userconfig.h"
 // define these in userconfig.h or uncomment here
-//#undef DEBUG
 //#define SYSLOG
 //String syslogSrv = "syslog";
-//String tzKey = "APIKEY"           // from https://timezonedb.com/register
-//String owKey = "APIKEY"           // from https://home.openweathermap.org/api_keys
+//uint16_t syslogPort = 514;
+//String tzKey = ""                 // API key from https://timezonedb.com/register
+//String owKey = ""                 // API key from https://home.openweathermap.org/api_keys
 //String softAPpass = "ConFigMe";   // password for SoftAP config
 //uint8_t brightness = 255;         // 0-255 display brightness
 //bool milTime = true;              // set false for 12hour clock
 //String location = "";             // zipcode or empty for geoIP location
+//String timezone = "";             // timezone from https://timezonedb.com/time-zones or empty for geoIP
 
 // Syslog
 #ifdef SYSLOG
@@ -41,10 +42,10 @@ static const char* UserAgent PROGMEM = "myClock/1.0 (Arduino ESP8266)";
 time_t TWOAM, pNow, wDelay;
 int pHH, pMM, pSS, light;
 long offset;
-String timezone;
 char HOST[20];
 bool saveConfig = false;
 uint8_t dim;
+bool LIGHT = true;
 
 void setup() {
   Serial.begin(115200);
@@ -72,7 +73,7 @@ void setup() {
 #endif
 
   if (location == "") location = getIPlocation();
-  else getIPlocation();
+  else while (timezone == "") getIPlocation();
 
   display.clearDisplay();
   display.setFont(&Picopixel);
@@ -161,7 +162,8 @@ void displayDraw(uint8_t b) {
   pNow = now;
 }
 
-int getLight() {
+void getLight() {
+  if (!LIGHT) return;
   int lt = analogRead(A0);
   if (lt > 20) {
     light = (light + lt) >> 1;

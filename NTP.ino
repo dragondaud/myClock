@@ -45,6 +45,7 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
     }
   }
   http.end();
+  delay(5000);
 } // getIPlocation
 
 int getOffset(const String tz) { // using timezonedb.com, return offset for zone name

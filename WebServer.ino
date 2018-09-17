@@ -9,7 +9,8 @@ static const char* serverRoot PROGMEM =
   "</style></head><body><h1>myClock " VERSION "</h1>"
   "<h2>Update Firmware</h2><form method='POST' action='/update' enctype='multipart/form-data'>"
   "<input type='file' name='update'><input type='submit' value='Update'></form>"
-  "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT'></form>";
+  "<p><form method='GET' action='/format'><input type='submit' value='ERASE CONFIG'></form>"
+  "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form>";
 
 static const char* serverTail PROGMEM = "</body></html>";
 
@@ -32,11 +33,24 @@ void startWebServer() {
     server.sendHeader(F("Connection"), F("close"));
     time_t now = time(nullptr);
     String t = ctime(&now);
-    String payload = String(serverRoot) + F("<h3>") + t + F("</h3><p>Light Level: ") + String(light) + String(serverTail);
+    String payload = String(serverRoot) + F("<h3>") + t + F("</h3><p>Free Heap: ") + String(ESP.getFreeHeap());
+    if (LIGHT) payload = payload + F("<p>Light Level: ") + String(light);
+    payload = payload + F("<p><pre>") + getSPIFFS() + String(serverTail);
     server.send(200, F("text/html"), payload);
   });
   server.on(F("/reset"), HTTP_GET, []() {
     syslog.log(LOG_INFO, F("webServer: reset"));
+    Serial.println(F("webServer: reset"));
+    String payload = String(serverReboot) + String(serverTail);
+    server.send(200, F("text/html"), payload);
+    server.close();
+    delay(1000);
+    ESP.restart();
+  });
+  server.on(F("/format"), HTTP_GET, []() {
+    syslog.log(LOG_INFO, F("webServer: format"));
+    Serial.println(F("webServer: format"));
+    SPIFFS.format();
     String payload = String(serverReboot) + String(serverTail);
     server.send(200, F("text/html"), payload);
     server.close();
@@ -44,7 +58,6 @@ void startWebServer() {
     ESP.restart();
   });
   server.on(F("/favicon.ico"), HTTP_GET, []() {
-    syslog.log(LOG_INFO, F("webServer: favicon.ico"));
     server.sendHeader(F("Location"), F("https://www.arduino.cc/favicon.ico"));
     server.send(301);
   });

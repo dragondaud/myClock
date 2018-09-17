@@ -19,6 +19,8 @@ void readSPIFFS() {
         if (sp != "") softAPpass = sp;
         String lo = json["location"];
         if (lo != "") location = lo;
+        String tz = json["timezone"];
+        if (tz != "") timezone = tz;
         String tk = json["tzKey"];
         if (tk != "") tzKey = tk;
         String ow = json["owKey"];
@@ -49,6 +51,7 @@ void writeSPIFFS() {
   JsonObject& json = jsonBuffer.createObject();
   json["softAPpass"] = softAPpass;
   json["location"] = location;
+  json["timezone"] = timezone;
   json["tzKey"] = tzKey;
   json["owKey"] = owKey;
   json["brightness"] = brightness;
@@ -77,4 +80,22 @@ void writeSPIFFS() {
     saveConfig = false;
     delay(1000);
   }
+}
+
+String getSPIFFS() {
+  String payload;
+  Serial.println(F("readSPIFFS: mounted"));
+  if (SPIFFS.exists("/config.json")) {
+    File configFile = SPIFFS.open("/config.json", "r");
+    if (configFile) {
+      size_t size = configFile.size();
+      std::unique_ptr<char[]> buf(new char[size]);
+      configFile.readBytes(buf.get(), size);
+      DynamicJsonBuffer jsonBuffer;
+      JsonObject& json = jsonBuffer.parseObject(buf.get());
+      if (json.success()) json.prettyPrintTo(payload);
+      configFile.close();
+    }
+  }
+  return payload;
 }
