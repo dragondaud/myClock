@@ -29,7 +29,9 @@ static const char* serverConfig PROGMEM =
   "maxlength='400' name='json' form='configForm'>\n";
 
 static const char* serverTail PROGMEM =
-  "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form></body></html>";
+  "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form>\n"
+  "<p><form method='GET' action='/logout'><input type='submit' value='LOGOUT'></form>\n"
+  "</body></html>";
 
 static const char* serverReboot PROGMEM =
   "<!DOCTYPE HTML><html><head>\n"
@@ -49,6 +51,7 @@ void handleNotFound() {
 }
 
 void handleColor() {
+  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication();
   if (!server.hasArg("myColor")) return server.send(503, textPlain, F("FAILED"));
   String c = server.arg("myColor");
   syslog.logf(LOG_INFO, "webServer: color %s", c.c_str());
@@ -61,6 +64,7 @@ void handleColor() {
 }
 
 void handleSave() {
+  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication();
   if (!server.hasArg("json")) return server.send(503, textPlain, F("FAILED"));
   syslog.log(LOG_INFO, F("webServer: save"));
   DynamicJsonBuffer jsonBuffer;
@@ -96,6 +100,7 @@ void handleSave() {
 }
 
 void handleRoot() {
+  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication();
   syslog.log(LOG_INFO, F("webServer: root"));
   server.sendHeader(F("Connection"), F("close"));
   time_t now = time(nullptr);
@@ -114,29 +119,39 @@ void handleRoot() {
   server.send(200, textHtml, payload);
 }
 
+void handleReset() {
+  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication();
+  syslog.log(LOG_INFO, F("webServer: reset"));
+  Serial.println(F("webServer: reset"));
+  server.send(200, textHtml, serverReboot);
+  server.close();
+  delay(1000);
+  ESP.restart();
+}
+
+void handleLogout() {
+  server.send(401, textPlain, "logged out");
+}
+
 void startWebServer() {
   server.on(F("/"), HTTP_GET, handleRoot);
   server.on(F("/save"), handleSave);
   server.on(F("/color"), handleColor);
-  server.on(F("/reset"), HTTP_GET, []() {
-    syslog.log(LOG_INFO, F("webServer: reset"));
-    Serial.println(F("webServer: reset"));
-    server.send(200, textHtml, serverReboot);
-    server.close();
-    delay(1000);
-    ESP.restart();
-  });
+  server.on(F("/reset"), HTTP_GET, handleReset);
+  server.on(F("/logout"), HTTP_GET, handleLogout);
   server.on(F("/favicon.ico"), HTTP_GET, []() {
     server.sendHeader(F("Location"), F("https://www.arduino.cc/favicon.ico"));
     server.send(301);
   });
   server.on(F("/update"), HTTP_POST, []() {
+    if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication();
     syslog.log(LOG_INFO, F("webServer: update"));
     server.send(200, textPlain, (Update.hasError()) ? "FAIL" : "OK");
     server.close();
     delay(1000);
     ESP.restart();
   }, []() {
+    if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication();
     HTTPUpload& upload = server.upload();
     if (upload.status == UPLOAD_FILE_START) {
       display_ticker.detach();
