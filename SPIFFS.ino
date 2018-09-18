@@ -40,11 +40,6 @@ void readSPIFFS() {
 }
 
 void writeSPIFFS() {
-  display.clearDisplay();
-  display.setFont(&Picopixel);
-  display.setCursor(2, row1);
-  display.print(F("save config"));
-  Serial.println(F("WiFiManager: save config"));
   DynamicJsonBuffer jsonBuffer;
   JsonObject& json = jsonBuffer.createObject();
   json["softAPpass"] = softAPpass;

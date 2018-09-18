@@ -16,6 +16,11 @@ static const char* serverRoot PROGMEM =
   "<input type='file' name='update'>\n"
   "<p><input type='submit' value='UPDATE'></form></div><p>\n";
 
+static const char* serverColor PROGMEM =
+  "<p><form method='POST' action='/color' id='colorForm' name='colorForm'>\n"
+  "<input type='color' id='myColor' name='myColor' value='#######'> "
+  "<input type='submit' value='Set Color'></form><p>\n";
+
 static const char* serverConfig PROGMEM =
   "<div><h2>Edit Config</h2>\n"
   "<form method='post' action='/save' id='configForm' name='configForm'>\n"
@@ -39,6 +44,18 @@ static const char* textHtml PROGMEM = "text/html";
 
 void handleNotFound() {
   syslog.log(LOG_INFO, F("webServer: Not Found"));
+  server.sendHeader(F("Location"), F("/"));
+  server.send(301);
+}
+
+void handleColor() {
+  if (!server.hasArg("myColor")) return server.send(503, textPlain, F("FAILED"));
+  String c = server.arg("myColor");
+  syslog.logf(LOG_INFO, "webServer: color %s", c.c_str());
+  myColor = htmlColor565(c);
+  displayDraw(brightness);
+  getWeather();
+  writeSPIFFS();
   server.sendHeader(F("Location"), F("/"));
   server.send(301);
 }
@@ -88,6 +105,10 @@ void handleRoot() {
   if (LIGHT) payload = payload + F("Light: ") + String(light) + ", ";
   payload = payload + F("Heap: ") + String(ESP.getFreeHeap()) + "\n";
   payload += String(serverRoot);
+  payload += String(serverColor);
+  char c[8];
+  sprintf(c, "#%06X", color565to888(myColor));
+  payload.replace("#######", String(c));
   payload += String(serverConfig) + getSPIFFS() + F("</textarea></form></div>\n");
   payload += String(serverTail);
   server.send(200, textHtml, payload);
@@ -96,6 +117,7 @@ void handleRoot() {
 void startWebServer() {
   server.on(F("/"), HTTP_GET, handleRoot);
   server.on(F("/save"), handleSave);
+  server.on(F("/color"), handleColor);
   server.on(F("/reset"), HTTP_GET, []() {
     syslog.log(LOG_INFO, F("webServer: reset"));
     Serial.println(F("webServer: reset"));

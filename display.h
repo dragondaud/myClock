@@ -21,6 +21,24 @@ Ticker display_ticker;
 
 PxMATRIX display(64, 32, P_LAT, P_OE, P_A, P_B, P_C, P_D, P_E);
 
+uint16_t htmlColor565(const String htmlColor) {
+  long c = strtol(htmlColor.substring(1).c_str(), NULL, 16);
+  uint8_t r = (c >> 19);
+  uint8_t g = (c >> 10) & 0x3F;
+  uint8_t b = (c >> 3) & 0x1F;
+  return ((r << 11) | (g << 5) | b);
+}
+
+uint32_t color565to888(uint16_t c) {
+  uint16_t r = (c >> 11) & 0x01f;
+  uint16_t g = (c >> 5) & 0x03f;
+  uint16_t b = (c) & 0x01f;
+  r <<= 3;
+  g <<= 2;
+  b <<= 3;
+  return ((r << 16) | (g << 8) | b);
+}
+
 void display_updater() {
   display.display(70);
 }

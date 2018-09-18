@@ -13,7 +13,7 @@
 #include "display.h"
 
 #define APPNAME "myClock"
-#define VERSION "0.9.8"
+#define VERSION "0.9.9"
 
 #include "userconfig.h"
 // define these in userconfig.h or uncomment here
@@ -168,10 +168,10 @@ void getLight() {
   if (lt > 20) {
     light = (light + lt) >> 1;
     if (light > 500) dim = brightness;
-    if (light < 100) dim = brightness >> 4;
-    if (light < 200) dim = brightness >> 3;
-    if (light < 300) dim = brightness >> 2;
-    if (light < 400) dim = brightness >> 1;
+    else if (light < 100) dim = brightness >> 4;
+    else if (light < 200) dim = brightness >> 3;
+    else if (light < 300) dim = brightness >> 2;
+    else if (light < 400) dim = brightness >> 1;
     display.setBrightness(dim);
   }
 }
