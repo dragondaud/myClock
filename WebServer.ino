@@ -3,28 +3,39 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 
+static const char* serverHead PROGMEM =
+  "<!DOCTYPE HTML><html><head>\n<title>myClock</title>\n<style>\n"
+  "body {background-color: DarkSlateGray; color: White; font-family: sans-serif;}\n"
+  "div {max-width: 500px; border: ridge; padding: 10px; background-color: SlateGray;}\n"
+  "</style></head>\n"
+  "<body><h1>myClock " VERSION "</h1>\n";
+
 static const char* serverRoot PROGMEM =
-  "<!DOCTYPE HTML><html><head><title>myClock</title><style>"
-  "body {background-color: black; color: White;}"
-  "</style></head><body><h1>myClock " VERSION "</h1>"
-  "<h2>Update Firmware</h2><form method='POST' action='/update' enctype='multipart/form-data'>"
-  "<input type='file' name='update'><input type='submit' value='Update'></form>"
-  "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form>&nbsp;"
-  "<form method='GET' action='/format'><input type='submit' value='ERASE CONFIG'></form>";
+  "<div><h2>Update Firmware</h2>\n"
+  "<form method='POST' action='/update' enctype='multipart/form-data'>\n"
+  "<input type='file' name='update'>\n"
+  "<p><input type='submit' value='UPDATE'></form></div><p>\n";
 
 static const char* serverConfig PROGMEM =
-  "<p><form method='post' action='/save' id='configForm' name='configForm'>"
-  "<input type='submit' value='SAVE'> <input type='reset'>"
-  "<p><textarea id='json' rows='13' cols='50' name='json' form='configForm'>";
+  "<div><h2>Edit Config</h2>\n"
+  "<form method='post' action='/save' id='configForm' name='configForm'>\n"
+  "<input type='submit' value='SAVE'> <input type='reset'>\n"
+  "<p><textarea style='resize: none;' id='json' rows='13' cols='50' "
+  "maxlength='400' name='json' form='configForm'>\n";
 
-static const char* serverTail PROGMEM = "</body></html>";
+static const char* serverTail PROGMEM =
+  "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form></body></html>";
 
 static const char* serverReboot PROGMEM =
-  "<!DOCTYPE HTML><html><head>"
+  "<!DOCTYPE HTML><html><head>\n"
   "<meta http-equiv=\"refresh\" content=\"10;url=/\" />"
-  "<style>body {background-color: black; color: White;}"
-  "</style></head><body><h1>myClock " VERSION "</h1>"
+  "<style>body {background-color: DarkSlateGray; color: White;}"
+  "</style></head>\n"
+  "<body><h1>myClock " VERSION "</h1>"
   "Rebooting...</body></html>";
+
+static const char* textPlain PROGMEM = "text/plain";
+static const char* textHtml PROGMEM = "text/html";
 
 void handleNotFound() {
   syslog.log(LOG_INFO, F("webServer: Not Found"));
@@ -32,23 +43,8 @@ void handleNotFound() {
   server.send(301);
 }
 
-void handleError() {
-  String message = "FAIL\n\n";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET)?"GET":"POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
-  for (uint8_t i=0; i<server.args(); i++){
-    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
-  }
-  server.send(500, "text/plain", message);
-}
-
 void handleSave() {
-  if (!server.hasArg("json")) return handleError();
+  if (!server.hasArg("json")) return server.send(503, textPlain, F("FAILED"));
   syslog.log(LOG_INFO, F("webServer: save"));
   DynamicJsonBuffer jsonBuffer;
   JsonObject& json = jsonBuffer.parseObject(server.arg("json"));
@@ -76,41 +72,34 @@ void handleSave() {
 #endif
   }
   writeSPIFFS();
-  String payload = String(serverReboot) + String(serverTail);
-  server.send(200, F("text/html"), payload);
+  server.send(200, textHtml, serverReboot);
   server.close();
   delay(1000);
   ESP.restart();
 }
 
+void handleRoot() {
+  syslog.log(LOG_INFO, F("webServer: root"));
+  server.sendHeader(F("Connection"), F("close"));
+  time_t now = time(nullptr);
+  String t = ctime(&now);
+  t.trim();
+  String payload = String(serverHead) + F("<h3>") + t + F("</h3>\n<p>");
+  if (LIGHT) payload = payload + F("Light: ") + String(light) + ", ";
+  payload = payload + F("Heap: ") + String(ESP.getFreeHeap()) + "\n";
+  payload += String(serverRoot);
+  payload += String(serverConfig) + getSPIFFS() + F("</textarea></form></div>\n");
+  payload += String(serverTail);
+  server.send(200, textHtml, payload);
+}
+
 void startWebServer() {
-  server.on(F("/"), HTTP_GET, []() {
-    syslog.log(LOG_INFO, F("webServer: index"));
-    server.sendHeader(F("Connection"), F("close"));
-    time_t now = time(nullptr);
-    String t = ctime(&now);
-    String payload = String(serverRoot) + F("<h3>") + t + F("</h3><p>Free Heap: ") + String(ESP.getFreeHeap());
-    if (LIGHT) payload = payload + F("<p>Light Level: ") + String(light);
-    payload += String(serverConfig) + getSPIFFS() + F("</textarea></form>");
-    payload += String(serverTail);
-    server.send(200, F("text/html"), payload);
-  });
+  server.on(F("/"), HTTP_GET, handleRoot);
   server.on(F("/save"), handleSave);
   server.on(F("/reset"), HTTP_GET, []() {
     syslog.log(LOG_INFO, F("webServer: reset"));
     Serial.println(F("webServer: reset"));
-    String payload = String(serverReboot) + String(serverTail);
-    server.send(200, F("text/html"), payload);
-    server.close();
-    delay(1000);
-    ESP.restart();
-  });
-  server.on(F("/format"), HTTP_GET, []() {
-    syslog.log(LOG_INFO, F("webServer: format"));
-    Serial.println(F("webServer: format"));
-    SPIFFS.format();
-    String payload = String(serverReboot) + String(serverTail);
-    server.send(200, F("text/html"), payload);
+    server.send(200, textHtml, serverReboot);
     server.close();
     delay(1000);
     ESP.restart();
@@ -121,7 +110,7 @@ void startWebServer() {
   });
   server.on(F("/update"), HTTP_POST, []() {
     syslog.log(LOG_INFO, F("webServer: update"));
-    server.send(200, F("text/plain"), (Update.hasError()) ? "FAIL" : "OK");
+    server.send(200, textPlain, (Update.hasError()) ? "FAIL" : "OK");
     server.close();
     delay(1000);
     ESP.restart();

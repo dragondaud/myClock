@@ -13,8 +13,6 @@ void readSPIFFS() {
       DynamicJsonBuffer jsonBuffer;
       JsonObject& json = jsonBuffer.parseObject(buf.get());
       if (json.success()) {
-        json.prettyPrintTo(Serial);
-        Serial.println();
         String sp = json["softAPpass"];
         if (sp != "") softAPpass = sp;
         String lo = json["location"];
