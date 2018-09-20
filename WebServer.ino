@@ -3,13 +3,6 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 
-// calculate lux from LDR
-#define MAX_ADC_READING           1023
-#define ADC_REF_VOLTAGE           3.3
-#define REF_RESISTANCE            10000
-#define LUX_CALC_SCALAR           12518931
-#define LUX_CALC_EXPONENT         -1.405
-
 static const char* serverHead PROGMEM =
   "<!DOCTYPE HTML><html><head>\n<title>myClock</title>\n<style>\n"
   "body {background-color: DarkSlateGray; color: White; font-family: sans-serif;}\n"
@@ -114,13 +107,7 @@ void handleRoot() {
   String t = ctime(&now);
   t.trim();
   String payload = String(serverHead) + F("<h3>") + t + F("</h3>\n<p>");
-  if (LIGHT) {
-    float rV = (float)light / MAX_ADC_READING * ADC_REF_VOLTAGE;
-    float lV = ADC_REF_VOLTAGE - rV;
-    float lR = lV / rV * REF_RESISTANCE;
-    long lux = round(LUX_CALC_SCALAR * pow(lR, LUX_CALC_EXPONENT));
-    payload = payload + F("LDR: ") + String(lux) + " lux, ";
-  }
+  if (LIGHT) payload = payload + F("LDR: ") + String(light) + ", ";
   payload = payload + F("Heap: ") + String(ESP.getFreeHeap()) + "\n";
   payload += String(serverRoot);
   payload += String(serverColor);

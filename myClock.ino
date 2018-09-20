@@ -13,20 +13,18 @@
 #include "display.h"
 
 #define APPNAME "myClock"
-#define VERSION "0.9.10"
+#define VERSION "0.9.11"
 
-#include "userconfig.h"
-// define these in userconfig.h or uncomment here
-//#define SYSLOG
-//String syslogSrv = "syslog";
-//uint16_t syslogPort = 514;
-//String tzKey = ""                 // API key from https://timezonedb.com/register
-//String owKey = ""                 // API key from https://home.openweathermap.org/api_keys
-//String softAPpass = "ConFigMe";   // password for SoftAP config
-//uint8_t brightness = 255;         // 0-255 display brightness
-//bool milTime = true;              // set false for 12hour clock
-//String location = "";             // zipcode or empty for geoIP location
-//String timezone = "";             // timezone from https://timezonedb.com/time-zones or empty for geoIP
+#define SYSLOG
+String syslogSrv = "syslog";
+uint16_t syslogPort = 514;
+String tzKey = "";                // API key from https://timezonedb.com/register
+String owKey = "";                // API key from https://home.openweathermap.org/api_keys
+String softAPpass = "ConFigMe";   // password for SoftAP config
+uint8_t brightness = 255;         // 0-255 display brightness
+bool milTime = true;              // set false for 12hour clock
+String location = "";             // zipcode or empty for geoIP location
+String timezone = "";             // timezone from https://timezonedb.com/time-zones or empty for geoIP
 
 // Syslog
 #ifdef SYSLOG

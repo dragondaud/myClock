@@ -5,7 +5,7 @@ void readSPIFFS() {
   if (SPIFFS.begin()) {
     Serial.println(F("readSPIFFS: mounted"));
     if (SPIFFS.exists("/config.json")) {
-      File configFile = SPIFFS.open("/config.json", "r");
+      File configFile = SPIFFS.open(F("/config.json"), "r");
       if (!configFile) return;
       size_t size = configFile.size();
       std::unique_ptr<char[]> buf(new char[size]);
