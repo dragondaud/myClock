@@ -1,3 +1,4 @@
 userconfig.h
 .tmp*
+*.tmp
 data
