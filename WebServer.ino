@@ -45,7 +45,9 @@ static const char* textPlain PROGMEM = "text/plain";
 static const char* textHtml PROGMEM = "text/html";
 
 void handleNotFound() {
+#ifdef SYSLOG
   syslog.log(LOG_INFO, F("webServer: Not Found"));
+#endif
   server.sendHeader(F("Location"), F("/"));
   server.send(301);
 }
@@ -54,7 +56,9 @@ void handleColor() {
   if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
   if (!server.hasArg("myColor")) return server.send(503, textPlain, F("FAILED"));
   String c = server.arg("myColor");
+#ifdef SYSLOG
   syslog.logf(LOG_INFO, "webServer: color %s", c.c_str());
+#endif
   myColor = htmlColor565(c);
   displayDraw(brightness);
   getWeather();
@@ -66,7 +70,9 @@ void handleColor() {
 void handleSave() {
   if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
   if (!server.hasArg("json")) return server.send(503, textPlain, F("FAILED"));
+#ifdef SYSLOG
   syslog.log(LOG_INFO, F("webServer: save"));
+#endif
   DynamicJsonBuffer jsonBuffer;
   JsonObject& json = jsonBuffer.parseObject(server.arg("json"));
   if (json.success()) {
@@ -101,7 +107,9 @@ void handleSave() {
 
 void handleRoot() {
   if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
+#ifdef SYSLOG
   syslog.log(LOG_INFO, F("webServer: root"));
+#endif
   server.sendHeader(F("Connection"), F("close"));
   time_t now = time(nullptr);
   String t = ctime(&now);
@@ -121,7 +129,9 @@ void handleRoot() {
 
 void handleReset() {
   if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
+#ifdef SYSLOG
   syslog.log(LOG_INFO, F("webServer: reset"));
+#endif
   Serial.println(F("webServer: reset"));
   server.send(200, textHtml, serverReboot);
   server.close();
@@ -145,7 +155,9 @@ void startWebServer() {
   });
   server.on(F("/update"), HTTP_POST, []() {
     if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
+#ifdef SYSLOG
     syslog.log(LOG_INFO, F("webServer: update"));
+#endif
     server.send(200, textPlain, (Update.hasError()) ? "FAIL" : "OK");
     server.close();
     delay(1000);

@@ -90,8 +90,10 @@ void setup() {
   light = analogRead(A0);
   Serial.printf("setup: %s, %s, %s, %d, %d \r\n",
                 location.c_str(), timezone.c_str(), milTime ? "true" : "false", brightness, light);
+#ifdef SYSLOG
   syslog.logf(LOG_INFO, "setup: %s|%s|%s|%d|%d",
               location.c_str(), timezone.c_str(), milTime ? "true" : "false", brightness, light);
+#endif
   setNTP(timezone);
   delay(1000);
   startWebServer();
