@@ -58,7 +58,7 @@ void handleNotFound() {
 }
 
 void handleColor() {
-  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication();
+  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
   if (!server.hasArg("myColor")) return server.send(503, textPlain, F("FAILED"));
   String c = server.arg("myColor");
   syslog.logf(LOG_INFO, "webServer: color %s", c.c_str());
@@ -71,7 +71,7 @@ void handleColor() {
 }
 
 void handleSave() {
-  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication();
+  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
   if (!server.hasArg("json")) return server.send(503, textPlain, F("FAILED"));
   syslog.log(LOG_INFO, F("webServer: save"));
   DynamicJsonBuffer jsonBuffer;
@@ -107,7 +107,7 @@ void handleSave() {
 }
 
 void handleRoot() {
-  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication();
+  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
   syslog.log(LOG_INFO, F("webServer: root"));
   server.sendHeader(F("Connection"), F("close"));
   time_t now = time(nullptr);
@@ -133,7 +133,7 @@ void handleRoot() {
 }
 
 void handleReset() {
-  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication();
+  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
   syslog.log(LOG_INFO, F("webServer: reset"));
   Serial.println(F("webServer: reset"));
   server.send(200, textHtml, serverReboot);
@@ -157,14 +157,14 @@ void startWebServer() {
     server.send(301);
   });
   server.on(F("/update"), HTTP_POST, []() {
-    if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication();
+    if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
     syslog.log(LOG_INFO, F("webServer: update"));
     server.send(200, textPlain, (Update.hasError()) ? "FAIL" : "OK");
     server.close();
     delay(1000);
     ESP.restart();
   }, []() {
-    if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication();
+    if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
     HTTPUpload& upload = server.upload();
     if (upload.status == UPLOAD_FILE_START) {
       display_ticker.detach();
