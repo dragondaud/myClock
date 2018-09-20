@@ -54,6 +54,7 @@ void setup() {
   display.begin(16);
   display_ticker.attach(0.002, display_updater);
   display.clearDisplay();
+  display.setFont(&TomThumb);
   display.setTextWrap(false);
   display.setTextColor(myColor);
   display.setBrightness(brightness);
@@ -74,7 +75,6 @@ void setup() {
   else while (timezone == "") getIPlocation();
 
   display.clearDisplay();
-  display.setFont(&Picopixel);
   display.setCursor(2, row1);
   display.setTextColor(myGREEN);
   display.print(HOST);

@@ -6,7 +6,7 @@
 #define double_buffer
 #include <PxMatrix.h> // https://github.com/2dom/PxMatrix
 #include <gfxfont.h>
-#include <Fonts/Picopixel.h>
+#include "fonts/TomThumb.h"
 
 #include <Ticker.h>
 Ticker display_ticker;
@@ -44,10 +44,10 @@ void display_updater() {
 }
 
 #include "Digit.h"
-const byte row1 = 4;
-const byte row2 = 13;
+const byte row1 = 6;
+const byte row2 = 14;
 const byte row3 = 22;
-const byte row4 = 30;
+const byte row4 = 31;
 const uint16_t myRED = display.color565(255, 0, 0);
 const uint16_t myGREEN = display.color565(0, 255, 0);
 const uint16_t myBLUE = display.color565(0, 0, 255);

@@ -6,7 +6,7 @@ void saveConfigCallback() {
 
 void configModeCallback(WiFiManager *myWiFiManager) {
   display.clearDisplay();
-  display.setFont(&Picopixel);
+  display.setFont(&TomThumb);
   display.setCursor(2, row1);
   display.print(F("Config WiFi"));
   display.setCursor(2, row2);
