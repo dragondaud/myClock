@@ -8,8 +8,8 @@ buildpath="$HOME/.build"
 # d1_mini
 board="esp8266com:esp8266:d1_mini:xtal=80,vt=flash,eesz=4M1M,ip=lm2,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600"
 
-# dt_mini_lite
-#board="esp8266com:esp8266:d1_mini:xtal=80,vt=flash,eesz=1M64,ip=lm2,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600"
+# d1_mini_lite
+#board="esp8266com:esp8266:d1_mini_lite:xtal=80,vt=flash,eesz=1M64,ip=lm2,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
 arduino="/Applications/Arduino.app/Contents/MacOS/Arduino"
