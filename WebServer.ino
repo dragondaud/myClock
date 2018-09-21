@@ -90,8 +90,8 @@ void handleSave() {
     if (ow != "") owKey = ow;
     brightness = json["brightness"];
     milTime = json["milTime"];
-    uint16_t c = json["myColor"];
-    if (c > 0) myColor = c;
+    myColor = json["myColor"];
+    threshold = json["threshold"];
 #ifdef SYSLOG
     String sl = json["syslogSrv"];
     if (sl != "") syslogSrv = sl;

@@ -25,6 +25,7 @@ uint8_t brightness = 255;         // 0-255 display brightness
 bool milTime = true;              // set false for 12hour clock
 String location = "";             // zipcode or empty for geoIP location
 String timezone = "";             // timezone from https://timezonedb.com/time-zones or empty for geoIP
+int threshold = 500;
 
 // Syslog
 #ifdef SYSLOG
@@ -167,11 +168,11 @@ void getLight() {
   int lt = analogRead(A0);
   if (lt > 20) {
     light = (light + lt) >> 1;
-    if (light > 500) dim = brightness;
-    else if (light < 100) dim = brightness >> 4;
-    else if (light < 200) dim = brightness >> 3;
-    else if (light < 300) dim = brightness >> 2;
-    else if (light < 400) dim = brightness >> 1;
+    if (light >= threshold) dim = brightness;
+    else if (light < (threshold >> 3)) dim = brightness >> 4;
+    else if (light < (threshold >> 2)) dim = brightness >> 3;
+    else if (light < (threshold >> 1)) dim = brightness >> 2;
+    else if (light < threshold) dim = brightness >> 1;
     display.setBrightness(dim);
   }
 }
