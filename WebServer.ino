@@ -3,10 +3,13 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 
+#define ADMIN_USER "admin"
+
 static const char* serverHead PROGMEM =
   "<!DOCTYPE HTML><html><head>\n<title>myClock</title>\n<style>\n"
   "body {background-color: DarkSlateGray; color: White; font-family: sans-serif;}\n"
   "div {max-width: 500px; border: ridge; padding: 10px; background-color: SlateGray;}\n"
+  "input[type=range] {vertical-align: middle;}\n"
   "</style></head>\n"
   "<body><h1>myClock " VERSION "</h1>\n";
 
@@ -18,8 +21,14 @@ static const char* serverRoot PROGMEM =
 
 static const char* serverColor PROGMEM =
   "<p><form method='POST' action='/color' id='colorForm' name='colorForm'>\n"
-  "<input type='color' id='myColor' name='myColor' value='#######'> "
-  "<input type='submit' value='Set Color'></form><p>\n";
+  "<label for='myColor'>Color </label>"
+  "<input type='color' id='myColor' name='myColor' value='#######'> \n"
+  "<label for='brightness'> Brightness: </label>"
+  "<input type='range' id='brightness' name='brightness' "
+  "min='1' max='255' value='!!!!!!!' oninput='brightNum.value=brightness.value'> \n"
+  "<input type='number' id='brightNum' name='brightNum' "
+  "min='1' max='255' value='!!!!!!!' oninput='brightness.value=brightNum.value'> \n"
+  "<input type='submit' value='SET'></form><p>\n";
 
 static const char* serverConfig PROGMEM =
   "<div><h2>Edit Config</h2>\n"
@@ -52,14 +61,24 @@ void handleNotFound() {
   server.send(301);
 }
 
+bool handleAuth() {
+  return server.authenticate(ADMIN_USER, softAPpass.c_str());
+}
+
+void reqAuth() {
+  return server.requestAuthentication(DIGEST_AUTH, HOST);
+}
+
 void handleColor() {
-  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
+  if (!handleAuth()) return reqAuth();
   if (!server.hasArg("myColor")) return server.send(503, textPlain, F("FAILED"));
   String c = server.arg("myColor");
+  uint8_t b = server.arg("brightness").toInt();
 #ifdef SYSLOG
-  syslog.logf(LOG_INFO, "webServer: color %s", c.c_str());
+  syslog.logf(LOG_INFO, "webServer: color %s, brightness %d", c.c_str(), b);
 #endif
   myColor = htmlColor565(c);
+  if (b) brightness = b;
   displayDraw(brightness);
   getWeather();
   writeSPIFFS();
@@ -68,7 +87,7 @@ void handleColor() {
 }
 
 void handleSave() {
-  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
+  if (!handleAuth()) return reqAuth();
   if (!server.hasArg("json")) return server.send(503, textPlain, F("FAILED"));
 #ifdef SYSLOG
   syslog.log(LOG_INFO, F("webServer: save"));
@@ -106,7 +125,7 @@ void handleSave() {
 }
 
 void handleRoot() {
-  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
+  if (!handleAuth()) return reqAuth();
 #ifdef SYSLOG
   syslog.log(LOG_INFO, F("webServer: root"));
 #endif
@@ -122,13 +141,14 @@ void handleRoot() {
   char c[8];
   sprintf(c, "#%06X", color565to888(myColor));
   payload.replace("#######", String(c));
+  payload.replace("!!!!!!!", String(brightness));
   payload += String(serverConfig) + getSPIFFS() + F("</textarea></form></div>\n");
   payload += String(serverTail);
   server.send(200, textHtml, payload);
 }
 
 void handleReset() {
-  if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
+  if (!handleAuth()) return reqAuth();
 #ifdef SYSLOG
   syslog.log(LOG_INFO, F("webServer: reset"));
 #endif
@@ -154,7 +174,7 @@ void startWebServer() {
     server.send(301);
   });
   server.on(F("/update"), HTTP_POST, []() {
-    if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
+    if (!handleAuth()) return reqAuth();
 #ifdef SYSLOG
     syslog.log(LOG_INFO, F("webServer: update"));
 #endif
@@ -163,7 +183,7 @@ void startWebServer() {
     delay(1000);
     ESP.restart();
   }, []() {
-    if (!server.authenticate("admin", softAPpass.c_str())) return server.requestAuthentication(DIGEST_AUTH);
+    if (!handleAuth()) return reqAuth();
     HTTPUpload& upload = server.upload();
     if (upload.status == UPLOAD_FILE_START) {
       display_ticker.detach();

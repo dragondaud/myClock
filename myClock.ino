@@ -13,7 +13,7 @@
 #include "display.h"
 
 #define APPNAME "myClock"
-#define VERSION "0.9.11"
+#define VERSION "0.9.12"
 
 #define SYSLOG
 String syslogSrv = "syslog";
