@@ -13,11 +13,10 @@
 #include "display.h"
 
 #define APPNAME "myClock"
-#define VERSION "0.9.12"
+#define VERSION "0.9.13"
+//#define DS18                      // enable DS18B20 temperature sensor
+#define SYSLOG                    // enable SYSLOG support
 
-#define SYSLOG
-String syslogSrv = "syslog";
-uint16_t syslogPort = 514;
 String tzKey = "";                // API key from https://timezonedb.com/register
 String owKey = "";                // API key from https://home.openweathermap.org/api_keys
 String softAPpass = "ConFigMe";   // password for SoftAP config
@@ -32,6 +31,18 @@ int threshold = 500;
 #include <Syslog.h>             // https://github.com/arcao/Syslog
 WiFiUDP udpClient;
 Syslog syslog(udpClient, SYSLOG_PROTO_IETF);
+String syslogSrv = "syslog";
+uint16_t syslogPort = 514;
+#endif
+
+// DS18B20
+#ifdef DS18
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#define ONE_WIRE_BUS D3
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+int Temp;
 #endif
 
 ESP8266WebServer server(80);
@@ -39,7 +50,8 @@ ESP8266WebServer server(80);
 static const char* UserAgent PROGMEM = "myClock/1.0 (Arduino ESP8266)";
 
 time_t TWOAM, pNow, wDelay;
-int pHH, pMM, pSS, light;
+uint8_t pHH, pMM, pSS;
+uint16_t light;
 long offset;
 char HOST[20];
 bool saveConfig = false;
@@ -47,8 +59,9 @@ uint8_t dim;
 bool LIGHT = true;
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(115200, SERIAL_8N1, SERIAL_TX_ONLY, 1);
   while (!Serial);
+  delay(10);
   Serial.println();
   readSPIFFS();
 
@@ -61,6 +74,10 @@ void setup() {
   display.setBrightness(brightness);
 
   drawImage(0, 0); // display splash image while connecting
+
+#ifdef DS18
+  sensors.begin();
+#endif
 
   startWiFi();
   if (saveConfig) writeSPIFFS();
@@ -120,7 +137,6 @@ void loop() {
       pSS = ss;
       getLight();
     }
-
     if (mm != pMM) {
       int m0 = mm % 10;
       int m1 = mm / 10;
@@ -129,7 +145,6 @@ void loop() {
       pMM = mm;
       Serial.printf("%02d:%02d %3d %3d \r", hh, mm, light, dim);
     }
-
     if (hh != pHH) {
       int h0 = hh % 10;
       int h1 = hh / 10;
@@ -137,6 +152,16 @@ void loop() {
       if (h1 != digit5.Value()) digit5.Morph(h1);
       pHH = hh;
     }
+#ifdef DS18
+    sensors.requestTemperatures();
+    int t = round(sensors.getTempF(0));
+    if (t < -67 | t > 180) t = 0;
+    if (Temp != t) {
+      Temp = t;
+      display.setCursor(1, row1);
+      display.printf("%2d", Temp);
+    }
+#endif
     pNow = now;
     if (now > wDelay) getWeather();
   }

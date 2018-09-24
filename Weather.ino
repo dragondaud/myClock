@@ -38,8 +38,13 @@ void getWeather() { // Using openweasthermap.org
         else if (temperature >= 90) display.setTextColor(myRED);
         else display.setTextColor(myColor);
         display.fillRect(0, 0, 64, 6, myBLACK);
+#ifdef DS18
+        display.setCursor(0, row1);
+        display.printf("% 2d/% 2d%cF %2d%% %2d %s", Temp, round(temperature), 142, humidity, round(wind), dir.c_str());
+#else
         display.setCursor(9, row1);
-        display.printf("%2d%cF  %2d%%  %2d %s", round(temperature), 142, humidity, round(wind), dir.c_str());
+        display.printf("% 2d%cF %2d%% %2d %s", round(temperature), 142, humidity, round(wind), dir.c_str());
+#endif
         String description = weather["main"];
         int id = weather["id"];
         int i = round(id / 100);

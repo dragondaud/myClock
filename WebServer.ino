@@ -136,6 +136,9 @@ void handleRoot() {
   String t = ctime(&now);
   t.trim();
   String payload = String(serverHead) + F("<h3>") + t + F("</h3>\n<p>");
+#ifdef DS18
+  payload += "<p><meter value='" + String(Temp) + "' min='-50' max='150'></meter> Temperature\n";
+#endif
   if (LIGHT) payload += "<p><meter value='" + String(light) + "' min='0' max='" + String(threshold) + "'></meter> Light Level\n";
   payload += "<p><meter value='" + String(ESP.getFreeHeap()) + "' min='0' max='32767'></meter> Free Heap\n";
   payload += String(serverRoot);
