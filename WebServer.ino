@@ -10,6 +10,8 @@ static const char* serverHead PROGMEM =
   "body {background-color: DarkSlateGray; color: White; font-family: sans-serif;}\n"
   "div {max-width: 500px; border: ridge; padding: 10px; background-color: SlateGray;}\n"
   "input[type=range] {vertical-align: middle;}\n"
+  "meter {width: 400px; vertical-align: middle; color: Black;}"
+  "meter::after {content: attr(value); position:relative; top:-17px;}"
   "</style></head>\n"
   "<body><h1>myClock " VERSION "</h1>\n";
 
@@ -22,13 +24,13 @@ static const char* serverRoot PROGMEM =
 static const char* serverColor PROGMEM =
   "<p><form method='POST' action='/color' id='colorForm' name='colorForm'>\n"
   "<label for='myColor'>Color </label>"
-  "<input type='color' id='myColor' name='myColor' value='#######'> \n"
-  "<label for='brightness'> Brightness: </label>"
+  "<input type='color' id='myColor' name='myColor' value='%myColor%'> \n"
+  "<label for='brightness'> Brightness </label>"
+  "<input type='number' id='brightNum' name='brightNum' style='width: 3em;'"
+  "min='1' max='255' value='%brightness%' oninput='brightness.value=brightNum.value'> \n"
   "<input type='range' id='brightness' name='brightness' "
-  "min='1' max='255' value='!!!!!!!' oninput='brightNum.value=brightness.value'> \n"
-  "<input type='number' id='brightNum' name='brightNum' "
-  "min='1' max='255' value='!!!!!!!' oninput='brightness.value=brightNum.value'> \n"
-  "<input type='submit' value='SET'></form><p>\n";
+  "min='1' max='255' value='%brightness%' oninput='brightNum.value=brightness.value'> \n"
+  "<input type='submit' value='SET DISPLAY'></form><p>\n";
 
 static const char* serverConfig PROGMEM =
   "<div><h2>Edit Config</h2>\n"
@@ -134,14 +136,15 @@ void handleRoot() {
   String t = ctime(&now);
   t.trim();
   String payload = String(serverHead) + F("<h3>") + t + F("</h3>\n<p>");
-  if (LIGHT) payload = payload + F("LDR: ") + String(light) + ", ";
-  payload = payload + F("Heap: ") + String(ESP.getFreeHeap()) + "\n";
+  if (LIGHT) payload += "<p><meter value='" + String(light) + "' min='0' max='" + String(threshold) + "'></meter> Light Level\n";
+  payload += "<p><meter value='" + String(ESP.getFreeHeap()) + "' min='0' max='32767'></meter> Free Heap\n";
   payload += String(serverRoot);
   payload += String(serverColor);
   char c[8];
   sprintf(c, "#%06X", color565to888(myColor));
-  payload.replace("#######", String(c));
-  payload.replace("!!!!!!!", String(brightness));
+  payload.replace("%light%", String(light));
+  payload.replace("%myColor%", String(c));
+  payload.replace("%brightness%", String(brightness));
   payload += String(serverConfig) + getSPIFFS() + F("</textarea></form></div>\n");
   payload += String(serverTail);
   server.send(200, textHtml, payload);

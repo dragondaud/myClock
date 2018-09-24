@@ -167,7 +167,7 @@ void getLight() {
   if (!LIGHT) return;
   int lt = analogRead(A0);
   if (lt > 20) {
-    light = (light + lt) >> 1;
+    light = (light * 3 + lt) >> 2;
     if (light >= threshold) dim = brightness;
     else if (light < (threshold >> 3)) dim = brightness >> 4;
     else if (light < (threshold >> 2)) dim = brightness >> 3;
