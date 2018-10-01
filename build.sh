@@ -57,14 +57,17 @@ else
 	espota="$HOME/Arduino/hardware/esp8266com/esp8266/tools/espota.py"
 fi
 
-echo "Building ${APP} in ${buildpath}..."
-
-"${arduino}" ${verbose} --pref build.path="${buildpath}" --board "${board}" --save-prefs --verify ${SRC}
-ret=$?
-
-if [ $ret -eq 0 ] && [ -f $espota ] && [ ! -z "$FLASH" ]; then
-	echo "Flashing ${BIN} to ${FLASH}..."
-	"${espota}" ${debug} --progress --file="${buildpath}/${BIN}" --ip=${FLASH}
+if [ -z "$arduino" ]; then
+	echo "Arduino IDE must be installed"
+	exit 1
 else
-	exit $ret
+	echo "Building ${APP} in ${buildpath}..."
+	"${arduino}" ${verbose} --pref build.path="${buildpath}" --board "${board}" --save-prefs --verify ${SRC}
+	ret=$?
+	if [ $ret -eq 0 ] && [ -f "$espota" ] && [ ! -z "$FLASH" ]; then
+		echo "Flashing ${BIN} to ${FLASH}..."
+		"${espota}" ${debug} --progress --file="${buildpath}/${BIN}" --ip=${FLASH}
+	else
+		exit $ret
+	fi
 fi

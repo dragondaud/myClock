@@ -103,6 +103,6 @@ void getWeather() { // Using openweasthermap.org
 } // getWeather
 
 String degreeDir(int degrees) {
-  char* caridnals[] = { "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N" };
+  static const char* caridnals[] PROGMEM = { "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N" };
   return caridnals[round((degrees % 360) / 45)];
 } // degreeDir
