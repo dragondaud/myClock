@@ -7,7 +7,8 @@
 #include <ESP8266HTTPClient.h>
 #include <ArduinoOTA.h>
 #include <time.h>
-#include "FS.h"
+#include <FS.h>
+#include <pgmspace.h>
 #include <ArduinoJson.h>        // https://github.com/bblanchon/ArduinoJson/
 #include <WiFiManager.h>        // https://github.com/tzapu/WiFiManager
 #include "display.h"
@@ -106,10 +107,10 @@ void setup() {
   display.setTextColor(myCYAN);
   display.print(F("waiting for ntp"));
   light = analogRead(A0);
-  Serial.printf("setup: %s, %s, %s, %d, %d \r\n",
+  Serial.printf_P(PSTR("setup: %s, %s, %s, %d, %d \r\n"),
                 location.c_str(), timezone.c_str(), milTime ? "true" : "false", brightness, light);
 #ifdef SYSLOG
-  syslog.logf(LOG_INFO, "setup: %s|%s|%s|%d|%d",
+  syslog.logf("setup: %s|%s|%s|%d|%d",
               location.c_str(), timezone.c_str(), milTime ? "true" : "false", brightness, light);
 #endif
   setNTP(timezone);
@@ -143,7 +144,7 @@ void loop() {
       if (m0 != digit2.Value()) digit2.Morph(m0);
       if (m1 != digit3.Value()) digit3.Morph(m1);
       pMM = mm;
-      Serial.printf("%02d:%02d %3d %3d \r", hh, mm, light, dim);
+      Serial.printf_P(PSTR("%02d:%02d %3d %3d \r"), hh, mm, light, dim);
     }
     if (hh != pHH) {
       int h0 = hh % 10;
@@ -159,7 +160,7 @@ void loop() {
     if (Temp != t) {
       Temp = t;
       display.setCursor(1, row1);
-      display.printf("%2d", Temp);
+      display.printf_P(PSTR("%2d"), Temp);
     }
 #endif
     pNow = now;
@@ -176,7 +177,7 @@ void displayDraw(uint8_t b) {
   int mm = (now / 60) % 60;
   int hh = (now / (60 * 60)) % 24;
   if ((!milTime) && (hh > 12)) hh -= 12;
-  Serial.printf("%02d:%02d\r", hh, mm);
+  Serial.printf_P(PSTR("%02d:%02d\r"), hh, mm);
   digit1.DrawColon(myColor);
   digit3.DrawColon(myColor);
   digit0.Draw(ss % 10, myColor);

@@ -33,7 +33,7 @@ void startWiFi() {   // if WiFi does not connect, establish AP for configuration
   ArduinoOTA.setHostname(HOST);
   ArduinoOTA.onStart([]() {
 #ifdef SYSLOG
-    syslog.log(LOG_INFO, F("OTA Update"));
+    syslog.log(F("OTA Update"));
 #endif
     display.clearDisplay();   // turn off display during update
     display_ticker.detach();

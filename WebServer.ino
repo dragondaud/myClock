@@ -60,7 +60,7 @@ static const char* textHtml PROGMEM = "text/html";
 
 void handleNotFound() {
 #ifdef SYSLOG
-  syslog.log(LOG_INFO, F("webServer: Not Found"));
+  syslog.log(F("webServer: Not Found"));
 #endif
   server.sendHeader(F("Location"), F("/"));
   server.send(301);
@@ -76,11 +76,11 @@ void reqAuth() {
 
 void handleColor() {
   if (!handleAuth()) return reqAuth();
-  if (!server.hasArg("myColor")) return server.send(503, textPlain, F("FAILED"));
-  String c = server.arg("myColor");
-  uint8_t b = server.arg("brightness").toInt();
+  if (!server.hasArg(F("myColor"))) return server.send(503, textPlain, F("FAILED"));
+  String c = server.arg(F("myColor"));
+  uint8_t b = server.arg(F("brightness")).toInt();
 #ifdef SYSLOG
-  syslog.logf(LOG_INFO, "webServer: color %s, brightness %d", c.c_str(), b);
+  syslog.logf("webServer: color %s, brightness %d", c.c_str(), b);
 #endif
   myColor = htmlColor565(c);
   if (b) brightness = b;
@@ -93,12 +93,12 @@ void handleColor() {
 
 void handleSave() {
   if (!handleAuth()) return reqAuth();
-  if (!server.hasArg("json")) return server.send(503, textPlain, F("FAILED"));
+  if (!server.hasArg(F("json"))) return server.send(503, textPlain, F("FAILED"));
 #ifdef SYSLOG
-  syslog.log(LOG_INFO, F("webServer: save"));
+  syslog.log(F("webServer: save"));
 #endif
   DynamicJsonBuffer jsonBuffer;
-  JsonObject& json = jsonBuffer.parseObject(server.arg("json"));
+  JsonObject& json = jsonBuffer.parseObject(server.arg(F("json")));
   if (json.success()) {
     json.prettyPrintTo(Serial);
     Serial.println();
@@ -132,7 +132,7 @@ void handleSave() {
 void handleRoot() {
   if (!handleAuth()) return reqAuth();
 #ifdef SYSLOG
-  syslog.log(LOG_INFO, F("webServer: root"));
+  syslog.log(F("webServer: root"));
 #endif
   server.sendHeader(F("Connection"), F("close"));
   time_t now = time(nullptr);
@@ -159,7 +159,7 @@ void handleRoot() {
 void handleReset() {
   if (!handleAuth()) return reqAuth();
 #ifdef SYSLOG
-  syslog.log(LOG_INFO, F("webServer: reset"));
+  syslog.log(F("webServer: reset"));
 #endif
   Serial.println(F("webServer: reset"));
   server.send(200, textHtml, serverReboot);
@@ -185,7 +185,7 @@ void startWebServer() {
   server.on(F("/update"), HTTP_POST, []() {
     if (!handleAuth()) return reqAuth();
 #ifdef SYSLOG
-    syslog.log(LOG_INFO, F("webServer: update"));
+    syslog.log(F("webServer: update"));
 #endif
     server.send(200, textPlain, (Update.hasError()) ? "FAIL" : "OK");
     server.close();
@@ -197,7 +197,7 @@ void startWebServer() {
     if (upload.status == UPLOAD_FILE_START) {
       display_ticker.detach();
       WiFiUDP::stopAll();
-      Serial.printf("Update: %s\n", upload.filename.c_str());
+      Serial.printf_P(PSTR("Update: %s\n"), upload.filename.c_str());
       uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
       if (!Update.begin(maxSketchSpace)) { //start with max available size
         Update.printError(Serial);
@@ -208,7 +208,7 @@ void startWebServer() {
       }
     } else if (upload.status == UPLOAD_FILE_END) {
       if (Update.end(true)) { //true to set the size to the current progress
-        Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
+        Serial.printf_P(PSTR("Update Success: %u\nRebooting...\n"), upload.totalSize);
       } else {
         Update.printError(Serial);
       }
@@ -217,5 +217,5 @@ void startWebServer() {
   });
   server.onNotFound(handleNotFound);
   server.begin();
-  MDNS.addService("http", "tcp", 80);
+  MDNS.addService(F("http"), F("tcp"), 80);
 }

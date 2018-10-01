@@ -65,7 +65,7 @@ void writeSPIFFS() {
     ESP.restart();
   } else {
 #ifdef SYSLOG
-    syslog.log(LOG_INFO, F("save config"));
+    syslog.log(F("save config"));
 #endif
     json.prettyPrintTo(Serial);
     Serial.println();
