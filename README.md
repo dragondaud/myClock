@@ -12,6 +12,8 @@ Supports display of indoor temperature with DS18B20 connected to RX/D9 pin, pull
 
 Display wired following https://www.instructables.com/id/Morphing-Digital-Clock/
 
+Easy hookup using Wemos Matrix Shield from https://github.com/hallard/WeMos-Matrix-Shield
+
 Morphing digits code from https://github.com/hwiguna/HariFun_166_Morphing_Clock
 
 Lookup TimeZone from IP using: http://ip-api.com/ (no API key required).
@@ -35,4 +37,10 @@ https://github.com/2dom/PxMatrix
 https://github.com/tzapu/WiFiManager
 
 https://github.com/arcao/Syslog, if rsyslog functionality desired.
+
+### Scripts
+
+install-Arduino.sh will install necessary componants to build myClock on a Linux system.
+
+build.sh will build, and optionally OTA update, myClock on Linux, MacOS or Windows.
 
