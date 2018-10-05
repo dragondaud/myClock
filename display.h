@@ -19,7 +19,7 @@ Ticker display_ticker;
 #define P_E 0
 #define P_OE 2
 
-PxMATRIX display(64, 32, P_LAT, P_OE, P_A, P_B, P_C, P_D, P_E);
+PxMATRIX display(64, 32, P_LAT, P_OE, P_A, P_B, P_C, P_D);
 
 uint16_t htmlColor565(const String htmlColor) {
   long c = strtol(htmlColor.substring(1).c_str(), NULL, 16);
