@@ -54,7 +54,7 @@ elif [[ "$OSTYPE" == "msys" ]]; then
 else
 	arduino="`which arduino`"
 	if [ -z "$arduino" ]; then
-		arduino=`find /usr -type f -name arduino -print -quit`
+		arduino=`find ~/.local /usr -type f -name arduino -print -quit`
 	fi
 	buildpath="$HOME/.build"
 	espota="$HOME/Arduino/hardware/esp8266com/esp8266/tools/espota.py"
