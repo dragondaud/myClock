@@ -26,7 +26,7 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
         http.end();
 #ifdef SYSLOG
         syslog.logf("getIPlocation: %s, %s, %s, %s",
-                      isp.c_str(), region.c_str(), country.c_str(), tz.c_str());
+                    isp.c_str(), region.c_str(), country.c_str(), tz.c_str());
 #endif
         Serial.println(PSTR("getIPlocation: ") + isp + ", " + region + ", " + country + ", " + tz);
         return zip;

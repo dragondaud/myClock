@@ -81,7 +81,7 @@ void getWeather() {    // Using openweathermap.org
         display.print(description);
 #ifdef SYSLOG
         syslog.logf("getWeather: %dF|%d%%RH|%d%s|%s",
-                      round(temperature), humidity, round(wind), dir.c_str(), description.c_str());
+                    round(temperature), humidity, round(wind), dir.c_str(), description.c_str());
 #endif
         Serial.printf_P(PSTR("%2dF, %2d%%, %d %s (%d), %s (%d) \r\n"),
                         round(temperature), humidity, round(wind), dir.c_str(), deg, description.c_str(), id);

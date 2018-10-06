@@ -12,8 +12,8 @@ static const char* serverHead PROGMEM =
   "a:hover {text-decoration: underline; color: SteelBlue;}\n"
   "div {max-width: 500px; border: ridge; padding: 10px; background-color: SlateGray;}\n"
   "input[type=range] {vertical-align: middle;}\n"
-  "meter {width: 400px; vertical-align: middle; color: Black;}"
-  "meter::after {content: attr(value); position:relative; top:-17px;}"
+  "meter {width: 400px; vertical-align: middle;}\n"
+  "meter::after {content: attr(value); position:relative; top:-17px; color: Black;}"
   "</style></head>\n"
   "<body><a href='https://github.com/dragondaud/myClock' target='_blank'>\n"
   "<h1>myClock " VERSION "</h1></a>\n";

@@ -12,6 +12,7 @@
 #include <ArduinoJson.h>        // https://github.com/bblanchon/ArduinoJson/
 #include <WiFiManager.h>        // https://github.com/tzapu/WiFiManager
 #include "display.h"
+#include "user_interface.h"
 
 #define APPNAME "myClock"
 #define VERSION "0.9.14"
@@ -60,6 +61,7 @@ uint8_t dim;
 bool LIGHT = true;
 
 void setup() {
+  system_update_cpu_freq(SYS_CPU_160MHZ);
   Serial.begin(115200, SERIAL_8N1, SERIAL_TX_ONLY, 1);
   while (!Serial);
   delay(10);
@@ -108,7 +110,7 @@ void setup() {
   display.print(F("waiting for ntp"));
   light = analogRead(A0);
   Serial.printf_P(PSTR("setup: %s, %s, %s, %d, %d \r\n"),
-                location.c_str(), timezone.c_str(), milTime ? "true" : "false", brightness, light);
+                  location.c_str(), timezone.c_str(), milTime ? "true" : "false", brightness, light);
 #ifdef SYSLOG
   syslog.logf("setup: %s|%s|%s|%d|%d",
               location.c_str(), timezone.c_str(), milTime ? "true" : "false", brightness, light);
