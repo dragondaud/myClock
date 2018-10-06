@@ -116,6 +116,7 @@ void handleSave() {
     milTime = json["milTime"];
     myColor = json["myColor"];
     threshold = json["threshold"];
+    celsius = json["celsius"];
 #ifdef SYSLOG
     String sl = json["syslogSrv"];
     if (sl != "") syslogSrv = sl;
@@ -142,8 +143,10 @@ void handleRoot() {
 #ifdef DS18
   payload += "<p><meter value='" + String(Temp) + "' min='-50' max='150'></meter> Temperature\n";
 #endif
-  if (LIGHT) payload += "<p><meter value='" + String(light) + "' min='0' max='" + String(threshold) + "'></meter> Light Level\n";
-  payload += "<p><meter value='" + String(ESP.getFreeHeap()) + "' min='0' max='32767'></meter> Free Heap\n";
+  if (LIGHT) payload += "<p><meter value='" + String(light)
+                          + "' min='0' max='" + String(threshold) + "'></meter> Light Level\n";
+  payload += "<p><meter value='" + String(ESP.getFreeHeap())
+             + "' min='0' max='32767'></meter> Free Heap\n";
   payload += String(serverRoot);
   payload += String(serverColor);
   char c[8];

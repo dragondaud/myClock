@@ -6,7 +6,8 @@ void getWeather() {    // Using openweathermap.org
   display.setTextColor(myRED);
   HTTPClient http;
   String URL = PSTR("http://api.openweathermap.org/data/2.5/weather?zip=")
-               + location + F("&units=imperial&appid=") + owKey;
+               + location + F("&units=%units%&appid=") + owKey;
+  URL.replace("%units%", celsius ? "metric" : "imperial");
   String payload;
   long offset;
   http.setUserAgent(UserAgent);
@@ -31,12 +32,15 @@ void getWeather() {    // Using openweathermap.org
         float wind = root["wind"]["speed"];
         int deg = root["wind"]["deg"];
         String dir = degreeDir(deg);
-        if (temperature < 40) display.setTextColor(myBLUE);
-        else if (temperature < 50) display.setTextColor(myCYAN);
-        else if (temperature < 60) display.setTextColor(myYELLOW);
-        else if (temperature < 80) display.setTextColor(myGREEN);
-        else if (temperature >= 80) display.setTextColor(myORANGE);
-        else if (temperature >= 90) display.setTextColor(myRED);
+        int tc;
+        if (celsius) tc = round(temperature * 1.8) + 32;
+        else tc = round(temperature);
+        if (tc < 40) display.setTextColor(myBLUE);
+        else if (tc < 50) display.setTextColor(myCYAN);
+        else if (tc < 60) display.setTextColor(myYELLOW);
+        else if (tc < 80) display.setTextColor(myGREEN);
+        else if (tc >= 80) display.setTextColor(myORANGE);
+        else if (tc >= 90) display.setTextColor(myRED);
         else display.setTextColor(myColor);
         display.fillRect(0, 0, 64, 6, myBLACK);
 #ifdef DS18
@@ -45,8 +49,8 @@ void getWeather() {    // Using openweathermap.org
                          Temp, round(temperature), 142, humidity, round(wind), dir.c_str());
 #else
         display.setCursor(9, row1);
-        display.printf_P(PSTR("% 2d%cF %2d%% %2d %s"),
-                         round(temperature), 142, humidity, round(wind), dir.c_str());
+        display.printf_P(PSTR("% 2d%c%s %2d%% %2d %s"),
+                         round(temperature), 142, celsius ? "C" : "F", humidity, round(wind), dir.c_str());
 #endif
         String description = weather["main"];
         int id = weather["id"];

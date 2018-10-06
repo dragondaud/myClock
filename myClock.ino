@@ -15,7 +15,7 @@
 #include "user_interface.h"
 
 #define APPNAME "myClock"
-#define VERSION "0.9.14"
+#define VERSION "0.9.15"
 //#define DS18                      // enable DS18B20 temperature sensor
 #define SYSLOG                    // enable SYSLOG support
 
@@ -26,7 +26,8 @@ uint8_t brightness = 255;         // 0-255 display brightness
 bool milTime = true;              // set false for 12hour clock
 String location = "";             // zipcode or empty for geoIP location
 String timezone = "";             // timezone from https://timezonedb.com/time-zones or empty for geoIP
-int threshold = 500;
+int threshold = 500;              // below this value display will dim, incrementally
+bool celsius = false;             // set true to display temp in celsius
 
 // Syslog
 #ifdef SYSLOG
@@ -61,8 +62,8 @@ uint8_t dim;
 bool LIGHT = true;
 
 void setup() {
-  system_update_cpu_freq(SYS_CPU_160MHZ);
-  Serial.begin(115200, SERIAL_8N1, SERIAL_TX_ONLY, 1);
+  system_update_cpu_freq(SYS_CPU_160MHZ);               // force 160Mhz to prevent display flicker
+  Serial.begin(115200, SERIAL_8N1, SERIAL_TX_ONLY, 1);  // allow use of RX pin for gpio
   while (!Serial);
   delay(10);
   Serial.println();
@@ -157,12 +158,14 @@ void loop() {
     }
 #ifdef DS18
     sensors.requestTemperatures();
-    int t = round(sensors.getTempF(0));
-    if (t < -67 | t > 180) t = 0;
+    int t;
+    if (celsius) t = round(sensors.getTempC(0));
+    else t = round(sensors.getTempF(0));
+    if (t < -66 | t > 150) t = 0;
     if (Temp != t) {
       Temp = t;
       display.setCursor(1, row1);
-      display.printf_P(PSTR("%2d"), Temp);
+      display.printf_P(PSTR("% 2d"), Temp);
     }
 #endif
     pNow = now;

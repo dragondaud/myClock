@@ -1,5 +1,5 @@
 # myClock
-## v0.9.14 PRE-RELEASE
+## v0.9.15 PRE-RELEASE
 ### Copyright 2018 by David M Denney &lt;dragondaud@gmail.com&gt;
 
 Master repository: https://github.com/dragondaud/myClock
@@ -8,7 +8,7 @@ Displays accurate time and current weather on a 64x32 pixel display. Sets timezo
 
 Uses LDR, pulled low with a 10k resistor, on analog input to set display brightness.
 
-Supports display of indoor temperature with DS18B20 connected to RX/D9 pin, pulled high with a 4.7K resistor.
+Supports display of indoor temperature with DS18B20 connected to D3 pin, pulled high with a 10K resistor. This pin is listed as 'E' on the input connector, should not be connected. If using matrix shield, you must cut the "E" trace right before the pad.
 
 Display wired following https://www.instructables.com/id/Morphing-Digital-Clock/
 

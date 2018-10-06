@@ -16,7 +16,7 @@ Ticker display_ticker;
 #define P_B 4
 #define P_C 15
 #define P_D 12
-#define P_E 0
+#define P_E 0   // not needed on 64x32
 #define P_OE 2
 
 PxMATRIX display(64, 32, P_LAT, P_OE, P_A, P_B, P_C, P_D);

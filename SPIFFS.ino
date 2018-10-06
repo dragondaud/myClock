@@ -27,6 +27,7 @@ void readSPIFFS() {
         milTime = json["milTime"];
         myColor = json["myColor"];
         threshold = json["threshold"];
+        celsius = json["celsius"];
 #ifdef SYSLOG
         String sl = json["syslogSrv"];
         if (sl != "") syslogSrv = sl;
@@ -51,6 +52,7 @@ void writeSPIFFS() {
   json["milTime"] = milTime;
   json["myColor"] = myColor;
   json["threshold"] = threshold;
+  json["celsius"] = celsius;
 #ifdef SYSLOG
   json["syslogSrv"] = syslogSrv;
   json["syslogPort"] = syslogPort;
