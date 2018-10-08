@@ -4,6 +4,8 @@
 
 Master repository: https://github.com/dragondaud/myClock
 
+![myClock](/docs/clock+board.png)
+
 Displays accurate time and current weather on a 64x32 pixel display. Sets timezone automatically from geoIP, uses the ESP's native NTP for time, and accepts OTA updates. Local WebServer allows updating and configuration, including color-picker to set digits color.
 
 Uses LDR, pulled low with a 10k resistor, on analog input to set display brightness.
