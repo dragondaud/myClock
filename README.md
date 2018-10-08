@@ -10,6 +10,8 @@ Uses LDR, pulled low with a 10k resistor, on analog input to set display brightn
 
 Supports display of indoor temperature with DS18B20 connected to D3 pin, pulled high with a 10K resistor. This pin is listed as 'E' on the input connector, should not be connected. If using matrix shield, you must cut the "E" trace right before the pad.
 
+![Cut E Trace](/docs/E-trace-cut.png)
+
 Display wired following https://www.instructables.com/id/Morphing-Digital-Clock/
 
 Easy hookup using Wemos Matrix Shield from https://github.com/hallard/WeMos-Matrix-Shield
