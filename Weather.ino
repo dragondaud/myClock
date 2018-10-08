@@ -55,6 +55,7 @@ void getWeather() {    // Using openweathermap.org
                          round(temperature), 142, celsius ? "C" : "F", humidity, round(wind), dir.c_str());
 #endif
         String description = weather["description"];
+        description.replace(F("intensity "), "");   // english description too long sometimes
         int id = weather["id"];
         int i = id / 100;
         switch (i) {
@@ -79,9 +80,9 @@ void getWeather() {    // Using openweathermap.org
         }
         int16_t  x1, y1, ww;
         uint16_t w, h;
-        display.getTextBounds(description, 0, row4, &x1, &y1, &w, &h);
-        display.fillRect(0, y1, 64, 6, myBLACK);
-        if (w < 64) x1 = (64 - w) >> 1;         // center weather description on bottom line
+        display.getTextBounds(description, 0, 0, &x1, &y1, &w, &h);
+        display.fillRect(0, row4, 64, 6, myBLACK);
+        if (w < 64) x1 = (67 - w) >> 1;         // center weather description on bottom line
         display.setCursor(x1, row4);
         display.print(description);
 #ifdef SYSLOG
