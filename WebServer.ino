@@ -39,7 +39,7 @@ static const char* serverConfig PROGMEM =
   "<div><h2>Edit Config</h2>\n"
   "<form method='post' action='/save' id='configForm' name='configForm'>\n"
   "<input type='submit' value='SAVE'> <input type='reset'>\n"
-  "<p><textarea style='resize: none;' id='json' rows='13' cols='50' "
+  "<p><textarea style='resize: none;' id='json' rows='15' cols='50' "
   "maxlength='400' name='json' form='configForm'>\n";
 
 static const char* serverTail PROGMEM =
@@ -99,30 +99,7 @@ void handleSave() {
 #endif
   DynamicJsonBuffer jsonBuffer;
   JsonObject& json = jsonBuffer.parseObject(server.arg(F("json")));
-  if (json.success()) {
-    json.prettyPrintTo(Serial);
-    Serial.println();
-    String sp = json["softAPpass"];
-    if (sp != "") softAPpass = sp;
-    String lo = json["location"];
-    if (lo != "") location = lo;
-    String tz = json["timezone"];
-    if (tz != "") timezone = tz;
-    String tk = json["tzKey"];
-    if (tk != "") tzKey = tk;
-    String ow = json["owKey"];
-    if (ow != "") owKey = ow;
-    brightness = json["brightness"];
-    milTime = json["milTime"];
-    myColor = json["myColor"];
-    threshold = json["threshold"];
-    celsius = json["celsius"];
-#ifdef SYSLOG
-    String sl = json["syslogSrv"];
-    if (sl != "") syslogSrv = sl;
-    syslogPort = json["syslogPort"];
-#endif
-  }
+  parseJson(json);
   writeSPIFFS();
   server.send(200, textHtml, serverReboot);
   server.close();

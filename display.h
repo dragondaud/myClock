@@ -51,6 +51,7 @@ const byte row4 = 31;
 const uint16_t myRED = display.color565(255, 0, 0);
 const uint16_t myGREEN = display.color565(0, 255, 0);
 const uint16_t myBLUE = display.color565(0, 0, 255);
+const uint16_t myLTBLUE = display.color565(32, 64, 160);
 const uint16_t myWHITE = display.color565(255, 255, 255);
 const uint16_t myYELLOW = display.color565(255, 255, 0);
 const uint16_t myORANGE = display.color565(255, 165, 0);

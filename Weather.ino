@@ -6,8 +6,9 @@ void getWeather() {    // Using openweathermap.org
   display.setTextColor(myRED);
   HTTPClient http;
   String URL = PSTR("http://api.openweathermap.org/data/2.5/weather?zip=")
-               + location + F("&units=%units%&appid=") + owKey;
+               + location + F("&units=%units%&lang=%lang%&appid=") + owKey;
   URL.replace("%units%", celsius ? "metric" : "imperial");
+  URL.replace("%lang%", language);
   String payload;
   long offset;
   http.setUserAgent(UserAgent);
@@ -35,12 +36,13 @@ void getWeather() {    // Using openweathermap.org
         int tc;
         if (celsius) tc = round(temperature * 1.8) + 32;
         else tc = round(temperature);
-        if (tc < 40) display.setTextColor(myBLUE);
-        else if (tc < 50) display.setTextColor(myCYAN);
-        else if (tc < 60) display.setTextColor(myYELLOW);
-        else if (tc < 80) display.setTextColor(myGREEN);
-        else if (tc >= 80) display.setTextColor(myORANGE);
-        else if (tc >= 90) display.setTextColor(myRED);
+        if (tc <= 32) display.setTextColor(myCYAN);
+        else if (tc <= 50) display.setTextColor(myLTBLUE);
+        else if (tc <= 60) display.setTextColor(myBLUE);
+        else if (tc <= 78) display.setTextColor(myGREEN);
+        else if (tc <= 86) display.setTextColor(myYELLOW);
+        else if (tc <= 95) display.setTextColor(myORANGE);
+        else if (tc > 95) display.setTextColor(myRED);
         else display.setTextColor(myColor);
         display.fillRect(0, 0, 64, 6, myBLACK);
 #ifdef DS18
@@ -52,9 +54,9 @@ void getWeather() {    // Using openweathermap.org
         display.printf_P(PSTR("% 2d%c%s %2d%% %2d %s"),
                          round(temperature), 142, celsius ? "C" : "F", humidity, round(wind), dir.c_str());
 #endif
-        String description = weather["main"];
+        String description = weather["description"];
         int id = weather["id"];
-        int i = round(id / 100);
+        int i = id / 100;
         switch (i) {
           case 2: // Thunderstorms
             display.setTextColor(myORANGE);
@@ -79,9 +81,8 @@ void getWeather() {    // Using openweathermap.org
         uint16_t w, h;
         display.getTextBounds(description, 0, row4, &x1, &y1, &w, &h);
         display.fillRect(0, y1, 64, 6, myBLACK);
-        if (w > 64) w = 0;
-        else w = round((64 - w) / 2);
-        display.setCursor(w, row4);
+        if (w < 64) x1 = (64 - w) >> 1;         // center weather description on bottom line
+        display.setCursor(x1, row4);
         display.print(description);
 #ifdef SYSLOG
         syslog.logf("getWeather: %dF|%d%%RH|%d%s|%s",
