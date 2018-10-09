@@ -48,12 +48,12 @@ void getWeather() {    // Using openweathermap.org
         display.fillRect(0, 0, 64, 6, myBLACK);
 #ifdef DS18
         display.setCursor(0, row1);
-        display.printf_P(PSTR("% 2d/% 2d%cF %2d%% %2d %s"),
-                         Temp, round(temperature), 142, humidity, round(wind), dir.c_str());
+        display.printf_P(PSTR("%2d/%2d%c%s %2d%% %2d %s"), Temp, round(temperature),
+                         142, celsius ? "C" : "F", humidity, round(wind), dir.c_str());
 #else
         display.setCursor(9, row1);
-        display.printf_P(PSTR("% 2d%c%s %2d%% %2d %s"),
-                         round(temperature), 142, celsius ? "C" : "F", humidity, round(wind), dir.c_str());
+        display.printf_P(PSTR("% 2d%c%s %2d%% %2d %s"), round(temperature),
+                         142, celsius ? "C" : "F", humidity, round(wind), dir.c_str());
 #endif
         String description = weather["description"];
         description.replace(F("intensity "), "");   // english description too long sometimes

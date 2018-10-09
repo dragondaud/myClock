@@ -17,7 +17,7 @@
 #define APPNAME "myClock"
 #define VERSION "0.9.17"
 //#define DS18                      // enable DS18B20 temperature sensor
-//#define SYSLOG                    // enable SYSLOG support
+#define SYSLOG                    // enable SYSLOG support
 
 String tzKey;                     // API key from https://timezonedb.com/register
 String owKey;                     // API key from https://home.openweathermap.org/api_keys
@@ -165,7 +165,7 @@ void loop() {
     if (t < -66 | t > 150) t = 0;
     if (Temp != t) {
       Temp = t;
-      display.setCursor(1, row1);
+      display.setCursor(0, row1);
       display.printf_P(PSTR("% 2d"), Temp);
     }
 #endif
