@@ -13,7 +13,9 @@ static const char* serverHead PROGMEM =
   "div {max-width: 500px; border: ridge; padding: 10px; background-color: SlateGray;}\n"
   "input[type=range] {vertical-align: middle;}\n"
   "meter {width: 400px; vertical-align: middle;}\n"
-  "meter::after {content: attr(value); position:relative; top:-17px; color: Black;}"
+  "meter::after {content: attr(value); position:relative; top:-17px; color: Black;}\n"
+  "meter::-webkit-meter-bar {background: none; background-color: LightBlue; "
+  "box-shadow: 5px 5px 5px SlateGray inset; border: 1px solid; }\n"
   "</style></head>\n"
   "<body><a href='https://github.com/dragondaud/myClock' target='_blank'>\n"
   "<h1>myClock " VERSION "</h1></a>\n";
@@ -109,6 +111,7 @@ void handleSave() {
 
 void handleRoot() {
   if (!handleAuth()) return reqAuth();
+  size_t fh = ESP.getFreeHeap();
 #ifdef SYSLOG
   syslog.log(F("webServer: root"));
 #endif
@@ -116,17 +119,18 @@ void handleRoot() {
   time_t now = time(nullptr);
   String t = ctime(&now);
   t.trim();
+  char c[8];
   String payload = String(serverHead) + F("<h3>") + t + F("</h3>\n<p>");
 #ifdef DS18
   payload += "<p><meter value='" + String(Temp) + "' min='-50' max='150'></meter> Temperature\n";
 #endif
-  if (LIGHT) payload += "<p><meter value='" + String(light)
-                          + "' min='0' max='" + String(threshold) + "'></meter> Light Level\n";
-  payload += "<p><meter value='" + String(ESP.getFreeHeap())
-             + "' min='0' max='32767'></meter> Free Heap\n";
+  if (LIGHT) payload += "<p><meter value='" + String(light) + "' high='" + String(threshold << 1)
+                          + "' min='0' max='1023' low='" + String(threshold)
+                          + "' optimal='" + String(threshold) + "'></meter> Light Level\n";
+  payload += "<p><meter value='" + String(fh) + "' min='0' max='32767'"
+             + " low='10000' optimal='15000'></meter> Free Heap\n";
   payload += String(serverRoot);
   payload += String(serverColor);
-  char c[8];
   sprintf(c, "#%06X", color565to888(myColor));
   payload.replace("%light%", String(light));
   payload.replace("%myColor%", String(c));

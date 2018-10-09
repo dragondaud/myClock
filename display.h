@@ -1,3 +1,5 @@
+// matrix display related definitions
+
 #ifndef DISPLAY_H
 #define DISPLAY_H
 

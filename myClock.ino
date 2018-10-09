@@ -15,17 +15,17 @@
 #include "user_interface.h"
 
 #define APPNAME "myClock"
-#define VERSION "0.9.16"
+#define VERSION "0.9.17"
 //#define DS18                      // enable DS18B20 temperature sensor
-#define SYSLOG                    // enable SYSLOG support
+//#define SYSLOG                    // enable SYSLOG support
 
-String tzKey = "";                // API key from https://timezonedb.com/register
-String owKey = "";                // API key from https://home.openweathermap.org/api_keys
+String tzKey;                     // API key from https://timezonedb.com/register
+String owKey;                     // API key from https://home.openweathermap.org/api_keys
 String softAPpass = "ConFigMe";   // password for SoftAP config
 uint8_t brightness = 255;         // 0-255 display brightness
 bool milTime = true;              // set false for 12hour clock
-String location = "";             // zipcode or empty for geoIP location
-String timezone = "";             // timezone from https://timezonedb.com/time-zones or empty for geoIP
+String location;                  // zipcode or empty for geoIP location
+String timezone;                  // timezone from https://timezonedb.com/time-zones or empty for geoIP
 int threshold = 500;              // below this value display will dim, incrementally
 bool celsius = false;             // set true to display temp in celsius
 String language = "en";           // ar,bg,ca,cz,de,el,en,fa,fi,fr,gl,hr,hu,it,ja,kr,la,lt,mk,nl,pl,pt,ro,ru,se,sk,sl,es,tr,ua,vi,zh_cn,zh_tw

@@ -1,11 +1,12 @@
 //  NTP and location functions
 
 String getIPlocation() { // Using ip-api.com to discover public IP's location and timezone
+  WiFiClient wifi;
   HTTPClient http;
   static const char URL[] PROGMEM = "http://ip-api.com/json";
   String payload;
   http.setUserAgent(UserAgent);
-  if (!http.begin(URL)) {
+  if (!http.begin(wifi, URL)) {
 #ifdef SYSLOG
     syslog.log(F("getIPlocation HTTP failed"));
 #endif
@@ -50,13 +51,14 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
 } // getIPlocation
 
 int getOffset(const String tz) { // using timezonedb.com, return offset for zone name
+  WiFiClient wifi;
   HTTPClient http;
   String URL = PSTR("http://api.timezonedb.com/v2/list-time-zone?key=")
                + tzKey + F("&format=json&zone=") + tz;
   String payload;
   int stat;
   http.setUserAgent(UserAgent);
-  if (!http.begin(URL)) {
+  if (!http.begin(wifi, URL)) {
 #ifdef SYSLOG
     syslog.log(F("getOffset HTTP failed"));
 #endif

@@ -4,6 +4,7 @@ void getWeather() {    // Using openweathermap.org
   wDelay = pNow + 900; // delay between weather updates
   display.setCursor(0, row4);   // any error displayed in red on bottom row
   display.setTextColor(myRED);
+  WiFiClient wifi;
   HTTPClient http;
   String URL = PSTR("http://api.openweathermap.org/data/2.5/weather?zip=")
                + location + F("&units=%units%&lang=%lang%&appid=") + owKey;
@@ -12,7 +13,7 @@ void getWeather() {    // Using openweathermap.org
   String payload;
   long offset;
   http.setUserAgent(UserAgent);
-  if (!http.begin(URL)) {
+  if (!http.begin(wifi, URL)) {
 #ifdef SYSLOG
     syslog.log(F("getWeather HTTP failed"));
 #endif

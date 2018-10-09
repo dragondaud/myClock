@@ -22,7 +22,7 @@ void configModeCallback(WiFiManager *myWiFiManager) {
 void startWiFi() {   // if WiFi does not connect, establish AP for configuration
   String t = WiFi.macAddress();
   t = String(APPNAME) + "-" + t.substring(9, 11) + t.substring(12, 14) + t.substring(15, 17);
-  t.toCharArray(HOST, 20);
+  t.toCharArray(HOST, sizeof(HOST));
   WiFi.hostname(HOST);
   WiFiManager wifiManager;
   wifiManager.setAPCallback(configModeCallback);
