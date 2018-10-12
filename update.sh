@@ -1,6 +1,6 @@
 #!/bin/bash
-# update myClock and required libraries
-# works on Linux, MacOS and Windows with git bash
+# update myClock, ESP core, and required libraries
+# under Windows use git bash in git for Windows https://gitforwindows.org/
 
 SCRIPT=`realpath $0`
 SCRIPTPATH=`dirname $SCRIPT`

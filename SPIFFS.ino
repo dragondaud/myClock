@@ -13,6 +13,7 @@ void readSPIFFS() {
       DynamicJsonBuffer jsonBuffer;
       JsonObject& json = jsonBuffer.parseObject(buf.get());
       parseJson(json);
+      configFile.close();
     }
   } else {
     Serial.println(F("readSPIFFS: failed to mount SPIFFS"));
