@@ -8,12 +8,12 @@ SRC="$APP.ino"
 BIN="$SRC.bin"
 
 #default board d1_mini
-board="esp8266com:esp8266:d1_mini:xtal=160,vt=flash,eesz=4M1M,ip=lm2,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600"
+board="esp8266com:esp8266:d1_mini:xtal=160,vt=flash,eesz=4M1M,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600"
 
 while getopts ":lvf:h" opt; do
 	case $opt in
 		l)
-			board="esp8266com:esp8266:d1_mini_lite:xtal=160,vt=flash,eesz=1M64,ip=lm2,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600";;
+			board="esp8266com:esp8266:d1_mini_lite:xtal=160,vt=flash,eesz=1M64,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600";;
 		v)
 			verbose="--verbose"
 			debug="--debug";;
