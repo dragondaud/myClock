@@ -4,18 +4,11 @@
 
 SCRIPT=`realpath $0`
 SCRIPTPATH=`dirname $SCRIPT`
-cd $SCRIPTPATH
-git pull --no-edit
-cd ../hardware/esp8266com/esp8266
-git pull --no-edit
-cd ../../../libraries/ArduinoJson
-git pull --no-edit
-cd ../Syslog
-git pull --no-edit
-cd ../Adafruit-GFX-Library
-git pull --no-edit
-cd ../PxMatrix
-git pull --no-edit
-cd ../WiFiManager
-git pull --no-edit
-cd "$OLDPWD"
+ARDUINO=`realpath $SCRIPTPATH/..`
+cd $SCRIPTPATH && git pull --no-edit
+cd $ARDUINO/hardware/esp8266com/esp8266 && git pull --no-edit
+cd $ARDUINO/libraries/ArduinoJson && git pull --no-edit
+cd $ARDUINO/libraries/Syslog && git pull --no-edit
+cd $ARDUINO/libraries/Adafruit-GFX-Library && git pull --no-edit
+cd $ARDUINO/libraries/PxMatrix && git pull --no-edit
+cd $ARDUINO/libraries/WiFiManager && git pull --no-edit

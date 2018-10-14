@@ -82,7 +82,7 @@ void getWeather() {    // Using openweathermap.org
         int16_t  x1, y1, ww;
         uint16_t w, h;
         display.getTextBounds(description, 0, row4, &x1, &y1, &w, &h);
-        display.fillRect(x1, y1, 64, 6, myBLACK);
+        display.fillRect(0, 25, 64, 6, myBLACK);
         if (w < 64) x1 = (68 - w) >> 1;         // center weather description (getTextBounds returns too long)
         display.setCursor(x1, row4);
         display.print(description);
