@@ -44,7 +44,8 @@ https://github.com/arcao/Syslog, if rsyslog functionality desired.
 
 ### Scripts
 
-install-Arduino.sh will install necessary componants to build myClock on a Linux system.
+install-Arduino.sh will install necessary components to build myClock on a Linux system.
 
 build.sh will build, and optionally OTA update, myClock on Linux, MacOS or Windows.
 
+update.sh will update myClock, core, and required libraries.
