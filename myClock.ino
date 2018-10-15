@@ -15,7 +15,7 @@
 #include "user_interface.h"
 
 #define APPNAME "myClock"
-#define VERSION "0.9.17"
+#define VERSION "0.9.18"
 //#define DS18                      // enable DS18B20 temperature sensor
 #define SYSLOG                    // enable SYSLOG support
 
@@ -29,6 +29,7 @@ String timezone;                  // timezone from https://timezonedb.com/time-z
 int threshold = 500;              // below this value display will dim, incrementally
 bool celsius = false;             // set true to display temp in celsius
 String language = "en";           // ar,bg,ca,cz,de,el,en,fa,fi,fr,gl,hr,hu,it,ja,kr,la,lt,mk,nl,pl,pt,ro,ru,se,sk,sl,es,tr,ua,vi,zh_cn,zh_tw
+String countryCode = "US";        // default US, automatically set based on public IP address
 
 // Syslog
 #ifdef SYSLOG

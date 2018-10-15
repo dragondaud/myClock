@@ -1,5 +1,5 @@
 # myClock
-## v0.9.15 PRE-RELEASE
+## v0.9.18 PRE-RELEASE
 ### Copyright 2018 by David M Denney &lt;dragondaud@gmail.com&gt;
 
 Master repository: https://github.com/dragondaud/myClock
@@ -7,6 +7,8 @@ Master repository: https://github.com/dragondaud/myClock
 ![myClock](/docs/clock+board.png)
 
 Displays accurate time and current weather on a 64x32 pixel display. Sets timezone automatically from geoIP, uses the ESP's native NTP for time, and accepts OTA updates. Local WebServer allows updating and configuration, including color-picker to set digits color.
+
+Designed to run on a Wemos-D1-Mini or NodeMCU, configured for CPU Freq 160Mhz and Flash size 4M (1M SPIFFS). Known to work on D1-mini-lite, with Flash size 1M (64k SPIFFS).
 
 Uses LDR, pulled low with a 10k resistor, on analog input to set display brightness.
 

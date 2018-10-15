@@ -24,6 +24,7 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
         String tz = root["timezone"];
         String zip = root["zip"];
         timezone = tz;
+        countryCode = country;
         http.end();
 #ifdef SYSLOG
         syslog.logf("getIPlocation: %s, %s, %s, %s",
@@ -96,7 +97,7 @@ void setNTP(const String tz) {
     delay(1000);
   }
   Serial.print(F("setNTP: configure NTP ..."));
-  configTime(offset, 0, "pool.ntp.org", "time.nist.gov");
+  configTime(offset, 0, "0.pool.ntp.org", "1.pool.ntp.org");
   while (time(nullptr) < (30 * 365 * 24 * 60 * 60)) {
     delay(1000);
     Serial.print(F("."));
