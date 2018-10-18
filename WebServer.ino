@@ -57,6 +57,30 @@ static const char* serverReboot PROGMEM =
   "<body><h1>myClock " VERSION "</h1>"
   "Rebooting...</body></html>";
 
+static const char* serverLanguage PROGMEM =
+  "<p><form method='POST' action='/lang' id='langForm' name='langForm'>\n"
+  "<label for='myLang'>Weather Language </label>"
+  "<select name='myLang' id='myLang'>\n"
+  "<option value='%lang%'>Select (%lang%)</option>\n"
+  "<option value='en'>English</option>\n"
+  "<option value='hr'>Croatian</option>\n"
+  "<option value='cz'>Czech</option>\n"
+  "<option value='nl'>Dutch</option>\n"
+  "<option value='fi'>Finnish</option>\n"
+  "<option value='fr'>French</option>\n"
+  "<option value='gl'>Galician</option>\n"
+  "<option value='de'>German</option>\n"
+  "<option value='hu'>Hungarian</option>\n"
+  "<option value='it'>Italian</option>\n"
+  "<option value='la'>Latvian</option>\n"
+  "<option value='lt'>Lithuanian</option>\n"
+  "<option value='pl'>Polish</option>\n"
+  "<option value='pt'>Portuguese</option>\n"
+  "<option value='sk'>Slovak</option>\n"
+  "<option value='sl'>Slovenian</option>\n"
+  "<option value='es'>Spanish</option>\n"
+  "</select> <input type='submit' value='SET'></form><p>\n";
+
 static const char* textPlain PROGMEM = "text/plain";
 static const char* textHtml PROGMEM = "text/html";
 
@@ -87,6 +111,17 @@ void handleColor() {
   myColor = htmlColor565(c);
   if (b) brightness = b;
   displayDraw(brightness);
+  getWeather();
+  writeSPIFFS();
+  server.sendHeader(F("Location"), F("/"));
+  server.send(301);
+}
+
+void handleLang() {
+  if (!handleAuth()) return reqAuth();
+  if (!server.hasArg(F("myLang"))) return server.send(503, textPlain, F("FAILED"));
+  String lang = server.arg(F("myLang"));
+  language = lang;
   getWeather();
   writeSPIFFS();
   server.sendHeader(F("Location"), F("/"));
@@ -135,6 +170,8 @@ void handleRoot() {
   payload.replace("%light%", String(light));
   payload.replace("%myColor%", String(c));
   payload.replace("%brightness%", String(brightness));
+  payload += String(serverLanguage);
+  payload.replace("%lang%", String(language));
   payload += String(serverConfig) + getSPIFFS() + F("</textarea></form></div>\n");
   payload += String(serverTail);
   server.send(200, textHtml, payload);
@@ -160,6 +197,7 @@ void startWebServer() {
   server.on(F("/"), HTTP_GET, handleRoot);
   server.on(F("/save"), handleSave);
   server.on(F("/color"), handleColor);
+  server.on(F("/lang"), handleLang);
   server.on(F("/reset"), HTTP_GET, handleReset);
   server.on(F("/logout"), HTTP_GET, handleLogout);
   server.on(F("/favicon.ico"), HTTP_GET, []() {
