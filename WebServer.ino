@@ -34,7 +34,7 @@ static const char* serverStyle PROGMEM =
   ".slider.round:before {border-radius: 50%;}\n";
 
 static const char* serverOptions PROGMEM =
-  "<div><h3>Configuration</h3>\n"
+  "<div><h3>%host%</h3>\n"
   "<form method='POST' action='/options' id='optionsForm' name='optionsForm'>\n"
   "<table><tr><th><label for='myColor'>Color</label></th>\n"
   "<td><input type='color' id='myColor' name='myColor' value='%myColor%'></td></tr>\n"
@@ -56,7 +56,7 @@ static const char* serverOptions PROGMEM =
   "<span class='slider round'></span></label></td></tr>\n"
   "<tr><th><label for='language'>Language</label></th>\n"
   "<td><select name='language' id='language'>\n"
-  "<option value='%lang%'>Select (%lang%)</option>\n"
+  "<option value='%language%'>%language%</option>\n"
   "<option value='en'>English</option>\n"
   "<option value='hr'>Croatian</option>\n"
   "<option value='cz'>Czech</option>\n"
@@ -200,13 +200,15 @@ void handleRoot() {
              + " low='10000' optimal='15000'></meter> Free Heap\n";
   payload += String(serverOptions);
   sprintf(c, "#%06X", color565to888(myColor));
+  payload.replace("%host%", String(HOST));
   payload.replace("%light%", String(light));
   payload.replace("%myColor%", String(c));
   payload.replace("%brightness%", String(brightness));
   payload.replace("%threshold%", String(threshold));
   payload.replace("%milTime%", milTime ? checked : "");
   payload.replace("%celsius%", celsius ? checked : "");
-  payload.replace("%lang%", String(language));
+  payload.replace("'" + String(language) + "'", "'" + String(language) + "'" + " selected");
+  payload.replace("%language%", String(language));
   payload.replace("%location%", String(location));
   payload.replace("%timezone%", String(timezone));
   payload.replace("%tzKey%", String(tzKey));
