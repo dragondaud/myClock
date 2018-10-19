@@ -44,11 +44,16 @@ static const char* serverOptions PROGMEM =
   "<form method='POST' action='/options' id='optionsForm' name='optionsForm'>\n"
   "<table><tr><th><label for='myColor'>Color</label></th>\n"
   "<td><input type='color' id='myColor' name='myColor' value='%myColor%'></td></tr>\n"
-  "<tr><th><label for='brightness'> Brightness</label></th>\n"
+  "<tr><th><label for='brightness'>Brightness</label></th>\n"
   "<td><input type='number' id='brightNum' name='brightNum' style='width: 3em;'"
   "min='1' max='255' value='%brightness%' oninput='brightness.value=brightNum.value'> \n"
   "<input type='range' id='brightness' name='brightness' "
   "min='1' max='255' value='%brightness%' oninput='brightNum.value=brightness.value'></td></tr>\n"
+  "<tr><th><label for='threshold'>Threshold</label></th>\n"
+  "<td><input type='number' id='threshNum' name='threshNum' style='width: 3em;'"
+  "min='1' max='255' value='%threshold%' oninput='threshold.value=threshNum.value'> \n"
+  "<input type='range' id='threshold' name='threshold' "
+  "min='1' max='255' value='%threshold%' oninput='threshNum.value=threshold.value'></td></tr>\n"
   "<tr><th><label for='milTime'>24hour Time</label></th>\n"
   "<td><label class='switch'><input type='checkbox' id='milTime' name='milTime' %milTime%>"
   "<span class='slider round'></span></label></td></tr>\n"
@@ -75,19 +80,18 @@ static const char* serverOptions PROGMEM =
   "<option value='sk'>Slovak</option>\n"
   "<option value='sl'>Slovenian</option>\n"
   "<option value='es'>Spanish</option></select></td></tr>\n"
-  "<tr><th><label for='softAPpass'>Admin Password</label></th>\n"
-  "<td><input type='password' id='softAPpass' name='softAPpass' placeholder='new password'></td></tr>\n"
   "<tr><th><label for='location'>Postal Code</label></th>\n"
   "<td><input type='number' id='location' name='location' style='width: 5em' value='%location%'></td></tr>\n"
+  "<tr><th><label for='timezone'>Time Zone</label></th>\n"
+  "<td><input type='text' id='timezone' name='timezone' value='%timezone%'></td></tr>\n"
+  "<tr><th><label for='tzKey'>TimeZoneDB Key</label></th>\n"
+  "<td><input type='text' id='tzKey' name='tzKey' value='%tzKey%'></td></tr>\n"
+  "<tr><th><label for='owKey'>OpenWeatherMap Key</label></th>\n"
+  "<td><input type='text' id='owKey' name='owKey' value='%owKey%'></td></tr>\n"
+  "<tr><th><label for='softAPpass'>Admin Password</label></th>\n"
+  "<td><input type='password' id='softAPpass' name='softAPpass' placeholder='new password'></td></tr>\n"
   "<tr><th><input type='submit' value='SET OPTIONS'></th></tr>\n"
   "</table></form><p></div><p>\n";
-
-static const char* serverConfig PROGMEM =
-  "<div><h2>Edit Config</h2>\n"
-  "<form method='post' action='/save' id='configForm' name='configForm'>\n"
-  "<input type='submit' value='SAVE'> <input type='reset'>\n"
-  "<p><textarea style='resize: none;' id='json' rows='15' cols='50' "
-  "maxlength='500' name='json' form='configForm'>\n";
 
 static const char* serverTail PROGMEM =
   "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form>\n"
@@ -136,6 +140,9 @@ void handleOptions() {
   uint8_t b = server.arg(F("brightness")).toInt();
   if (b) brightness = b;
   else brightness = 255;
+  int t = server.arg(F("threshold")).toInt();
+  if (t) threshold = t;
+  else threshold = 500;
   c = server.arg(F("milTime"));
   if (c == "on") milTime = true;
   else milTime = false;
@@ -148,6 +155,12 @@ void handleOptions() {
   if (c != "") softAPpass = c;
   c = server.arg(F("location"));
   if (c != "") location = c;
+  c = server.arg(F("timezone"));
+  if (c != "") timezone = c;
+  c = server.arg(F("tzKey"));
+  if (c != "") tzKey = c;
+  c = server.arg(F("owKey"));
+  if (c != "") owKey = c;
   displayDraw(brightness);
   getWeather();
   writeSPIFFS();
@@ -196,12 +209,15 @@ void handleRoot() {
   payload.replace("%light%", String(light));
   payload.replace("%myColor%", String(c));
   payload.replace("%brightness%", String(brightness));
+  payload.replace("%threshold%", String(threshold));
   payload.replace("%milTime%", milTime ? checked : "");
   payload.replace("%celsius%", celsius ? checked : "");
   payload.replace("%lang%", String(language));
   payload.replace("%location%", String(location));
+  payload.replace("%timezone%", String(timezone));
+  payload.replace("%tzKey%", String(tzKey));
+  payload.replace("%owKey%", String(owKey));
   payload += String(serverUpdate);
-  payload += String(serverConfig) + getSPIFFS() + F("</textarea></form></div>\n");
   payload += String(serverTail);
   server.send(200, textHtml, payload);
 }
