@@ -74,9 +74,8 @@ static const char* serverOptions PROGMEM =
   "<option value='sl'>Slovenian</option>\n"
   "<option value='es'>Spanish</option></select></td></tr>\n"
   "<tr><th><label for='location'>Postal Code</label></th>\n"
-  "<td><input type='number' id='location' name='location' style='width: 5em' value='%location%'></td></tr>\n"
-  "<tr><th><label for='timezone'>Time Zone</label></th>\n"
-  "<td><input type='text' id='timezone' name='timezone' value='%timezone%'></td></tr>\n"
+  "<td><input type='number' id='location' name='location' style='width: 5em' value='%location%'></td>"
+  "<td>%timezone%</td></tr>\n"
   "<tr><th><label for='tzKey'>TimeZoneDB Key</label></th>\n"
   "<td><input type='text' id='tzKey' name='tzKey' value='%tzKey%'></td></tr>\n"
   "<tr><th><label for='owKey'>OpenWeatherMap Key</label></th>\n"
@@ -153,14 +152,15 @@ void handleOptions() {
   c = server.arg(F("softAPpass"));
   if (c != "") softAPpass = c;
   c = server.arg(F("location"));
-  if (c != "") location = c;
-  c = server.arg(F("timezone"));
-  if (c != "") timezone = c;
+  if (c != "") {
+    location = c;
+    timezone = "";
+  }
   c = server.arg(F("tzKey"));
   if (c != "") tzKey = c;
   c = server.arg(F("owKey"));
   if (c != "") owKey = c;
-  getIPlocation();
+  while (timezone == "") getIPlocation();
   setNTP(timezone);
   displayDraw(brightness);
   getWeather();
