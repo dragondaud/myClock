@@ -160,8 +160,8 @@ void handleOptions() {
   if (c != "") tzKey = c;
   c = server.arg(F("owKey"));
   if (c != "") owKey = c;
-  displayDraw(brightness);
   setNTP(timezone);
+  displayDraw(brightness);
   getWeather();
   writeSPIFFS();
   server.sendHeader(F("Location"), F("/"));
