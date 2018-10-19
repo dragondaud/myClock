@@ -33,12 +33,6 @@ static const char* serverStyle PROGMEM =
   ".slider.round {border-radius: 34px;}\n"
   ".slider.round:before {border-radius: 50%;}\n";
 
-static const char* serverUpdate PROGMEM =
-  "<div><h2>Update Firmware</h2>\n"
-  "<form method='POST' action='/update' enctype='multipart/form-data'>\n"
-  "<input type='file' name='update'>  \n"
-  "<input type='submit' value='UPDATE'></form></div><p>\n";
-
 static const char* serverOptions PROGMEM =
   "<div><form method='POST' action='/options' id='optionsForm' name='optionsForm'>\n"
   "<table><tr><th><label for='myColor'>Color</label></th>\n"
@@ -92,9 +86,15 @@ static const char* serverOptions PROGMEM =
   "</table><input type='submit' value='APPLY'>\n"
   "</form></div><p>\n";
 
+static const char* serverUpdate PROGMEM =
+  "<div><h2>Update Firmware</h2>\n"
+  "<form method='POST' action='/update' enctype='multipart/form-data'>\n"
+  "<input type='file' name='update'>  \n"
+  "<input type='submit' value='UPDATE'></form><p></div><p>\n";
+
 static const char* serverTail PROGMEM =
-  "<p><form method='GET' action='/logout'><input type='submit' value='LOGOUT'></form>  \n"
-  "<form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form>\n"
+  "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form>\n"
+  "<p><form method='GET' action='/logout'><input type='submit' value='LOGOUT'></form>\n"
   "</body></html>";
 
 static const char* serverReboot PROGMEM =
