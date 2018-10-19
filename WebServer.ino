@@ -56,11 +56,10 @@ static const char* serverOptions PROGMEM =
   "<span class='slider round'></span></label></td></tr>\n"
   "<tr><th><label for='language'>Language</label></th>\n"
   "<td><select name='language' id='language'>\n"
-  "<option value='%language%'>%language%</option>\n"
-  "<option value='en'>English</option>\n"
   "<option value='hr'>Croatian</option>\n"
   "<option value='cz'>Czech</option>\n"
   "<option value='nl'>Dutch</option>\n"
+  "<option value='en'>English</option>\n"
   "<option value='fi'>Finnish</option>\n"
   "<option value='fr'>French</option>\n"
   "<option value='gl'>Galician</option>\n"
@@ -208,7 +207,6 @@ void handleRoot() {
   payload.replace("%milTime%", milTime ? checked : "");
   payload.replace("%celsius%", celsius ? checked : "");
   payload.replace("'" + String(language) + "'", "'" + String(language) + "'" + " selected");
-  payload.replace("%language%", String(language));
   payload.replace("%location%", String(location));
   payload.replace("%timezone%", String(timezone));
   payload.replace("%tzKey%", String(tzKey));

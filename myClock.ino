@@ -28,7 +28,7 @@ String location;                  // zipcode or empty for geoIP location
 String timezone;                  // timezone from https://timezonedb.com/time-zones or empty for geoIP
 int threshold = 500;              // below this value display will dim, incrementally
 bool celsius = false;             // set true to display temp in celsius
-String language = "en";           // ar,bg,ca,cz,de,el,en,fa,fi,fr,gl,hr,hu,it,ja,kr,la,lt,mk,nl,pl,pt,ro,ru,se,sk,sl,es,tr,ua,vi,zh_cn,zh_tw
+String language = "en";           // font does not support all languages
 String countryCode = "US";        // default US, automatically set based on public IP address
 
 // Syslog
