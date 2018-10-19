@@ -36,8 +36,8 @@ static const char* serverStyle PROGMEM =
 static const char* serverUpdate PROGMEM =
   "<div><h2>Update Firmware</h2>\n"
   "<form method='POST' action='/update' enctype='multipart/form-data'>\n"
-  "<input type='file' name='update'>\n"
-  "<p><input type='submit' value='UPDATE'></form></div><p>\n";
+  "<input type='file' name='update'>  \n"
+  "<input type='submit' value='UPDATE'></form></div><p>\n";
 
 static const char* serverOptions PROGMEM =
   "<div><form method='POST' action='/options' id='optionsForm' name='optionsForm'>\n"
@@ -89,12 +89,12 @@ static const char* serverOptions PROGMEM =
   "<td><input type='text' id='owKey' name='owKey' size='32' value='%owKey%'></td></tr>\n"
   "<tr><th><label for='softAPpass'>Admin Password</label></th>\n"
   "<td><input type='password' id='softAPpass' name='softAPpass' placeholder='enter new password'></td></tr>\n"
-  "<tr><th></th><th><input type='submit' value='APPLY'></th></tr>\n"
-  "</table></form></div><p>\n";
+  "</table><input type='submit' value='APPLY'>\n"
+  "</form></div><p>\n";
 
 static const char* serverTail PROGMEM =
-  "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form>\n"
-  "<p><form method='GET' action='/logout'><input type='submit' value='LOGOUT'></form>\n"
+  "<p><form method='GET' action='/logout'><input type='submit' value='LOGOUT'></form>  \n"
+  "<form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form>\n"
   "</body></html>";
 
 static const char* serverReboot PROGMEM =
