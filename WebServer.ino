@@ -83,7 +83,7 @@ static const char* serverOptions PROGMEM =
   "<td><input type='text' id='owKey' name='owKey' size='32' value='%owKey%'></td></tr>\n"
   "<tr><th><label for='softAPpass'>Admin Password</label></th>\n"
   "<td><input type='password' id='softAPpass' name='softAPpass' placeholder='enter new password'></td></tr>\n"
-  "</table><input type='submit' value='APPLY'>\n"
+  "</table><p><input type='submit' value='APPLY OPTIONS'>\n"
   "</form></div><p>\n";
 
 static const char* serverUpdate PROGMEM =
