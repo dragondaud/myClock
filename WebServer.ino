@@ -34,7 +34,8 @@ static const char* serverStyle PROGMEM =
   ".slider.round:before {border-radius: 50%;}\n";
 
 static const char* serverOptions PROGMEM =
-  "<div><form method='POST' action='/options' id='optionsForm' name='optionsForm'>\n"
+  "<div><h3>Configuration</h3>\n"
+  "<form method='POST' action='/options' id='optionsForm' name='optionsForm'>\n"
   "<table><tr><th><label for='myColor'>Color</label></th>\n"
   "<td><input type='color' id='myColor' name='myColor' value='%myColor%'></td></tr>\n"
   "<tr><th><label for='brightness'>Brightness</label></th>\n"
@@ -87,7 +88,7 @@ static const char* serverOptions PROGMEM =
   "</form></div><p>\n";
 
 static const char* serverUpdate PROGMEM =
-  "<div><h2>Update Firmware</h2>\n"
+  "<div><h3>Update Firmware</h3>\n"
   "<form method='POST' action='/update' enctype='multipart/form-data'>\n"
   "<input type='file' name='update'>  \n"
   "<input type='submit' value='UPDATE'></form><p></div><p>\n";
