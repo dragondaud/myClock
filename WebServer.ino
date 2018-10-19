@@ -158,13 +158,16 @@ void handleOptions() {
   if (c != "") {
     c.trim();
     c.replace(' ', '_');
-    timezone = c;
+    if (timezone != c) {
+      timezone = c;
+      setNTP(timezone);
+      delay(1000);
+    }
   }
   c = server.arg(F("tzKey"));
   if (c != "") tzKey = c;
   c = server.arg(F("owKey"));
   if (c != "") owKey = c;
-  setNTP(timezone);
   displayDraw(brightness);
   getWeather();
   writeSPIFFS();
