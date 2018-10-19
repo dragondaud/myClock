@@ -90,13 +90,15 @@ static const char* serverOptions PROGMEM =
 static const char* serverUpdate PROGMEM =
   "<div><h3>Update Firmware</h3>\n"
   "<form method='POST' action='/update' enctype='multipart/form-data'>\n"
-  "<input type='file' name='update' class='button'>  \n"
+  "<input type='file' name='update'>  \n"
   "<input type='submit' value='UPDATE' class='button'></form><p></div><p>\n";
 
 static const char* serverTail PROGMEM =
-  "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK' class='button'></form>\n"
-  "<p><form method='GET' action='/logout'><input type='submit' value='LOGOUT' class='button'></form>\n"
-  "</body></html>";
+  "<p><form method='GET' action='/reset'>"
+  "<input type='submit' value='REBOOT CLOCK' class='button'></form>  \n"
+  "<form method='GET' action='/logout' style='display: inline'>"
+  "<input type='submit' value='LOGOUT' class='button'>"
+  "</form></body></html>\n";
 
 static const char* serverReboot PROGMEM =
   "<!DOCTYPE HTML><html><head>\n"
@@ -189,7 +191,7 @@ void handleRoot() {
   t = String(F("<span style='text-align: right'>")) + t + String(F("</span>"));
   char c[8];
   String payload;
-  payload.reserve(4000);
+  payload.reserve(5000);
   payload = String(serverHead);
 #ifdef DS18
   payload += "<p><meter value='" + String(Temp) + "' min='-50' max='150'></meter> Temperature\n";
