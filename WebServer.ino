@@ -186,7 +186,7 @@ void handleRoot() {
   time_t now = time(nullptr);
   String t = ctime(&now);
   t.trim();
-  t = F("<span style='text-align: right'>") + t + F("</span>");
+  t = String(F("<span style='text-align: right'>")) + t + String(F("</span>"));
   char c[8];
   String payload;
   payload.reserve(4000);
