@@ -19,6 +19,7 @@ static const char* serverStyle PROGMEM =
   "td {padding: 4px; text-align: left;}\n"
   "th {padding: 4px; text-align: right;}\n"
   "input[type=range] {vertical-align: middle;}\n"
+  ".button {padding:10px 15px; background:#ccc; -webkit-border-radius: 5px;}\n"
   "meter {width: 400px; vertical-align: middle;}\n"
   "meter::after {content: attr(value); position:relative; top:-17px; color: Black;}\n"
   "meter::-webkit-meter-bar {background: none; background-color: LightBlue; "
@@ -83,18 +84,18 @@ static const char* serverOptions PROGMEM =
   "<td><input type='text' id='owKey' name='owKey' size='32' value='%owKey%'></td></tr>\n"
   "<tr><th><label for='softAPpass'>Admin Password</label></th>\n"
   "<td><input type='password' id='softAPpass' name='softAPpass' placeholder='enter new password'></td></tr>\n"
-  "</table><p><input type='submit' value='APPLY OPTIONS'>\n"
+  "</table><p style='text-align: right'><input type='submit' class='button' value='APPLY CONFIG'>\n"
   "</form></div><p>\n";
 
 static const char* serverUpdate PROGMEM =
   "<div><h3>Update Firmware</h3>\n"
   "<form method='POST' action='/update' enctype='multipart/form-data'>\n"
-  "<input type='file' name='update'>  \n"
-  "<input type='submit' value='UPDATE'></form><p></div><p>\n";
+  "<input type='file' name='update' class='button'>  \n"
+  "<input type='submit' value='UPDATE' class='button'></form><p></div><p>\n";
 
 static const char* serverTail PROGMEM =
-  "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form>\n"
-  "<p><form method='GET' action='/logout'><input type='submit' value='LOGOUT'></form>\n"
+  "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK' class='button'></form>\n"
+  "<p><form method='GET' action='/logout'><input type='submit' value='LOGOUT' class='button'></form>\n"
   "</body></html>";
 
 static const char* serverReboot PROGMEM =
@@ -185,10 +186,11 @@ void handleRoot() {
   time_t now = time(nullptr);
   String t = ctime(&now);
   t.trim();
+  t = F("<span style='text-align: right'>") + t + F("</span>");
   char c[8];
   String payload;
   payload.reserve(4000);
-  payload = String(serverHead) + F("<h3>") + t + F("</h3>\n");
+  payload = String(serverHead);
 #ifdef DS18
   payload += "<p><meter value='" + String(Temp) + "' min='-50' max='150'></meter> Temperature\n";
 #endif
@@ -199,7 +201,7 @@ void handleRoot() {
              + " low='10000' optimal='15000'></meter> Free Heap\n";
   payload += String(serverOptions);
   sprintf(c, "#%06X", color565to888(myColor));
-  payload.replace("%host%", String(HOST));
+  payload.replace("%host%", String(HOST) + t);
   payload.replace("%light%", String(light));
   payload.replace("%myColor%", String(c));
   payload.replace("%brightness%", String(brightness));
