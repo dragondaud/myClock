@@ -1,6 +1,7 @@
 #!/bin/bash
 # update myClock, ESP core, and required libraries
 # under Windows use git bash in git for Windows https://gitforwindows.org/
+# MacOS requires GNU 'coreutils' for this script to function
 
 SCRIPT=`realpath $0`
 SCRIPTPATH=`dirname $SCRIPT`

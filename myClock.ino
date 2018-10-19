@@ -15,9 +15,9 @@
 #include "user_interface.h"
 
 #define APPNAME "myClock"
-#define VERSION "0.9.18"
+#define VERSION "0.9.19"
 //#define DS18                      // enable DS18B20 temperature sensor
-#define SYSLOG                    // enable SYSLOG support
+//#define SYSLOG                    // enable SYSLOG support
 
 String tzKey;                     // API key from https://timezonedb.com/register
 String owKey;                     // API key from https://home.openweathermap.org/api_keys

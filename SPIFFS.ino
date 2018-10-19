@@ -77,8 +77,6 @@ void writeSPIFFS() {
 #ifdef SYSLOG
     syslog.log(F("save config"));
 #endif
-    json.prettyPrintTo(Serial);
-    Serial.println();
     json.printTo(configFile);
     configFile.close();
     saveConfig = false;
