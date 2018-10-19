@@ -161,6 +161,7 @@ void handleOptions() {
   c = server.arg(F("owKey"));
   if (c != "") owKey = c;
   displayDraw(brightness);
+  setNTP(timezone);
   getWeather();
   writeSPIFFS();
   server.sendHeader(F("Location"), F("/"));
