@@ -160,28 +160,13 @@ void handleOptions() {
   if (c != "") tzKey = c;
   c = server.arg(F("owKey"));
   if (c != "") owKey = c;
+  getIPlocation();
   setNTP(timezone);
   displayDraw(brightness);
   getWeather();
   writeSPIFFS();
   server.sendHeader(F("Location"), F("/"));
   server.send(301);
-}
-
-void handleSave() {
-  if (!handleAuth()) return reqAuth();
-  if (!server.hasArg(F("json"))) return server.send(503, textPlain, F("FAILED"));
-#ifdef SYSLOG
-  syslog.log(F("webServer: save"));
-#endif
-  DynamicJsonBuffer jsonBuffer;
-  JsonObject& json = jsonBuffer.parseObject(server.arg(F("json")));
-  parseJson(json);
-  writeSPIFFS();
-  server.send(200, textHtml, serverReboot);
-  server.close();
-  delay(1000);
-  ESP.restart();
 }
 
 void handleRoot() {
@@ -243,7 +228,6 @@ void handleLogout() {
 void startWebServer() {
   server.on(F("/"), HTTP_GET, handleRoot);
   server.on(F("/stylesheet.css"), HTTP_GET, handleStyle);
-  server.on(F("/save"), handleSave);
   server.on(F("/options"), handleOptions);
   server.on(F("/reset"), HTTP_GET, handleReset);
   server.on(F("/logout"), HTTP_GET, handleLogout);
