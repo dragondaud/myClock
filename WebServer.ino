@@ -40,8 +40,7 @@ static const char* serverUpdate PROGMEM =
   "<p><input type='submit' value='UPDATE'></form></div><p>\n";
 
 static const char* serverOptions PROGMEM =
-  "<div><h2>myClock Options</h2>\n"
-  "<form method='POST' action='/options' id='optionsForm' name='optionsForm'>\n"
+  "<div><form method='POST' action='/options' id='optionsForm' name='optionsForm'>\n"
   "<table><tr><th><label for='myColor'>Color</label></th>\n"
   "<td><input type='color' id='myColor' name='myColor' value='%myColor%'></td></tr>\n"
   "<tr><th><label for='brightness'>Brightness</label></th>\n"
@@ -51,9 +50,9 @@ static const char* serverOptions PROGMEM =
   "min='1' max='255' value='%brightness%' oninput='brightNum.value=brightness.value'></td></tr>\n"
   "<tr><th><label for='threshold'>Threshold</label></th>\n"
   "<td><input type='number' id='threshNum' name='threshNum' style='width: 3em;'"
-  "min='1' max='255' value='%threshold%' oninput='threshold.value=threshNum.value'> \n"
+  "min='1' max='1000' value='%threshold%' oninput='threshold.value=threshNum.value'> \n"
   "<input type='range' id='threshold' name='threshold' "
-  "min='1' max='255' value='%threshold%' oninput='threshNum.value=threshold.value'></td></tr>\n"
+  "min='1' max='1000' value='%threshold%' oninput='threshNum.value=threshold.value'></td></tr>\n"
   "<tr><th><label for='milTime'>24hour Time</label></th>\n"
   "<td><label class='switch'><input type='checkbox' id='milTime' name='milTime' %milTime%>"
   "<span class='slider round'></span></label></td></tr>\n"
@@ -90,8 +89,8 @@ static const char* serverOptions PROGMEM =
   "<td><input type='text' id='owKey' name='owKey' size='32' value='%owKey%'></td></tr>\n"
   "<tr><th><label for='softAPpass'>Admin Password</label></th>\n"
   "<td><input type='password' id='softAPpass' name='softAPpass' placeholder='enter new password'></td></tr>\n"
-  "<tr><th>%length% <input type='submit' value='SET OPTIONS'></th></tr>\n"
-  "</table></form><p></div><p>\n";
+  "<tr><th></th><th><input type='submit' value='APPLY'></th></tr>\n"
+  "</table></form></div><p>\n";
 
 static const char* serverTail PROGMEM =
   "<p><form method='GET' action='/reset'><input type='submit' value='REBOOT CLOCK'></form>\n"
@@ -196,7 +195,7 @@ void handleRoot() {
   t.trim();
   char c[8];
   String payload;
-  payload.reserve(1000);
+  payload.reserve(4000);
   payload = String(serverHead) + F("<h3>") + t + F("</h3>\n");
 #ifdef DS18
   payload += "<p><meter value='" + String(Temp) + "' min='-50' max='150'></meter> Temperature\n";
@@ -221,7 +220,6 @@ void handleRoot() {
   payload.replace("%owKey%", String(owKey));
   payload += String(serverUpdate);
   payload += String(serverTail);
-  payload.replace("%length%", String(payload.length()));
   server.send(200, textHtml, payload);
 }
 
