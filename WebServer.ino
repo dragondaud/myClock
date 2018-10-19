@@ -94,9 +94,9 @@ static const char* serverUpdate PROGMEM =
   "<input type='submit' value='UPDATE' class='button'></form><p></div><p>\n";
 
 static const char* serverTail PROGMEM =
-  "<p><form method='GET' action='/reset'>"
+  "<p><form method='GET' action='/reset' style='display: inline; float: left;'>"
   "<input type='submit' value='REBOOT CLOCK' class='button'></form>  \n"
-  "<form method='GET' action='/logout' style='display: inline; float: right;'>"
+  "<form method='GET' action='/logout' style='display: inline; float: left;'>"
   "<input type='submit' value='LOGOUT' class='button'>"
   "</form></body></html>\n";
 
@@ -196,11 +196,6 @@ void handleRoot() {
 #ifdef DS18
   payload += "<p><meter value='" + String(Temp) + "' min='-50' max='150'></meter> Temperature\n";
 #endif
-  if (LIGHT) payload += "<p><meter value='" + String(light) + "' high='" + String(threshold << 1)
-                          + "' min='0' max='1023' low='" + String(threshold)
-                          + "' optimal='" + String(threshold) + "'></meter> Light Level\n";
-  payload += "<p><meter value='" + String(fh) + "' min='0' max='32767'"
-             + " low='10000' optimal='15000'></meter> Free Heap\n";
   payload += String(serverOptions);
   sprintf(c, "#%06X", color565to888(myColor));
   payload.replace("%host%", String(HOST) + t);
