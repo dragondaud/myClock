@@ -155,7 +155,7 @@ void handleOptions() {
   c = server.arg(F("location"));
   if (c != "") location = c;
   c = server.arg(F("timezone"));
-  if (c != "") timezone = c;
+  if (c != "") timezone = c.trim().replace(" ", "_");
   c = server.arg(F("tzKey"));
   if (c != "") tzKey = c;
   c = server.arg(F("owKey"));
