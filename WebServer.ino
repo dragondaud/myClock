@@ -16,8 +16,8 @@ static const char* serverStyle PROGMEM =
   "a {text-decoration: none; color: LightSteelBlue;}\n"
   "a:hover {text-decoration: underline; color: SteelBlue;}\n"
   "div {max-width: 500px; border: ridge; padding: 10px; background-color: SlateGray;}\n"
-  "td {padding: 5px; text-align: left;}\n"
-  "th {padding: 5px; text-align: right;}\n"
+  "td {padding: 4px; text-align: left;}\n"
+  "th {padding: 4px; text-align: right;}\n"
   "input[type=range] {vertical-align: middle;}\n"
   "meter {width: 400px; vertical-align: middle;}\n"
   "meter::after {content: attr(value); position:relative; top:-17px; color: Black;}\n"
@@ -87,10 +87,10 @@ static const char* serverOptions PROGMEM =
   "<tr><th><label for='tzKey'>TimeZoneDB Key</label></th>\n"
   "<td><input type='text' id='tzKey' name='tzKey' value='%tzKey%'></td></tr>\n"
   "<tr><th><label for='owKey'>OpenWeatherMap Key</label></th>\n"
-  "<td><input type='text' id='owKey' name='owKey' style='width: 32em' value='%owKey%'></td></tr>\n"
+  "<td><input type='text' id='owKey' name='owKey' size='32' value='%owKey%'></td></tr>\n"
   "<tr><th><label for='softAPpass'>Admin Password</label></th>\n"
   "<td><input type='password' id='softAPpass' name='softAPpass' placeholder='enter new password'></td></tr>\n"
-  "<tr><th><input type='submit' value='SET OPTIONS'></th></tr>\n"
+  "<tr><th>%length% <input type='submit' value='SET OPTIONS'></th></tr>\n"
   "</table></form><p></div><p>\n";
 
 static const char* serverTail PROGMEM =
@@ -195,7 +195,9 @@ void handleRoot() {
   String t = ctime(&now);
   t.trim();
   char c[8];
-  String payload = String(serverHead) + F("<h3>") + t + F("</h3>\n");
+  String payload;
+  payload.reserve(1000);
+  payload = String(serverHead) + F("<h3>") + t + F("</h3>\n");
 #ifdef DS18
   payload += "<p><meter value='" + String(Temp) + "' min='-50' max='150'></meter> Temperature\n";
 #endif
@@ -219,6 +221,7 @@ void handleRoot() {
   payload.replace("%owKey%", String(owKey));
   payload += String(serverUpdate);
   payload += String(serverTail);
+  payload.replace("%length%", String(payload.length()));
   server.send(200, textHtml, payload);
 }
 
