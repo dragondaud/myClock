@@ -40,12 +40,12 @@ static const char* serverOptions PROGMEM =
   "<table><tr><th><label for='myColor'>Color</label></th>\n"
   "<td><input type='color' id='myColor' name='myColor' value='%myColor%'></td></tr>\n"
   "<tr><th><label for='brightness'>Brightness</label></th>\n"
-  "<td><input type='number' id='brightNum' name='brightNum' style='width: 3em;'"
+  "<td><input type='number' id='brightNum' name='brightNum' style='width: 3em'"
   "min='1' max='255' value='%brightness%' oninput='brightness.value=brightNum.value'> \n"
   "<input type='range' id='brightness' name='brightness' "
   "min='1' max='255' value='%brightness%' oninput='brightNum.value=brightness.value'></td></tr>\n"
   "<tr><th><label for='threshold'>Threshold</label></th>\n"
-  "<td><input type='number' id='threshNum' name='threshNum' style='width: 3em;'"
+  "<td><input type='number' id='threshNum' name='threshNum' style='width: 3em'"
   "min='1' max='999' value='%threshold%' oninput='threshold.value=threshNum.value'> \n"
   "<input type='range' id='threshold' name='threshold' "
   "min='1' max='999' value='%threshold%' oninput='threshNum.value=threshold.value'></td></tr>\n"
@@ -94,10 +94,10 @@ static const char* serverUpdate PROGMEM =
   "<input type='submit' value='UPDATE' class='button'></form><p></div><p>\n";
 
 static const char* serverTail PROGMEM =
-  "<p><form method='GET' action='/reset' style='display: inline; float: left;'>"
-  "<input type='submit' value='REBOOT CLOCK' class='button'></form>  \n"
-  "<form method='GET' action='/logout' style='display: inline; float: left;'>"
-  "<input type='submit' value='LOGOUT' class='button'>"
+  "<p><form method='GET' action='/reset' style='float: left'>"
+  "<input type='submit' value='REBOOT CLOCK' class='button'></form>\n"
+  "<form method='GET' action='/logout' style='float: left'>"
+  "<input type='submit' value='LOGOUT' class='button'>\n"
   "</form></body></html>\n";
 
 static const char* serverReboot PROGMEM =
@@ -188,7 +188,7 @@ void handleRoot() {
   time_t now = time(nullptr);
   String t = ctime(&now);
   t.trim();
-  t = String(F("<span style='text-align: right'>")) + t + String(F("</span>"));
+  t = String(F("<span style='float: right'>")) + t + String(F("</span>"));
   char c[8];
   String payload;
   payload.reserve(5000);
