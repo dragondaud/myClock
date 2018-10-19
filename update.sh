@@ -13,3 +13,4 @@ cd $ARDUINO/libraries/Syslog && git pull --no-edit
 cd $ARDUINO/libraries/Adafruit-GFX-Library && git pull --no-edit
 cd $ARDUINO/libraries/PxMatrix && git pull --no-edit
 cd $ARDUINO/libraries/WiFiManager && git pull --no-edit
+
