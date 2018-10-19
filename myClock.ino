@@ -109,8 +109,12 @@ void setup() {
   display.setTextColor(myMAGENTA);
   display.print(timezone);
   display.setCursor(2, row4);
-  display.setTextColor(myCYAN);
-  display.print(F("waiting for ntp"));
+  display.setTextColor(myLTBLUE);
+  display.print(F("V"));
+  display.print(VERSION);
+  display.setCursor(32, row4);
+  display.setTextColor(myBLUE);
+  display.print(F("set ntp"));
   light = analogRead(A0);
   Serial.printf_P(PSTR("setup: %s, %s, %s, %d, %d \r\n"),
                   location.c_str(), timezone.c_str(), milTime ? "true" : "false", brightness, light);

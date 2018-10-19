@@ -87,9 +87,9 @@ static const char* serverOptions PROGMEM =
   "<tr><th><label for='tzKey'>TimeZoneDB Key</label></th>\n"
   "<td><input type='text' id='tzKey' name='tzKey' value='%tzKey%'></td></tr>\n"
   "<tr><th><label for='owKey'>OpenWeatherMap Key</label></th>\n"
-  "<td><input type='text' id='owKey' name='owKey' value='%owKey%'></td></tr>\n"
+  "<td><input type='text' id='owKey' name='owKey' style='width: 32em' value='%owKey%'></td></tr>\n"
   "<tr><th><label for='softAPpass'>Admin Password</label></th>\n"
-  "<td><input type='password' id='softAPpass' name='softAPpass' placeholder='new password'></td></tr>\n"
+  "<td><input type='password' id='softAPpass' name='softAPpass' placeholder='enter new password'></td></tr>\n"
   "<tr><th><input type='submit' value='SET OPTIONS'></th></tr>\n"
   "</table></form><p></div><p>\n";
 
