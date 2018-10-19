@@ -96,7 +96,7 @@ static const char* serverUpdate PROGMEM =
 static const char* serverTail PROGMEM =
   "<p><form method='GET' action='/reset'>"
   "<input type='submit' value='REBOOT CLOCK' class='button'></form>  \n"
-  "<form method='GET' action='/logout' style='display: inline'>"
+  "<form method='GET' action='/logout' style='display: inline; float: right;'>"
   "<input type='submit' value='LOGOUT' class='button'>"
   "</form></body></html>\n";
 
