@@ -19,6 +19,7 @@ static const char* serverStyle PROGMEM =
   "td {padding: 4px; text-align: left;}\n"
   "th {padding: 4px; text-align: right;}\n"
   "input[type=range] {vertical-align: middle;}\n"
+  "input[type=file] {padding:10px 15px; -webkit-border-radius: 5px;}\n"
   ".button {padding:10px 15px; background:#ccc; -webkit-border-radius: 5px;}\n"
   "meter {width: 400px; vertical-align: middle;}\n"
   "meter::after {content: attr(value); position:relative; top:-17px; color: Black;}\n"
