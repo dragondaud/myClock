@@ -7,6 +7,7 @@
 
 static const char* serverHead PROGMEM =
   "<!DOCTYPE HTML><html><head>\n<title>myClock</title>\n"
+  "<meta name='viewport' content='width=500, initial-scale=1'>"
   "<link href='stylesheet.css' rel='stylesheet' type='text/css'></head>\n"
   "<body><a href='https://github.com/dragondaud/myClock' target='_blank'>\n"
   "<h1>myClock " VERSION "</h1></a>\n";
