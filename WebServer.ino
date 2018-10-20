@@ -7,7 +7,7 @@
 
 static const char* serverHead PROGMEM =
   "<!DOCTYPE HTML><html><head>\n<title>myClock</title>\n"
-  "<meta name='viewport' content='width=device-width'>"
+  "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
   "<link href='stylesheet.css' rel='stylesheet' type='text/css'></head>\n"
   "<body><a href='https://github.com/dragondaud/myClock' target='_blank'>\n"
   "<h1>myClock " VERSION "</h1></a>\n";
@@ -16,7 +16,7 @@ static const char* serverStyle PROGMEM =
   "body {background-color: DarkSlateGray; color: White; font-family: sans-serif;}\n"
   "a {text-decoration: none; color: LightSteelBlue;}\n"
   "a:hover {text-decoration: underline; color: SteelBlue;}\n"
-  "div {max-width: 500px; border: ridge; padding: 10px; background-color: SlateGray;}\n"
+  "div {min-width: 500px; margin: auto; border: ridge; padding: 10px; background-color: SlateGray;}\n"
   "td {padding: 4px; text-align: left;}\n"
   "th {padding: 4px; text-align: right;}\n"
   "input[type=range] {vertical-align: middle;}\n"
