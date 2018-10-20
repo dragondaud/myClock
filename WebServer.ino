@@ -16,7 +16,7 @@ static const char* serverStyle PROGMEM =
   "body {background-color: DarkSlateGray; color: White; font-family: sans-serif;}\n"
   "a {text-decoration: none; color: LightSteelBlue;}\n"
   "a:hover {text-decoration: underline; color: SteelBlue;}\n"
-  "div {min-width: 450px; max-width: 600px; border: ridge; padding: 10px; background-color: SlateGray;}\n"
+  "div {min-width: 420px; max-width: 600px; border: ridge; padding: 10px; background-color: SlateGray;}\n"
   "td {padding: 4px; text-align: left;}\n"
   "th {padding: 4px; text-align: right;}\n"
   "input[type=range] {vertical-align: middle;}\n"
