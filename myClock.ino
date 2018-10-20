@@ -15,7 +15,7 @@
 #include "user_interface.h"
 
 #define APPNAME "myClock"
-#define VERSION "0.9.20"
+#define VERSION "0.9.21"
 //#define DS18                      // enable DS18B20 temperature sensor
 //#define SYSLOG                    // enable SYSLOG support
 

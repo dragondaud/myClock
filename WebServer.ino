@@ -85,17 +85,17 @@ static const char* serverOptions PROGMEM =
   "<tr><th><label for='softAPpass'>Admin Password</label></th>\n"
   "<td><input type='password' id='softAPpass' name='softAPpass' placeholder='enter new password'></td></tr>\n"
   "</table><p style='text-align: right'><input type='submit' class='button' value='APPLY CONFIG'>\n"
-  "</form></div>\n";
+  "</form></div><p>\n";
 
 static const char* serverUpdate PROGMEM =
   "<div><h3>Update Firmware</h3>\n"
   "<form method='POST' action='/update' enctype='multipart/form-data'>\n"
   "<input type='file' name='update'>\n"
-  "<input type='submit' value='UPDATE' class='button' style='float: right'></form><p>\n"
-  "<p><form method='GET' action='/reset' style='float: left'>\n"
+  "<input type='submit' value='UPDATE' class='button'></form><p>\n"
+  "<p><span><form method='GET' action='/reset' style='display:inline'>\n"
   "<input type='submit' value='REBOOT CLOCK' class='button'></form>\n"
-  "<form method='GET' action='/logout' style='float: right'>\n"
-  "<input type='submit' value='LOGOUT' class='button'></form>\n"
+  "<form method='GET' action='/logout' style='display:inline'>\n"
+  "<input type='submit' value='LOGOUT' class='button'></form></span>\n"
   "<p></div></body></html>\n";
 
 static const char* serverReboot PROGMEM =
