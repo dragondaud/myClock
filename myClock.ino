@@ -15,9 +15,9 @@
 #include "user_interface.h"
 
 #define APPNAME "myClock"
-#define VERSION "0.9.18"
+#define VERSION "0.9.21"
 //#define DS18                      // enable DS18B20 temperature sensor
-#define SYSLOG                    // enable SYSLOG support
+//#define SYSLOG                    // enable SYSLOG support
 
 String tzKey;                     // API key from https://timezonedb.com/register
 String owKey;                     // API key from https://home.openweathermap.org/api_keys
@@ -28,7 +28,7 @@ String location;                  // zipcode or empty for geoIP location
 String timezone;                  // timezone from https://timezonedb.com/time-zones or empty for geoIP
 int threshold = 500;              // below this value display will dim, incrementally
 bool celsius = false;             // set true to display temp in celsius
-String language = "en";           // ar,bg,ca,cz,de,el,en,fa,fi,fr,gl,hr,hu,it,ja,kr,la,lt,mk,nl,pl,pt,ro,ru,se,sk,sl,es,tr,ua,vi,zh_cn,zh_tw
+String language = "en";           // font does not support all languages
 String countryCode = "US";        // default US, automatically set based on public IP address
 
 // Syslog
@@ -109,8 +109,12 @@ void setup() {
   display.setTextColor(myMAGENTA);
   display.print(timezone);
   display.setCursor(2, row4);
-  display.setTextColor(myCYAN);
-  display.print(F("waiting for ntp"));
+  display.setTextColor(myLTBLUE);
+  display.print(F("V"));
+  display.print(VERSION);
+  display.setCursor(32, row4);
+  display.setTextColor(myBLUE);
+  display.print(F("set ntp"));
   light = analogRead(A0);
   Serial.printf_P(PSTR("setup: %s, %s, %s, %d, %d \r\n"),
                   location.c_str(), timezone.c_str(), milTime ? "true" : "false", brightness, light);
