@@ -7,23 +7,27 @@ if [[ "$OSTYPE" =~ linux ]]; then
 	sudo apt install build-essential openssh-server git ubuntu-make -y
 	sudo usermod -a -G dialout $USER
 	umake ide arduino
+	cd $HOME
+	mkdir -p Arduino && cd Arduino
+elif [[ "$OSTYPE" =~ darwin ]]; then
+	if [[ ! -d /Applications/Arduino.app ]]; then
+		echo "Install Arduino IDE from https://www.arduino.cc/en/Main/Software"
+	fi
+	mkdir -p $HOME/Documents/Arduino && cd $HOME/Documents/Arduino
 fi
 
-cd $HOME || exit
-
-mkdir Arduino && cd Arduino && mkdir hardware && cd hardware && mkdir esp8266com && cd esp8266com \
-	&& git clone https://github.com/esp8266/Arduino.git esp8266
-
-cd esp8266 && ./tools/boards.txt.py --nofloat --allgen && cd tools && python get.py
-
-cd ~/Arduino || exit
-git clone https://github.com/dragondaud/myClock.git
-
-mkdir libraries || exit
-cd libraries || exit
-git clone https://github.com/bblanchon/ArduinoJson.git
-git clone https://github.com/arcao/Syslog.git
-git clone https://github.com/adafruit/Adafruit-GFX-Library.git
-git clone https://github.com/2dom/PxMatrix.git
-git clone https://github.com/tzapu/WiFiManager.git
+[ ! -d "myClock" ] && git clone https://github.com/dragondaud/myClock.git
+mkdir -p hardware/esp8266com && cd hardware/esp8266com
+[ ! -d "esp8266" ] && git clone https://github.com/esp8266/Arduino.git esp8266
+cd esp8266
+./tools/boards.txt.py --nofloat --allgen
+cd tools
+python get.py
+cd ../../../..
+mkdir -p libraries && cd libraries
+[ ! -d "ArduinoJson" ] && git clone https://github.com/bblanchon/ArduinoJson.git
+[ ! -d "Syslog" ] && git clone https://github.com/arcao/Syslog.git
+[ ! -d "Adafruit-GFX-Library" ] && git clone https://github.com/adafruit/Adafruit-GFX-Library.git
+[ ! -d "PxMatrix" ] && git clone https://github.com/2dom/PxMatrix.git
+[ ! -d "WiFiManager" ] && git clone https://github.com/tzapu/WiFiManager.git
 

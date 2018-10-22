@@ -43,7 +43,7 @@ done
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	arduino="/Applications/Arduino.app/Contents/MacOS/Arduino"
 	buildpath="$HOME/.build"
-	espota="$HOME/Arduino/hardware/esp8266com/esp8266/tools/espota.py"
+	espota="$HOME/Documents/Arduino/hardware/esp8266com/esp8266/tools/espota.py"
 elif [[ "$OSTYPE" == "cygwin" ]]; then
 	arduino="/c/Program Files (x86)/Arduino/arduino_debug.exe"
 	buildpath="${USERPROFILE}\.build"
