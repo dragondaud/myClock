@@ -14,7 +14,7 @@
 #include "display.h"
 
 #define APPNAME "myClock"
-#define VERSION "0.9.21"
+#define VERSION "0.9.22"
 //#define DS18                      // enable DS18B20 temperature sensor
 //#define SYSLOG                    // enable SYSLOG support
 #define LIGHT                     // enable LDR light sensor
@@ -153,7 +153,7 @@ void loop() {
       if (m0 != digit2.Value()) digit2.Morph(m0);
       if (m1 != digit3.Value()) digit3.Morph(m1);
       pMM = mm;
-      Serial.printf_P(PSTR("%02d:%02d \r"), hh, mm);
+      Serial.printf_P(PSTR("%02d:%02d %d \r"), hh, mm, ESP.getFreeHeap());
     }
     if (hh != pHH) {
       int h0 = hh % 10;
