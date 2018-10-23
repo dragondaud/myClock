@@ -79,7 +79,6 @@ void writeSPIFFS() {
 #endif
     json.printTo(configFile);
     configFile.close();
-    saveConfig = false;
     delay(1000);
   }
 }

@@ -1,9 +1,5 @@
 // WiFi and WiFiManager
 
-void saveConfigCallback() {
-  saveConfig = true;
-}
-
 void configModeCallback(WiFiManager *myWiFiManager) {
   display.clearDisplay();
   display.setFont(&TomThumb);
@@ -45,10 +41,10 @@ void startWiFi() {   // if WiFi does not connect, establish AP for configuration
     ESP.restart();
   } );
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    Serial.print("OTA Progress: " + String((progress / (total / 100))) + " \r");
+    Serial.print(PSTR("OTA Progress: ") + String((progress / (total / 100))) + PSTR(" \r"));
   });
   ArduinoOTA.onError([](ota_error_t error) {
-    Serial.print("\nError[" + String(error) + "]: ");
+    Serial.print(PSTR("\nError[") + String(error) + PSTR("]: "));
     if (error == OTA_AUTH_ERROR) Serial.println(F("Auth Failed"));
     else if (error == OTA_BEGIN_ERROR) Serial.println(F("Begin Failed"));
     else if (error == OTA_CONNECT_ERROR) Serial.println(F("Connect Failed"));

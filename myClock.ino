@@ -17,6 +17,7 @@
 #define VERSION "0.9.21"
 //#define DS18                      // enable DS18B20 temperature sensor
 //#define SYSLOG                    // enable SYSLOG support
+#define LIGHT                     // enable LDR light sensor
 
 String tzKey;                     // API key from https://timezonedb.com/register
 String owKey;                     // API key from https://home.openweathermap.org/api_keys
@@ -58,9 +59,7 @@ uint8_t pHH, pMM, pSS;
 uint16_t light;
 long offset;
 char HOST[20];
-bool saveConfig = false;
 uint8_t dim;
-bool LIGHT = true;
 
 void setup() {
   system_update_cpu_freq(SYS_CPU_160MHZ);               // force 160Mhz to prevent display flicker
@@ -68,6 +67,10 @@ void setup() {
   while (!Serial);
   delay(10);
   Serial.println();
+  tzKey.reserve(13);
+  owKey.reserve(33);
+  location.reserve(10);
+  timezone.reserve(20);
   readSPIFFS();
 
   display.begin(16);
@@ -85,7 +88,6 @@ void setup() {
 #endif
 
   startWiFi();
-  if (saveConfig) writeSPIFFS();
 
 #ifdef SYSLOG
   syslog.server(syslogSrv.c_str(), syslogPort);
@@ -114,12 +116,9 @@ void setup() {
   display.setCursor(32, row4);
   display.setTextColor(myBLUE);
   display.print(F("set ntp"));
-  light = analogRead(A0);
-  Serial.printf_P(PSTR("setup: %s, %s, %s, %d, %d \r\n"),
-                  location.c_str(), timezone.c_str(), milTime ? "true" : "false", brightness, light);
+  Serial.printf_P(PSTR("setup: %s, %s, %s \r\n"), location.c_str(), timezone.c_str(), milTime ? "true" : "false");
 #ifdef SYSLOG
-  syslog.logf("setup: %s|%s|%s|%d|%d",
-              location.c_str(), timezone.c_str(), milTime ? "true" : "false", brightness, light);
+  syslog.logf("setup: %s|%s|%s", location.c_str(), timezone.c_str(), milTime ? "true" : "false");
 #endif
   setNTP(timezone);
   delay(1000);
@@ -144,7 +143,9 @@ void loop() {
       if (s0 != digit0.Value()) digit0.Morph(s0);
       if (s1 != digit1.Value()) digit1.Morph(s1);
       pSS = ss;
+#ifdef LIGHT
       getLight();
+#endif
     }
     if (mm != pMM) {
       int m0 = mm % 10;
@@ -152,7 +153,7 @@ void loop() {
       if (m0 != digit2.Value()) digit2.Morph(m0);
       if (m1 != digit3.Value()) digit3.Morph(m1);
       pMM = mm;
-      Serial.printf_P(PSTR("%02d:%02d %3d %3d \r"), hh, mm, light, dim);
+      Serial.printf_P(PSTR("%02d:%02d \r"), hh, mm);
     }
     if (hh != pHH) {
       int h0 = hh % 10;
@@ -199,8 +200,8 @@ void displayDraw(uint8_t b) {
   pNow = now;
 }
 
+#ifdef LIGHT
 void getLight() {
-  if (!LIGHT) return;
   int lt = analogRead(A0);
   if (lt > 20) {
     light = (light * 3 + lt) >> 2;
@@ -212,3 +213,4 @@ void getLight() {
     display.setBrightness(dim);
   }
 }
+#endif

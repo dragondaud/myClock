@@ -30,7 +30,8 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
         syslog.logf("getIPlocation: %s, %s, %s, %s",
                     isp.c_str(), region.c_str(), country.c_str(), tz.c_str());
 #endif
-        Serial.println(PSTR("getIPlocation: ") + isp + ", " + region + ", " + country + ", " + tz);
+        Serial.println(PSTR("getIPlocation: ") + isp + PSTR(", ")
+                       + region + PSTR(", ") + country + PSTR(", ") + tz);
         return zip;
       } else {
 #ifdef SYSLOG
@@ -55,7 +56,7 @@ int getOffset(const String tz) { // using timezonedb.com, return offset for zone
   WiFiClient wifi;
   HTTPClient http;
   String URL = PSTR("http://api.timezonedb.com/v2/list-time-zone?key=")
-               + tzKey + F("&format=json&zone=") + tz;
+               + tzKey + PSTR("&format=json&zone=") + tz;
   String payload;
   int stat;
   http.setUserAgent(UserAgent);
@@ -97,7 +98,7 @@ void setNTP(const String tz) {
     delay(1000);
   }
   Serial.print(F("setNTP: configure NTP ..."));
-  configTime(offset, 0, "0.pool.ntp.org", "1.pool.ntp.org");
+  configTime(offset, 0, PSTR("0.pool.ntp.org"), PSTR("1.pool.ntp.org"));
   while (time(nullptr) < (30 * 365 * 24 * 60 * 60)) {
     delay(1000);
     Serial.print(F("."));

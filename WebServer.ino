@@ -191,25 +191,25 @@ void handleRoot() {
   t = String(F("<span style='float: right'>")) + t + String(F("</span>"));
   char c[8];
   String payload;
-  payload.reserve(5000);
+  payload.reserve(4992);
   payload = String(serverHead);
 #ifdef DS18
-  payload += "<p><meter value='" + String(Temp) + "' min='-50' max='150'></meter> Temperature\n";
+  payload += PSTR("<p><meter value='" + String(Temp) + "' min='-50' max='150'></meter> Temperature\n");
 #endif
   payload += String(serverOptions);
   sprintf(c, "#%06X", color565to888(myColor));
-  payload.replace("%host%", String(HOST) + t);
-  payload.replace("%light%", String(light));
-  payload.replace("%myColor%", String(c));
-  payload.replace("%brightness%", String(brightness));
-  payload.replace("%threshold%", String(threshold));
-  payload.replace("%milTime%", milTime ? checked : "");
-  payload.replace("%celsius%", celsius ? checked : "");
-  payload.replace("'" + String(language) + "'", "'" + String(language) + "'" + " selected");
-  payload.replace("%location%", String(location));
-  payload.replace("%timezone%", String(timezone));
-  payload.replace("%tzKey%", String(tzKey));
-  payload.replace("%owKey%", String(owKey));
+  payload.replace(F("%host%"), String(HOST) + t);
+  payload.replace(F("%myColor%"), String(c));
+  payload.replace(F("%brightness%"), String(brightness));
+  payload.replace(F("%threshold%"), String(threshold));
+  payload.replace(F("%milTime%"), milTime ? checked : "");
+  payload.replace(F("%celsius%"), celsius ? checked : "");
+  payload.replace(PSTR("'") + String(language) + PSTR("'"),
+                  PSTR("'") + String(language) + PSTR("'") + PSTR(" selected"));
+  payload.replace(F("%location%"), String(location));
+  payload.replace(F("%timezone%"), String(timezone));
+  payload.replace(F("%tzKey%"), String(tzKey));
+  payload.replace(F("%owKey%"), String(owKey));
   payload += String(serverUpdate);
   server.send(200, textHtml, payload);
 }
@@ -227,7 +227,7 @@ void handleReset() {
 }
 
 void handleLogout() {
-  server.send(401, textPlain, "logged out");
+  server.send(401, textPlain, F("logged out"));
 }
 
 void startWebServer() {
@@ -245,7 +245,7 @@ void startWebServer() {
 #ifdef SYSLOG
     syslog.log(F("webServer: update"));
 #endif
-    server.send(200, textPlain, (Update.hasError()) ? "FAIL" : "OK");
+    server.send(200, textPlain, (Update.hasError()) ? F("FAIL") : F("OK"));
     server.close();
     delay(1000);
     ESP.restart();
