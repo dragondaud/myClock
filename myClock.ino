@@ -12,7 +12,6 @@
 #include <ArduinoJson.h>        // https://github.com/bblanchon/ArduinoJson/
 #include <WiFiManager.h>        // https://github.com/tzapu/WiFiManager
 #include "display.h"
-#include "user_interface.h"
 
 #define APPNAME "myClock"
 #define VERSION "0.9.21"

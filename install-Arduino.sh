@@ -1,5 +1,6 @@
 #!/bin/bash
-# install latest Arduino IDE and required libraries on Linux
+# Linux: install Arduino IDE, ESP8266 core and required libraries
+# MacOS: install ESP8266 core and required libs only
 
 if [[ "$OSTYPE" =~ linux ]]; then
 	sudo -v || exit
