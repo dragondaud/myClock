@@ -46,8 +46,6 @@
 ** 
 */
 
-#define TOMTHUMB_USE_EXTENDED 1
-
 static const uint8_t TomThumbBitmaps[] PROGMEM = {
    0x00,                                /* 0x20 space */
    0x80, 0x80, 0x80, 0x00, 0x80,        /* 0x21 exclam */
@@ -144,7 +142,6 @@ static const uint8_t TomThumbBitmaps[] PROGMEM = {
    0x80, 0x80, 0x00, 0x80, 0x80,        /* 0x7C bar */
    0xC0, 0x40, 0x20, 0x40, 0xC0,        /* 0x7D braceright */
    0x60, 0xC0,                          /* 0x7E asciitilde */
-#if (TOMTHUMB_USE_EXTENDED)
    0x80, 0x00, 0x80, 0x80, 0x80,        /* 0xA1 exclamdown */
    0x40, 0xE0, 0x80, 0xE0, 0x40,        /* 0xA2 cent */
    0x60, 0x40, 0xE0, 0x40, 0xE0,        /* 0xA3 sterling */
@@ -240,21 +237,6 @@ static const uint8_t TomThumbBitmaps[] PROGMEM = {
    0x20, 0x40, 0xA0, 0x60, 0x20, 0x40,  /* 0xFD yacute */
    0x80, 0xC0, 0xA0, 0xC0, 0x80,        /* 0xFE thorn */
    0xA0, 0x00, 0xA0, 0x60, 0x20, 0x40,  /* 0xFF ydieresis */
-   0x00,                                /* 0x11D gcircumflex */
-   0x60, 0xC0, 0xE0, 0xC0, 0x60,        /* 0x152 OE */
-   0x60, 0xE0, 0xC0, 0xE0,              /* 0x153 oe */
-   0xA0, 0x60, 0xC0, 0x60, 0xC0,        /* 0x160 Scaron */
-   0xA0, 0x60, 0xC0, 0x60, 0xC0,        /* 0x161 scaron */
-   0xA0, 0x00, 0xA0, 0x40, 0x40,        /* 0x178 Ydieresis */
-   0xA0, 0xE0, 0x60, 0xC0, 0xE0,        /* 0x17D Zcaron */
-   0xA0, 0xE0, 0x60, 0xC0, 0xE0,        /* 0x17E zcaron */
-   0x00,                                /* 0xEA4 uni0EA4 */
-   0x00,                                /* 0x13A0 uni13A0 */
-   0x80,                                /* 0x2022 bullet */
-   0xA0,                                /* 0x2026 ellipsis */
-   0x60, 0xE0, 0xE0, 0xC0, 0x60,        /* 0x20AC Euro */
-   0xE0, 0xA0, 0xA0, 0xA0, 0xE0,        /* 0xFFFD uniFFFD */
-#endif /* (TOMTHUMB_USE_EXTENDED)  */
   };
 
 
@@ -355,7 +337,6 @@ static const GFXglyph TomThumbGlyphs[] PROGMEM = {
    { 406, 8, 5, 2, 0, -5 },  /* 0x7C bar */
    { 411, 8, 5, 4, 0, -5 },  /* 0x7D braceright */
    { 416, 8, 2, 4, 0, -5 },  /* 0x7E asciitilde */
-#if (TOMTHUMB_USE_EXTENDED)
    { 418, 8, 5, 2, 0, -5 },  /* 0xA1 exclamdown */
    { 423, 8, 5, 4, 0, -5 },  /* 0xA2 cent */
    { 428, 8, 5, 4, 0, -5 },  /* 0xA3 sterling */
@@ -451,24 +432,9 @@ static const GFXglyph TomThumbGlyphs[] PROGMEM = {
    { 838, 8, 6, 4, 0, -5 },  /* 0xFD yacute */
    { 844, 8, 5, 4, 0, -4 },  /* 0xFE thorn */
    { 849, 8, 6, 4, 0, -5 },  /* 0xFF ydieresis */
-   { 855, 8, 1, 2, 0, -1 },  /* 0x11D gcircumflex */
-   { 856, 8, 5, 4, 0, -5 },  /* 0x152 OE */
-   { 861, 8, 4, 4, 0, -4 },  /* 0x153 oe */
-   { 865, 8, 5, 4, 0, -5 },  /* 0x160 Scaron */
-   { 870, 8, 5, 4, 0, -5 },  /* 0x161 scaron */
-   { 875, 8, 5, 4, 0, -5 },  /* 0x178 Ydieresis */
-   { 880, 8, 5, 4, 0, -5 },  /* 0x17D Zcaron */
-   { 885, 8, 5, 4, 0, -5 },  /* 0x17E zcaron */
-   { 890, 8, 1, 2, 0, -1 },  /* 0xEA4 uni0EA4 */
-   { 891, 8, 1, 2, 0, -1 },  /* 0x13A0 uni13A0 */
-   { 892, 8, 1, 2, 0, -3 },  /* 0x2022 bullet */
-   { 893, 8, 1, 4, 0, -1 },  /* 0x2026 ellipsis */
-   { 894, 8, 5, 4, 0, -5 },  /* 0x20AC Euro */
-   { 899, 8, 5, 4, 0, -5 },  /* 0xFFFD uniFFFD */
-#endif /* (TOMTHUMB_USE_EXTENDED) */
 };
 
 static const GFXfont TomThumb PROGMEM = {
   (uint8_t  *)TomThumbBitmaps,
   (GFXglyph *)TomThumbGlyphs,
-  0x20, 0xFE, 6 };
+  0x20, 0xFF, 6 };
