@@ -1,5 +1,5 @@
 # myClock
-## v0.9.22 PRE-RELEASE
+## v0.9.23 PRE-RELEASE
 ### Copyright 2018 by David M Denney &lt;dragondaud@gmail.com&gt;
 
 Master repository: https://github.com/dragondaud/myClock
@@ -45,6 +45,10 @@ https://github.com/2dom/PxMatrix
 https://github.com/tzapu/WiFiManager
 
 https://github.com/arcao/Syslog, if rsyslog functionality desired.
+
+https://github.com/milesburton/Arduino-Temperature-Control-Library, if DS18B20 used.
+
+https://github.com/PaulStoffregen/OneWire, if DS18B20 used.
 
 ### Scripts
 
