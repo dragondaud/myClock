@@ -31,4 +31,6 @@ mkdir -p libraries && cd libraries
 [ ! -d "Adafruit-GFX-Library" ] && git clone https://github.com/adafruit/Adafruit-GFX-Library.git
 [ ! -d "PxMatrix" ] && git clone https://github.com/2dom/PxMatrix.git
 [ ! -d "WiFiManager" ] && git clone https://github.com/tzapu/WiFiManager.git
+[ ! -d "DallasTemperature" ] && git clone https://github.com/milesburton/Arduino-Temperature-Control-Library DallasTemperature
+[ ! -d "OneWire" ] && git clone https://github.com/PaulStoffregen/OneWire
 

@@ -15,8 +15,8 @@
 
 #define APPNAME "myClock"
 #define VERSION "0.9.22"
-#define DS18                      // enable DS18B20 temperature sensor
-#define SYSLOG                    // enable SYSLOG support
+//#define DS18                      // enable DS18B20 temperature sensor
+//#define SYSLOG                    // enable SYSLOG support
 #define LIGHT                     // enable LDR light sensor
 
 String tzKey;                     // API key from https://timezonedb.com/register
