@@ -57,6 +57,7 @@ void getWeather() {    // Using openweathermap.org
 #endif
         String description = weather["description"];
         description.replace(F("intensity "), "");   // english description too long sometimes
+        description = utf8ascii(description);       // fix UTF-8 characters
         int id = weather["id"];
         int i = id / 100;
         switch (i) {
@@ -116,3 +117,49 @@ String degreeDir(int degrees) {
   static const char* caridnals[] PROGMEM = { "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N" };
   return caridnals[round((degrees % 360) / 45)];
 } // degreeDir
+
+byte utf8ascii(byte ascii) {
+  static byte c1;  // Last character buffer
+
+  if ( ascii < 128 ) // Standard ASCII-set 0..0x7F handling
+  { c1 = 0;
+    return ( ascii );
+  }
+
+  // get previous input
+  byte last = c1;   // get last char
+  c1 = ascii;       // remember actual character
+
+  switch (last)     // conversion depending on first UTF8-character
+  { case 0xC2: return  (ascii);  break;
+    case 0xC3: return  (ascii | 0xC0);  break;
+    case 0x82: if (ascii == 0xAC) return (0x80);   // special case Euro-symbol
+  }
+
+  return  (0);                                     // otherwise: return zero, if character has to be ignored
+}
+
+String utf8ascii(String s)
+{
+  String r = "";
+  char c;
+  for (int i = 0; i < s.length(); i++)
+  {
+    c = utf8ascii(s.charAt(i));
+    if (c != 0) r += c;
+  }
+  return r;
+}
+
+void utf8ascii(char* s)
+{
+  int k = 0;
+  char c;
+  for (int i = 0; i < strlen(s); i++)
+  {
+    c = utf8ascii(s[i]);
+    if (c != 0)
+      s[k++] = c;
+  }
+  s[k] = 0;
+}

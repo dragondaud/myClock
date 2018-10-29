@@ -194,7 +194,7 @@ void handleRoot() {
   payload.reserve(4992);
   payload = String(serverHead);
 #ifdef DS18
-  payload += PSTR("<p><meter value='" + String(Temp) + "' min='-50' max='150'></meter> Temperature\n");
+  payload += PSTR("<p><meter value='") + String(Temp) + PSTR("' min='-50' max='150'></meter> Temperature\n");
 #endif
   payload += String(serverOptions);
   sprintf(c, "#%06X", color565to888(myColor));
