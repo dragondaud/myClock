@@ -6,11 +6,12 @@
 APP="myClock"
 SRC="$APP.ino"
 BIN="$SRC.bin"
+RM=`which rm`
 
 #default board d1_mini
 board="esp8266com:esp8266:d1_mini:xtal=160,vt=flash,eesz=4M1M,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600"
 
-while getopts ":lvf:h" opt; do
+while getopts ":lvf:hc" opt; do
 	case $opt in
 		l)
 			board="esp8266com:esp8266:d1_mini_lite:xtal=160,vt=flash,eesz=1M64,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600";;
@@ -29,7 +30,10 @@ while getopts ":lvf:h" opt; do
 			echo -e "\t-v\tUse verbose output"
 			echo -e "\t-f\tIP address of ${APP} to flash update"
 			echo -e "\t-h\tDisplay usage and exit"
+			echo -e "\t-c\tClean build directory before building"
 			exit 0;;
+		c)
+			clean=true;;
 		\?)
 			echo "invalid option -$OPTARG" >&2
 			exit 1;;
@@ -65,6 +69,10 @@ if [ -z "$arduino" ]; then
 	echo "Arduino IDE must be installed"
 	exit 1
 else
+	if [ "$clean" = true ]; then
+		echo "Cleaning ${buildpath}..."
+		"${RM}" ${verbose} --one-file-system -rf "${buildpath}"
+	fi
 	echo "Building ${APP} in ${buildpath}..."
 	"${arduino}" ${verbose} --pref build.path="${buildpath}" --board "${board}" --save-prefs --verify ${SRC}
 	ret=$?
