@@ -153,7 +153,7 @@ void loop() {
       if (m0 != digit2.Value()) digit2.Morph(m0);
       if (m1 != digit3.Value()) digit3.Morph(m1);
       pMM = mm;
-      Serial.printf_P(PSTR("%02d:%02d %d \r"), hh, mm, ESP.getFreeHeap());
+      Serial.printf_P(PSTR("%02d:%02d %d %d \r"), hh, mm, light, ESP.getFreeHeap());
     }
     if (hh != pHH) {
       int h0 = hh % 10;
