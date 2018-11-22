@@ -84,6 +84,12 @@ static const char* serverOptions PROGMEM =
   "<td><input type='text' id='tzKey' name='tzKey' value='%tzKey%'></td></tr>\n"
   "<tr><th><label for='owKey'>OpenWeatherMap Key</label></th>\n"
   "<td><input type='text' id='owKey' name='owKey' value='%owKey%'></td></tr>\n"
+#ifdef SYSLOG
+  "<tr><th><label for='syslogSrv'>SysLog Server</label></th>\n"
+  "<td><input type='text' id='syslogSrv' name='owKey' value='%syslogSrv%'></td>  \n"
+  "<th><label for='syslogPort'>Port</label></th>\n"
+  "<td><input type='number' id='syslogPort' name='owKey' min='1' max='65535' value='%syslogPort%'></td></tr>\n"
+#endif
   "<tr><th><label for='softAPpass'>Admin Password</label></th>\n"
   "<td><input type='password' id='softAPpass' name='softAPpass' placeholder='enter new password'></td></tr>\n"
   "</table><p style='text-align: right'><input type='submit' class='button' value='APPLY CONFIG'>\n"
@@ -208,6 +214,10 @@ void handleRoot() {
   payload.replace(F("%timezone%"), String(timezone));
   payload.replace(F("%tzKey%"), String(tzKey));
   payload.replace(F("%owKey%"), String(owKey));
+#ifdef SYSLOG
+  payload.replace(F("%syslogSrv%"), String(syslogSrv));
+  payload.replace(F("%syslogPort%"), String(syslogPort));
+#endif
   payload += String(serverUpdate);
   server.send(200, textHtml, payload);
 }

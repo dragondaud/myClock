@@ -14,7 +14,7 @@
 #include "display.h"
 
 #define APPNAME "myClock"
-#define VERSION "0.9.23"
+#define VERSION "0.9.24"
 //#define DS18                      // enable DS18B20 temperature sensor
 //#define SYSLOG                    // enable SYSLOG support
 #define LIGHT                     // enable LDR light sensor
