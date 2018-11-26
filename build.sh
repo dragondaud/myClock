@@ -14,12 +14,17 @@ board="esp8266com:esp8266:d1_mini:xtal=160,vt=flash,eesz=4M1M,ip=lm2f,dbg=Disabl
 while getopts ":lvf:hcw" opt; do
 	case $opt in
 		l)
-			board="esp8266com:esp8266:d1_mini_lite:xtal=160,vt=flash,eesz=1M64,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600";;
+			echo "Board d1_mini_lite selected." >&2
+			board="esp8266com:esp8266:d1_mini_lite:xtal=160,vt=flash,eesz=1M64,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600"
+			;;
 		v)
 			verbose="--verbose"
-			debug="--debug";;
+			debug="--debug"
+			;;
 		f)
-			FLASH=$OPTARG;;
+			FLASH=$OPTARG
+			echo "Uploading to $FLASH after build." >&2
+			;;
 		h)
 			echo "Usage: build.sh [-b board] [-f IP] [-h]"
 			echo ""
@@ -36,9 +41,10 @@ while getopts ":lvf:hcw" opt; do
 		c)
 			clean=true;;
 		w)
+			echo "Wipe entire flash on upload." >&2
 			board=${board/wipe=none/wipe=all};;
 		\?)
-			echo "invalid option -$OPTARG" >&2
+			echo "Invalid option -$OPTARG" >&2
 			exit 1;;
 		:)
 			echo "Option -$OPTARG requires an argument." >&2
@@ -69,18 +75,18 @@ else
 fi
 
 if [ -z "$arduino" ]; then
-	echo "Arduino IDE must be installed"
+	echo "Arduino IDE must be installed" >&2
 	exit 1
 else
 	if [ "$clean" = true ]; then
-		echo "Cleaning ${buildpath}..."
+		echo "Cleaning ${buildpath}..." >&2
 		"${RM}" ${verbose} --one-file-system -rf "${buildpath}"
 	fi
-	echo "Building ${APP} in ${buildpath}..."
+	echo "Building ${APP} in ${buildpath}..." >&2
 	"${arduino}" ${verbose} --pref build.path="${buildpath}" --board "${board}" --save-prefs --verify ${SRC}
 	ret=$?
 	if [ $ret -eq 0 ] && [ -f "$espota" ] && [ ! -z "$FLASH" ]; then
-		echo "Flashing ${BIN} to ${FLASH}..."
+		echo "Flashing ${BIN} to ${FLASH}..." >&2
 		"${espota}" ${debug} --progress --file="${buildpath}/${BIN}" --ip=${FLASH}
 	else
 		exit $ret
