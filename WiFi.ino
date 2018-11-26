@@ -24,7 +24,11 @@ void startWiFi() {   // if WiFi does not connect, establish AP for configuration
   wifiManager.setAPCallback(configModeCallback);
   wifiManager.setDebugOutput(false);
   wifiManager.setMinimumSignalQuality(20);
-  if (!wifiManager.autoConnect(HOST, softAPpass.c_str())) ESP.restart();
+  if (!wifiManager.autoConnect(HOST, softAPpass.c_str())) {
+    Serial.println(F("\nWiFi: failed"));
+    delay(5000);
+    ESP.restart();
+  }
   MDNS.begin(HOST);
   ArduinoOTA.setHostname(HOST);
   ArduinoOTA.onStart([]() {
