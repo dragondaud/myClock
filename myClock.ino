@@ -21,7 +21,7 @@
 
 String tzKey;                     // API key from https://timezonedb.com/register
 String owKey;                     // API key from https://home.openweathermap.org/api_keys
-String softAPpass = "ConFigMe";   // password for SoftAP config
+String softAPpass = "ConFigMe";   // password for SoftAP config, minimum 8 characters
 uint8_t brightness = 255;         // 0-255 display brightness
 bool milTime = true;              // set false for 12hour clock
 String location;                  // zipcode or empty for geoIP location

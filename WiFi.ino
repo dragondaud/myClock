@@ -22,8 +22,9 @@ void startWiFi() {   // if WiFi does not connect, establish AP for configuration
   WiFi.hostname(HOST);
   WiFiManager wifiManager;
   wifiManager.setAPCallback(configModeCallback);
-  wifiManager.setDebugOutput(false);
-  wifiManager.setMinimumSignalQuality(20);
+  wifiManager.setDebugOutput(false);            // set true for wifi debugging
+  wifiManager.setConfigPortalTimeout(300);      // 5 minute timeout for config portal
+  wifiManager.setMinimumSignalQuality(20);      // ignore weak wifi signals
   if (!wifiManager.autoConnect(HOST, softAPpass.c_str())) {
     Serial.println(F("\nWiFi: failed"));
     delay(5000);

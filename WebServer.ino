@@ -91,7 +91,8 @@ static const char* serverOptions PROGMEM =
   "<td><input type='number' id='syslogPort' name='owKey' min='1' max='65535' value='%syslogPort%'></td></tr>\n"
 #endif
   "<tr><th><label for='softAPpass'>Admin Password</label></th>\n"
-  "<td><input type='password' id='softAPpass' name='softAPpass' placeholder='enter new password'></td></tr>\n"
+  "<td><input type='password' id='softAPpass' name='softAPpass'\n"
+  "minlength='8' placeholder='enter new password'></td></tr>\n"
   "</table><p style='text-align: right'><input type='submit' class='button' value='APPLY CONFIG'>\n"
   "</form></div><p>\n";
 

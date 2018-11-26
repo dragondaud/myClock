@@ -23,7 +23,7 @@ void readSPIFFS() {
 bool parseJson(JsonObject& json) {
   if (json.success()) {
     String sp = json["softAPpass"];
-    if (sp != "") softAPpass = sp;
+    if (sp.length() >= 8) softAPpass = sp;
     String lo = json["location"];
     if (lo != "") location = lo;
     String tz = json["timezone"];
