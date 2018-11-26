@@ -103,6 +103,8 @@ static const char* serverUpdate PROGMEM =
   "<input type='submit' value='UPDATE' class='button'></form><p>\n"
   "<p><span><form method='GET' action='/reset' style='display:inline'>\n"
   "<input type='submit' value='REBOOT CLOCK' class='button'></form>\n"
+  "<form method='GET' action='/download' style='display:inline'>\n"
+  "<input type='submit' value='SAVE CONFIG' class='button'></form>\n"
   "<form method='GET' action='/logout' style='display:inline'>\n"
   "<input type='submit' value='LOGOUT' class='button'></form></span>\n"
   "<p></div></body></html>\n";
@@ -235,6 +237,13 @@ void handleReset() {
   ESP.restart();
 }
 
+void handleDownload() {
+  if (!handleAuth()) return reqAuth();
+  String payload = getSPIFFS();
+  server.sendHeader(F("Content-Disposition"), F("attachment; filename='config.json'"));
+  server.send(200, F("application/json"), payload);
+}
+
 void handleLogout() {
   server.send(401, textPlain, F("logged out"));
 }
@@ -244,6 +253,7 @@ void startWebServer() {
   server.on(F("/stylesheet.css"), HTTP_GET, handleStyle);
   server.on(F("/options"), handleOptions);
   server.on(F("/reset"), HTTP_GET, handleReset);
+  server.on(F("/download"), HTTP_GET, handleDownload);
   server.on(F("/logout"), HTTP_GET, handleLogout);
   server.on(F("/favicon.ico"), HTTP_GET, []() {
     server.sendHeader(F("Location"), F("https://www.arduino.cc/favicon.ico"));
