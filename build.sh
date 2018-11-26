@@ -11,7 +11,7 @@ RM=`which rm`
 #default board d1_mini
 board="esp8266com:esp8266:d1_mini:xtal=160,vt=flash,eesz=4M1M,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600"
 
-while getopts ":lvf:hc" opt; do
+while getopts ":lvf:hcw" opt; do
 	case $opt in
 		l)
 			board="esp8266com:esp8266:d1_mini_lite:xtal=160,vt=flash,eesz=1M64,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600";;
@@ -31,9 +31,12 @@ while getopts ":lvf:hc" opt; do
 			echo -e "\t-f\tIP address of ${APP} to flash update"
 			echo -e "\t-h\tDisplay usage and exit"
 			echo -e "\t-c\tClean build directory before building"
+			echo -e "\t-w\tWipe entire flash, instead of sketch only"
 			exit 0;;
 		c)
 			clean=true;;
+		w)
+			board=${board/wipe=none/wipe=all};;
 		\?)
 			echo "invalid option -$OPTARG" >&2
 			exit 1;;
