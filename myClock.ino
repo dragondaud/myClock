@@ -63,14 +63,10 @@ uint8_t dim;
 
 void setup() {
   system_update_cpu_freq(SYS_CPU_160MHZ);               // force 160Mhz to prevent display flicker
-  Serial.begin(115200, SERIAL_8N1, SERIAL_TX_ONLY, 1);  // allow use of RX pin for gpio
+  Serial.begin(115200);
   while (!Serial);
   delay(10);
   Serial.println();
-  tzKey.reserve(13);
-  owKey.reserve(33);
-  location.reserve(10);
-  timezone.reserve(20);
   readSPIFFS();
 
   display.begin(16);
