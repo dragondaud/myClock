@@ -10,12 +10,14 @@ RM=`which rm`
 
 #default board d1_mini
 board="esp8266com:esp8266:d1_mini:xtal=160,vt=flash,eesz=4M1M,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600"
+port="8266"
 
 while getopts ":lvf:hcw" opt; do
 	case $opt in
 		l)
-			echo "Board d1_mini_lite selected." >&2
-			board="esp8266com:esp8266:d1_mini_lite:xtal=160,vt=flash,eesz=1M64,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600"
+			echo "Board lolin32 selected." >&2
+			board="espressif:esp32:lolin32"
+			port="3232"
 			;;
 		v)
 			verbose="--verbose"
@@ -31,7 +33,7 @@ while getopts ":lvf:hcw" opt; do
 			echo "Build ${APP} and optionally flash device."
 			echo ""
 			echo "Options:"
-			echo -e "\t-l\tBuild for d1_mini_lite instead of d1_mini"
+			echo -e "\t-l\tBuild for lolin32 instead of d1_mini"
 			echo -e "\t-v\tUse verbose output"
 			echo -e "\t-f\tIP address of ${APP} to flash update"
 			echo -e "\t-h\tDisplay usage and exit"
@@ -71,7 +73,7 @@ else
 		arduino=`find ~/.local /usr -type f -name arduino -print -quit`
 	fi
 	buildpath="$HOME/.build"
-	espota="$HOME/Arduino/hardware/esp8266com/esp8266/tools/espota.py"
+	espota="${arduino}/hardware/esp8266com/esp8266/tools/espota.py"
 fi
 
 if [ -z "$arduino" ]; then
@@ -87,7 +89,7 @@ else
 	ret=$?
 	if [ $ret -eq 0 ] && [ -f "$espota" ] && [ ! -z "$FLASH" ]; then
 		echo "Flashing ${BIN} to ${FLASH}..." >&2
-		"${espota}" ${debug} --progress --file="${buildpath}/${BIN}" --ip=${FLASH}
+		"${espota}" ${debug} --progress --file="${buildpath}/${BIN}" --ip=${FLASH} --port=${port}
 	else
 		exit $ret
 	fi
