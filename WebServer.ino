@@ -1,10 +1,5 @@
 // Web Server for configuration and updates
 
-#include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
-
-#define ADMIN_USER "admin"
-
 static const char* serverHead PROGMEM =
   "<!DOCTYPE HTML><html><head>\n<title>myClock</title>\n"
   "<meta name='viewport' content='width=device-width, initial-scale=.83'>"
@@ -273,7 +268,11 @@ void startWebServer() {
     HTTPUpload& upload = server.upload();
     if (upload.status == UPLOAD_FILE_START) {
       display_ticker.detach();
-      WiFiUDP::stopAll();
+#if defined(ESP8266)
+            WiFiUDP::stopAll();
+#else
+            MDNS.end();
+#endif
       Serial.printf_P(PSTR("Update: %s\n"), upload.filename.c_str());
       uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
       if (!Update.begin(maxSketchSpace)) { //start with max available size
@@ -294,5 +293,5 @@ void startWebServer() {
   });
   server.onNotFound(handleNotFound);
   server.begin();
-  MDNS.addService(F("http"), F("tcp"), 80);
+  MDNS.addService(F("_http"), F("_tcp"), 80);
 }

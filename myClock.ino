@@ -3,18 +3,33 @@
      distributed under the terms of the MIT License
 */
 
-#include <ESP8266WiFi.h>        //https://github.com/esp8266/Arduino
-#include <ESP8266HTTPClient.h>
+//  ESP8266 requires https://github.com/esp8266/Arduino
+//  https://github.com/esp8266/Arduino#using-git-version-basic-instructions
+
+//  ESP32 requires https://github.com/espressif/arduino-esp32
+//  https://github.com/espressif/arduino-esp32#installation-instructions
+
+#include <ArduinoJson.h>        // https://github.com/bblanchon/ArduinoJson/releases/latest
+#include <WiFiManager.h>        // https://github.com/tzapu/WiFiManager/tree/development
 #include <ArduinoOTA.h>
-#include <time.h>
 #include <FS.h>
-#include <pgmspace.h>
-#include <ArduinoJson.h>        // https://github.com/bblanchon/ArduinoJson/
-#include <WiFiManager.h>        // https://github.com/tzapu/WiFiManager
+#include <time.h>
 #include "display.h"
 
+#if defined(ESP8266)
+#include <ESP8266mDNS.h>
+#include <ESP8266HTTPClient.h>
+ESP8266WebServer server(80);
+#else
+#include <ESPmDNS.h>
+#include <SPIFFS.h>
+#include <HTTPClient.h>
+WebServer server(80);
+#endif
+
 #define APPNAME "myClock"
-#define VERSION "0.9.24"
+#define VERSION "0.10.1"
+#define ADMIN_USER "admin"
 //#define DS18                      // enable DS18B20 temperature sensor
 //#define SYSLOG                    // enable SYSLOG support
 #define LIGHT                     // enable LDR light sensor
@@ -50,8 +65,6 @@ DallasTemperature sensors(&oneWire);
 int Temp;
 #endif
 
-ESP8266WebServer server(80);
-
 static const char* UserAgent PROGMEM = "myClock/1.0 (Arduino ESP8266)";
 
 time_t TWOAM, pNow, wDelay;
@@ -62,10 +75,8 @@ char HOST[20];
 uint8_t dim;
 
 void setup() {
-  system_update_cpu_freq(SYS_CPU_160MHZ);               // force 160Mhz to prevent display flicker
   Serial.begin(115200);
-  while (!Serial);
-  delay(10);
+  while (!Serial) delay(10);
   Serial.println();
   readSPIFFS();
 
@@ -124,14 +135,16 @@ void setup() {
 } // setup
 
 void loop() {
+  struct tm * timeinfo;
   ArduinoOTA.handle();
   server.handleClient();
   time_t now = time(nullptr);
+  timeinfo = localtime(&now);
   if (now != pNow) {
     if (now > TWOAM) setNTP(timezone);
-    int ss = now % 60;
-    int mm = (now / 60) % 60;
-    int hh = (now / (60 * 60)) % 24;
+    int ss = timeinfo->tm_sec;
+    int mm = timeinfo->tm_min;
+    int hh = timeinfo->tm_hour;
     if ((!milTime) && (hh > 12)) hh -= 12;
     if (ss != pSS) {
       int s0 = ss % 10;
@@ -161,8 +174,8 @@ void loop() {
 #ifdef DS18
     sensors.requestTemperatures();
     int t;
-    if (celsius) t = round(sensors.getTempC(0));
-    else t = round(sensors.getTempF(0));
+    if (celsius) t = (int)round(sensors.getTempC(0));
+    else t = (int)round(sensors.getTempF(0));
     if (t < -66 | t > 150) t = 0;
     if (Temp != t) {
       Temp = t;

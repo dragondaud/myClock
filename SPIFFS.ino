@@ -2,9 +2,13 @@
 // auto format if unable to write
 
 void readSPIFFS() {
+#if defined(ESP8266)
   if (SPIFFS.begin()) {
+#else
+  if (SPIFFS.begin(true)) {
+#endif
     Serial.println(F("readSPIFFS: mounted"));
-    if (SPIFFS.exists("/config.json")) {
+    if (SPIFFS.exists(F("/config.json"))) {
       File configFile = SPIFFS.open(F("/config.json"), "r");
       if (!configFile) return;
       size_t size = configFile.size();
@@ -70,7 +74,6 @@ void writeSPIFFS() {
     display.setCursor(2, row2);
     display.print(F("config failed"));
     Serial.println(F("failed to open config.json for writing"));
-    if (SPIFFS.format()) Serial.println(F("SPIFFS formated"));
     delay(5000);
     ESP.restart();
   } else {

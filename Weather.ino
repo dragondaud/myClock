@@ -35,8 +35,8 @@ void getWeather() {    // Using openweathermap.org
         int deg = root["wind"]["deg"];
         String dir = degreeDir(deg);
         int tc;
-        if (celsius) tc = round(temperature * 1.8) + 32;
-        else tc = round(temperature);
+        if (celsius) tc = (int)round(temperature * 1.8) + 32;
+        else tc = (int)round(temperature);
         if (tc <= 32) display.setTextColor(myCYAN);
         else if (tc <= 50) display.setTextColor(myLTBLUE);
         else if (tc <= 60) display.setTextColor(myBLUE);
@@ -48,12 +48,12 @@ void getWeather() {    // Using openweathermap.org
         display.fillRect(0, 0, 64, 6, myBLACK);
 #ifdef DS18
         display.setCursor(0, row1);
-        display.printf_P(PSTR("%2d/%2d%c%s %2d%% %2d %s"), Temp, round(temperature),
-                         142, celsius ? "C" : "F", humidity, round(wind), dir.c_str());
+        display.printf_P(PSTR("%2d/%2d%c%s %2d%% %2d %s"), Temp, (int)round(temperature),
+                         142, celsius ? "C" : "F", humidity, (int)round(wind), dir.c_str());
 #else
         display.setCursor(9, row1);
-        display.printf_P(PSTR("% 2d%c%s %2d%% %2d %s"), round(temperature),
-                         142, celsius ? "C" : "F", humidity, round(wind), dir.c_str());
+        display.printf_P(PSTR("% 2d%c%s %2d%% %2d %s"), (int)round(temperature),
+                         142, celsius ? "C" : "F", humidity, (int)round(wind), dir.c_str());
 #endif
         String description = weather["description"];
         description.replace(F("intensity "), "");   // english description too long sometimes
@@ -89,10 +89,10 @@ void getWeather() {    // Using openweathermap.org
         display.print(description);
 #ifdef SYSLOG
         syslog.logf("getWeather: %dF|%d%%RH|%d%s|%s",
-                    round(temperature), humidity, round(wind), dir.c_str(), description.c_str());
+                    (int)round(temperature), humidity, (int)round(wind), dir.c_str(), description.c_str());
 #endif
         Serial.printf_P(PSTR("%2dF, %2d%%, %d %s (%d), %s (%d) \r\n"),
-                        round(temperature), humidity, round(wind), dir.c_str(), deg, description.c_str(), id);
+                        (int)round(temperature), humidity, (int)round(wind), dir.c_str(), deg, description.c_str(), id);
       } else {
         display.print(F("json fail"));
 #ifdef SYSLOG
@@ -115,7 +115,7 @@ void getWeather() {    // Using openweathermap.org
 
 String degreeDir(int degrees) {
   static const char* caridnals[] PROGMEM = { "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N" };
-  return caridnals[round((degrees % 360) / 45)];
+  return caridnals[(int)round((degrees % 360) / 45)];
 } // degreeDir
 
 // from http://playground.arduino.cc/Main/Utf8ascii

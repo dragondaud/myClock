@@ -15,11 +15,29 @@ void configModeCallback(WiFiManager *myWiFiManager) {
   display.print(WiFi.softAPIP());
 }
 
+#if defined(ESP32)
+#include "esp_system.h"
+String getMacAddress() {
+  uint8_t baseMac[6];
+  esp_read_mac(baseMac, ESP_MAC_WIFI_STA);
+  char baseMacChr[18] = {0};
+  sprintf(baseMacChr, "%02X:%02X:%02X:%02X:%02X:%02X", baseMac[0], baseMac[1], baseMac[2], baseMac[3], baseMac[4], baseMac[5]);
+  return String(baseMacChr);
+}
+#endif
+
 void startWiFi() {   // if WiFi does not connect, establish AP for configuration
+#if defined(ESP8266)
   String t = WiFi.macAddress();
   t = String(APPNAME) + "-" + t.substring(9, 11) + t.substring(12, 14) + t.substring(15, 17);
   t.toCharArray(HOST, sizeof(HOST));
   WiFi.hostname(HOST);
+#else
+  String t = getMacAddress();
+  t = String(APPNAME) + "-" + t.substring(9, 11) + t.substring(12, 14) + t.substring(15, 17);
+  t.toCharArray(HOST, sizeof(HOST));
+  WiFi.setHostname(HOST);
+#endif
   WiFiManager wifiManager;
   wifiManager.setAPCallback(configModeCallback);
   wifiManager.setDebugOutput(false);            // set true for wifi debugging
@@ -30,7 +48,10 @@ void startWiFi() {   // if WiFi does not connect, establish AP for configuration
     delay(5000);
     ESP.restart();
   }
-  MDNS.begin(HOST);
+  Serial.print(F("WiFi: "));
+  Serial.print(HOST);
+  Serial.print(F(" "));
+  Serial.println(WiFi.localIP());
   ArduinoOTA.setHostname(HOST);
   ArduinoOTA.onStart([]() {
 #ifdef SYSLOG

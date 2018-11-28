@@ -7,7 +7,7 @@ SCRIPT=`realpath $0`
 SCRIPTPATH=`dirname $SCRIPT`
 ARDUINO=`realpath $SCRIPTPATH/..`
 cd $SCRIPTPATH  && echo -n "`basename $PWD`: " && git pull --no-edit
-cd $ARDUINO/hardware/esp8266com/esp8266 && echo -n "`basename $PWD`: " && git pull --no-edit && ./tools/boards.txt.py --nofloat --allgen
+cd $ARDUINO/hardware/esp8266com/esp8266 && echo -n "`basename $PWD`: " && git fetch --all && git reset --hard origin/master && git pull --no-edit && ./tools/boards.txt.py --nofloat --allgen
 cd $ARDUINO/libraries/ArduinoJson && echo -n "`basename $PWD`: " && git pull --no-edit
 cd $ARDUINO/libraries/Syslog && echo -n "`basename $PWD`: " && git pull --no-edit
 cd $ARDUINO/libraries/Adafruit-GFX-Library && echo -n "`basename $PWD`: " && git pull --no-edit
