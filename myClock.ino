@@ -28,11 +28,24 @@ WebServer server(80);
 #endif
 
 #define APPNAME "myClock"
-#define VERSION "0.10.1"
+#define VERSION "0.10.2"
 #define ADMIN_USER "admin"
 //#define DS18                      // enable DS18B20 temperature sensor
 //#define SYSLOG                    // enable SYSLOG support
 #define LIGHT                     // enable LDR light sensor
+
+#define myOUT 1   // {0 = NullStream, 1 = Serial, 2 = Bluetooth}
+
+#if myOUT == 0                    // NullStream output
+NullStream NullStream;
+Stream & OUT = NullStream;
+#elif myOUT == 2                  // Bluetooth output, only on ESP32
+#include "BluetoothSerial.h"
+BluetoothSerial SerialBT;
+Stream & OUT = SerialBT;
+#else                             // Serial output default
+Stream & OUT = Serial;
+#endif
 
 String tzKey;                     // API key from https://timezonedb.com/register
 String owKey;                     // API key from https://home.openweathermap.org/api_keys
@@ -75,9 +88,23 @@ char HOST[20];
 uint8_t dim;
 
 void setup() {
+#if myOUT == 0
+  Serial.end();
+#else
   Serial.begin(115200);
   while (!Serial) delay(10);
   Serial.println();
+#endif
+
+#if myOUT == 2
+  if (!SerialBT.begin(APPNAME)) {
+    Serial.println(F("Bluetooth failed"));
+    delay(5000);
+    ESP.restart();
+  }
+  delay(5000); // wait for client to connect
+#endif
+
   readSPIFFS();
 
   display.begin(16);
@@ -123,7 +150,7 @@ void setup() {
   display.setCursor(32, row4);
   display.setTextColor(myBLUE);
   display.print(F("set ntp"));
-  Serial.printf_P(PSTR("setup: %s, %s, %s \r\n"), location.c_str(), timezone.c_str(), milTime ? "true" : "false");
+  OUT.printf_P(PSTR("setup: %s, %s, %s \r\n"), location.c_str(), timezone.c_str(), milTime ? "true" : "false");
 #ifdef SYSLOG
   syslog.logf("setup: %s|%s|%s", location.c_str(), timezone.c_str(), milTime ? "true" : "false");
 #endif
@@ -162,7 +189,7 @@ void loop() {
       if (m0 != digit2.Value()) digit2.Morph(m0);
       if (m1 != digit3.Value()) digit3.Morph(m1);
       pMM = mm;
-      Serial.printf_P(PSTR("%02d:%02d %d %d \r"), hh, mm, light, ESP.getFreeHeap());
+      OUT.printf_P(PSTR("%02d:%02d %d %d \r"), hh, mm, light, ESP.getFreeHeap());
     }
     if (hh != pHH) {
       int h0 = hh % 10;
@@ -197,7 +224,7 @@ void displayDraw(uint8_t b) {
   int mm = (now / 60) % 60;
   int hh = (now / (60 * 60)) % 24;
   if ((!milTime) && (hh > 12)) hh -= 12;
-  Serial.printf_P(PSTR("%02d:%02d\r"), hh, mm);
+  OUT.printf_P(PSTR("%02d:%02d\r"), hh, mm);
   digit1.DrawColon(myColor);
   digit3.DrawColon(myColor);
   digit0.Draw(ss % 10, myColor);

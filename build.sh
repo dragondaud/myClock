@@ -16,7 +16,7 @@ while getopts ":lvf:hcw" opt; do
 	case $opt in
 		l)
 			echo "Board lolin32 selected." >&2
-			board="espressif:esp32:lolin32"
+			board="espressif:esp32:lolin32:PartitionScheme=min_spiffs"
 			port="3232"
 			;;
 		v)

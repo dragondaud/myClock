@@ -7,7 +7,7 @@ void readSPIFFS() {
 #else
   if (SPIFFS.begin(true)) {
 #endif
-    Serial.println(F("readSPIFFS: mounted"));
+    OUT.println(F("readSPIFFS: mounted"));
     if (SPIFFS.exists(F("/config.json"))) {
       File configFile = SPIFFS.open(F("/config.json"), "r");
       if (!configFile) return;
@@ -20,7 +20,7 @@ void readSPIFFS() {
       configFile.close();
     }
   } else {
-    Serial.println(F("readSPIFFS: failed to mount SPIFFS"));
+    OUT.println(F("readSPIFFS: failed to mount SPIFFS"));
   }
 }
 
@@ -73,7 +73,7 @@ void writeSPIFFS() {
   if (!configFile) {
     display.setCursor(2, row2);
     display.print(F("config failed"));
-    Serial.println(F("failed to open config.json for writing"));
+    OUT.println(F("failed to open config.json for writing"));
     delay(5000);
     ESP.restart();
   } else {

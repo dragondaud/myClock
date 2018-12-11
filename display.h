@@ -23,6 +23,15 @@ Ticker display_ticker;
 
 PxMATRIX display(64, 32, P_LAT, P_OE, P_A, P_B, P_C, P_D);
 
+struct NullStream : public Stream {
+  NullStream(void) { return; }
+  int available(void) { return 0; }
+  void flush(void) { return; }
+  int peek(void) { return -1; }
+  int read(void) { return -1; }
+  size_t write(uint8_t u_Data) { return u_Data, 0x01; }
+};
+
 uint16_t htmlColor565(const String htmlColor) {
   long c = strtol(htmlColor.substring(1).c_str(), NULL, 16);
   uint8_t r = (c >> 19);

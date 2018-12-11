@@ -18,7 +18,7 @@ void getWeather() {    // Using openweathermap.org
     syslog.log(F("getWeather HTTP failed"));
 #endif
     display.print(F("http fail"));
-    Serial.println(F("getWeather: HTTP failed"));
+    OUT.println(F("getWeather: HTTP failed"));
   } else {
     int stat = http.GET();
     if (stat == HTTP_CODE_OK) {
@@ -91,7 +91,7 @@ void getWeather() {    // Using openweathermap.org
         syslog.logf("getWeather: %dF|%d%%RH|%d%s|%s",
                     (int)round(temperature), humidity, (int)round(wind), dir.c_str(), description.c_str());
 #endif
-        Serial.printf_P(PSTR("%2dF, %2d%%, %d %s (%d), %s (%d) \r\n"),
+        OUT.printf_P(PSTR("%2dF, %2d%%, %d %s (%d), %s (%d) \r\n"),
                         (int)round(temperature), humidity, (int)round(wind), dir.c_str(), deg, description.c_str(), id);
       } else {
         display.print(F("json fail"));
@@ -99,15 +99,15 @@ void getWeather() {    // Using openweathermap.org
         syslog.log(F("getWeather JSON parse failed"));
         syslog.log(payload);
 #endif
-        Serial.println(F("getWeather: JSON parse failed!"));
-        Serial.println(payload);
+        OUT.println(F("getWeather: JSON parse failed!"));
+        OUT.println(payload);
       }
     } else {
 #ifdef SYSLOG
       syslog.logf("getWeather failed, GET reply %d", stat);
 #endif
       display.print(stat);
-      Serial.printf_P(PSTR("getWeather: GET failed: %d %s\r\n"), stat, http.errorToString(stat).c_str());
+      OUT.printf_P(PSTR("getWeather: GET failed: %d %s\r\n"), stat, http.errorToString(stat).c_str());
     }
   }
   http.end();

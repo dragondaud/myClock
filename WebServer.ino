@@ -225,7 +225,7 @@ void handleReset() {
 #ifdef SYSLOG
   syslog.log(F("webServer: reset"));
 #endif
-  Serial.println(F("webServer: reset"));
+  OUT.println(F("webServer: reset"));
   server.send(200, textHtml, serverReboot);
   server.close();
   delay(1000);
@@ -273,7 +273,7 @@ void startWebServer() {
 #else
             MDNS.end();
 #endif
-      Serial.printf_P(PSTR("Update: %s\n"), upload.filename.c_str());
+      OUT.printf_P(PSTR("Update: %s\n"), upload.filename.c_str());
       uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
       if (!Update.begin(maxSketchSpace)) { //start with max available size
         Update.printError(Serial);
@@ -284,7 +284,7 @@ void startWebServer() {
       }
     } else if (upload.status == UPLOAD_FILE_END) {
       if (Update.end(true)) { //true to set the size to the current progress
-        Serial.printf_P(PSTR("Update Success: %u\nRebooting...\n"), upload.totalSize);
+        OUT.printf_P(PSTR("Update Success: %u\nRebooting...\n"), upload.totalSize);
       } else {
         Update.printError(Serial);
       }

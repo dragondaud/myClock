@@ -13,7 +13,9 @@ if [[ "$OSTYPE" =~ linux ]]; then
 elif [[ "$OSTYPE" =~ darwin ]]; then
 	if [[ ! -d /Applications/Arduino.app ]]; then
 		echo "Install Arduino IDE from https://www.arduino.cc/en/Main/Software"
+		exit 0
 	fi
+	xcode-select --install
 	mkdir -p $HOME/Documents/Arduino && cd $HOME/Documents/Arduino
 fi
 
