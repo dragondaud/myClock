@@ -18,14 +18,13 @@ while getopts "cth" opt; do
 				cd $ARDUINO/hardware/esp8266com
 				git clone https://github.com/esp8266/Arduino.git esp8266
 				cd esp8266
-				git submodule update --init
 			else
 				echo -e "${BOLD}Updating ESP8266 core ${NC}"
 				cd $ARDUINO/hardware/esp8266com/esp8266
 				git reset --hard origin/master
 				git pull --no-edit
-				git submodule update
 			fi
+			git submodule update --init
 			./tools/boards.txt.py --nofloat --allgen
 			cd tools
 			./get.py
