@@ -73,7 +73,7 @@ else
 		arduino="`find ~/.local /usr -type f -name arduino -print -quit`"
 	fi
 	buildpath="$HOME/.build"
-	espota="`find ~/.local ~/Arduino ~/Documents /usr -type f -name espota.py -print -quit`"
+	espota="`find ~/Arduino/hardware/esp8266com ~/Documents ~/.local /usr -type f -name espota.py -print -quit`"
 fi
 
 if [ -z "$arduino" ]; then
