@@ -6,13 +6,71 @@
 SCRIPT=`realpath $0`
 SCRIPTPATH=`dirname $SCRIPT`
 ARDUINO=`realpath $SCRIPTPATH/..`
-cd $SCRIPTPATH  && echo -n "`basename $PWD`: " && git pull --no-edit
-cd $ARDUINO/hardware/esp8266com/esp8266 && echo -n "`basename $PWD`: " && git fetch --all && git reset --hard origin/master && git pull --no-edit && ./tools/boards.txt.py --nofloat --allgen
-cd $ARDUINO/libraries/ArduinoJson && echo -n "`basename $PWD`: " && git pull --no-edit
-cd $ARDUINO/libraries/Syslog && echo -n "`basename $PWD`: " && git pull --no-edit
-cd $ARDUINO/libraries/Adafruit-GFX-Library && echo -n "`basename $PWD`: " && git pull --no-edit
-cd $ARDUINO/libraries/PxMatrix && echo -n "`basename $PWD`: " && git pull --no-edit
-cd $ARDUINO/libraries/WiFiManager && echo -n "`basename $PWD`: " && git checkout development -q && git pull --no-edit
-cd $ARDUINO/libraries/DallasTemperature && echo -n "`basename $PWD`: " && git pull --no-edit
-cd $ARDUINO/libraries/OneWire && echo -n "`basename $PWD`: " && git pull --no-edit
+BOLD='\033[1;34m'
+NC='\033[0m'
 
+while getopts "cth" opt; do
+	case $opt in
+		c)
+			if [ ! -d "$ARDUINO/hardware/esp8266com/esp8266" ]; then
+				echo -e "${BOLD}Installing ESP8266 core ${NC}"
+				mkdir -p $ARDUINO/hardware/esp8266com
+				cd $ARDUINO/hardware/esp8266com
+				git clone https://github.com/esp8266/Arduino.git esp8266
+				cd esp8266
+				git submodule update --init
+			else
+				echo -e "${BOLD}Updating ESP8266 core ${NC}"
+				cd $ARDUINO/hardware/esp8266com/esp8266
+				git reset --hard origin/master
+				git pull --no-edit
+				git submodule update
+			fi
+			./tools/boards.txt.py --nofloat --allgen
+			cd tools
+			./get.py
+			exit 0;;
+		t)
+			if [ ! -d "$ARDUINO/hardware/espressif/esp32" ]; then
+				echo -e "${BOLD}Installing ESP32 core ${NC}"
+				mkdir -p $ARDUINO/hardware/espressif
+				cd $ARDUINO/hardware/espressif
+				git clone https://github.com/espressif/arduino-esp32.git esp32
+				cd esp32
+				git submodule update --init --recursive
+			else
+				echo -e "${BOLD}Updating ESP32 core ${NC}"
+				cd $ARDUINO/hardware/espressif/esp32
+				git reset --hard origin/master
+				git pull --no-edit
+				git submodule update
+			fi
+			cd tools
+			python -m pip install --upgrade pip
+			pip -q install requests
+			python ./get.py || ./get.exe
+			exit 0;;
+		h)
+			echo "Usage: update.sh [-c] [-t] [-h]"
+			echo ""
+			echo "default: update myClock and required libraries."
+			echo ""
+			echo "Options:"
+			echo -e "\t-c\tUpdate or install latest ESP8266 core"
+			echo -e "\t-t\tUpdate or install ESP32 core"
+			echo -e "\t-h\tDisplay usage and exit"
+			exit 0;;
+		\?)
+			echo "Invalid option -$OPTARG" >&2
+			exit 1;;
+	esac
+done
+
+cd $SCRIPTPATH  && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
+cd $ARDUINO/libraries/ArduinoJson && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
+cd $ARDUINO/libraries/Syslog && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
+cd $ARDUINO/libraries/Adafruit-GFX-Library && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
+cd $ARDUINO/libraries/PxMatrix && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
+cd $ARDUINO/libraries/WiFiManager && echo -en "${BOLD}`basename $PWD`: ${NC}" && git checkout development -q && git pull --no-edit
+cd $ARDUINO/libraries/DallasTemperature && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
+cd $ARDUINO/libraries/OneWire && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit

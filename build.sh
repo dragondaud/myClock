@@ -28,7 +28,7 @@ while getopts ":lvf:hcw" opt; do
 			echo "Uploading to $FLASH after build." >&2
 			;;
 		h)
-			echo "Usage: build.sh [-b board] [-f IP] [-h]"
+			echo "Usage: build.sh [-l] [-v] [-f IP] [-h] [-c] [-w]"
 			echo ""
 			echo "Build ${APP} and optionally flash device."
 			echo ""
