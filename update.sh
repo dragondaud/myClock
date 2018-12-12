@@ -47,7 +47,7 @@ while getopts "cth" opt; do
 			fi
 			cd tools
 			python -m pip install --upgrade pip
-			pip -q install requests
+			pip -q install requests --user
 			python ./get.py || ./get.exe
 			exit 0;;
 		h)
