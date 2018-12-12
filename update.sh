@@ -37,6 +37,8 @@ while getopts "cth" opt; do
 				git clone https://github.com/espressif/arduino-esp32.git esp32
 				cd esp32
 				git submodule update --init --recursive
+				python -m pip install --upgrade pip
+				pip -q install requests --user
 			else
 				echo -e "${BOLD}Updating ESP32 core ${NC}"
 				cd $ARDUINO/hardware/espressif/esp32
@@ -45,8 +47,6 @@ while getopts "cth" opt; do
 				git submodule update
 			fi
 			cd tools
-			python -m pip install --upgrade pip
-			pip -q install requests --user
 			python ./get.py || ./get.exe
 			exit 0;;
 		h)
