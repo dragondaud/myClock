@@ -162,9 +162,12 @@ void setup() {
 } // setup
 
 void loop() {
-  struct tm * timeinfo;
+#if defined(ESP8266)
+  MDNS.update();
+#endif
   ArduinoOTA.handle();
   server.handleClient();
+  struct tm * timeinfo;
   time_t now = time(nullptr);
   timeinfo = localtime(&now);
   if (now != pNow) {
