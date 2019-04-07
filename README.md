@@ -1,6 +1,6 @@
 # myClock
-## v0.10.2 PRE-RELEASE
-### Copyright 2018 by David M Denney &lt;dragondaud@gmail.com&gt;
+## v0.10.3 PRE-RELEASE
+### Copyright 2019 by David M Denney &lt;dragondaud@gmail.com&gt;
 
 Master repository: https://github.com/dragondaud/myClock
 
@@ -34,11 +34,11 @@ Get current weather data from https://openweathermap.org/api which requires an A
 
 Arduino IDE 1.8.7, for your platform, from https://www.arduino.cc/en/Main/Software
 
-Arduino core for ESP8266, github version: https://github.com/esp8266/Arduino
+Arduino core for ESP8266, version 2.5.0: https://github.com/esp8266/Arduino
 
 or Arduino core for ESP32, from: https://github.com/espressif/arduino-esp32
 
-https://github.com/bblanchon/ArduinoJson/releases/tag/v5.13.2
+https://github.com/bblanchon/ArduinoJson/releases/tag/v5.13.5
 
 https://github.com/adafruit/Adafruit-GFX-Library
 

@@ -132,7 +132,7 @@ static const uint16_t image[] PROGMEM = {
 };
 
 void drawImage(int x, int y) {
-  display.setBrightness(255);
+  display.setBrightness(64);
   int imageHeight = 32;
   int imageWidth = 64;
   int counter = 0;

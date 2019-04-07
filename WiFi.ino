@@ -38,16 +38,17 @@ void startWiFi() {   // if WiFi does not connect, establish AP for configuration
   t.toCharArray(HOST, sizeof(HOST));
   WiFi.setHostname(HOST);
 #endif
-  WiFiManager wifiManager;
+  WiFiManager wifiManager(OUT);
   wifiManager.setAPCallback(configModeCallback);
   wifiManager.setDebugOutput(false);            // set true for wifi debugging
   wifiManager.setConfigPortalTimeout(300);      // 5 minute timeout for config portal
-  wifiManager.setMinimumSignalQuality(20);      // ignore weak wifi signals
+  wifiManager.setClass("invert");               // dark theme
   if (!wifiManager.autoConnect(HOST, softAPpass.c_str())) {
     OUT.println(F("\nWiFi: failed"));
     delay(5000);
     ESP.restart();
   }
+  WiFi.mode(WIFI_STA);
   OUT.print(F("WiFi: "));
   OUT.print(HOST);
   OUT.print(F(" "));
