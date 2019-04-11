@@ -64,8 +64,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 	arduino="/Applications/Arduino.app/Contents/MacOS/Arduino"
 	buildpath="$HOME/.build"
 	arduinoLocal="`\"${arduino}\" --get-pref runtime.hardware.path 2>/dev/null`"
-	espota="`find \"${arduinoLocal}\" \"~/Documents/Arduino/hardware/\" \"~/Arduino\" -type f -name espota.py -print -quit 2>/dev/null`"
-	esptool="`find \"${arduinoLocal}\" \"~/Documents/Arduino/hardware/\" \"~/Arduino\" -type f -name esptool.py -print -quit 2>/dev/null`"
+	espota="python `find \"${arduinoLocal}\" \"~/Documents/Arduino/hardware/\" \"~/Arduino\" -type f -name espota.py -print -quit 2>/dev/null`"
+	esptool="python `find \"${arduinoLocal}\" \"~/Documents/Arduino/hardware/\" \"~/Arduino\" -type f -name esptool.py -print -quit 2>/dev/null`"
 elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
 	arduino="/c/Program Files (x86)/Arduino/arduino_debug.exe"
 	buildpath="${USERPROFILE}\.build"
