@@ -95,7 +95,7 @@ else
 			${PYTHON} "${espota}" ${debug} --progress --file="${buildpath}/${BIN}" --ip=${FLASH} --port=${port}
 		elif [ -f "$esptool" ] && [ ! -z "$SER" ]; then
 			echo "Flashing ${BIN} to ${SER}..." >&2
-			"${esptool}" --port ${SER} --baud 921600 write_flash 0x0 "${buildpath}/${BIN}"
+			"${esptool}" -cp ${SER} -cb 921600 -ca 0x0 -cd nodemcu -cf "${buildpath}/${BIN}"
 		fi
 		echo "build complete"
 	else
