@@ -63,24 +63,21 @@ done
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	arduino="/Applications/Arduino.app/Contents/MacOS/Arduino"
 	buildpath="$HOME/.build"
-	arduinoLocal="`\"${arduino}\" --get-pref runtime.hardware.path 2>/dev/null`"
-	espota="python `find \"${arduinoLocal}\" \"~/Documents/Arduino/hardware/\" \"~/Arduino\" -type f -name espota.py -print -quit 2>/dev/null`"
-	esptool="python `find \"${arduinoLocal}\" \"~/Documents/Arduino/hardware/\" \"~/Arduino\" -type f -name esptool.py -print -quit 2>/dev/null`"
+	espota="python `\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`/tools/espota.py"
+	esptool="`\"${arduino}\" --get-pref runtime.tools.esptool.path 2>/dev/null`/esptool"
 elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
 	arduino="/c/Program Files (x86)/Arduino/arduino_debug.exe"
 	buildpath="${USERPROFILE}\.build"
-	arduinoLocal="`\"${arduino}\" --get-pref runtime.hardware.path 2>/dev/null`"
-	espota="`find \"${arduinoLocal}\" \"$HOME/Documents/Arduino/hardware/\" -type f -name espota.py -print -quit 2>/dev/null`"
-	esptool="`find \"${arduinoLocal}\" \"$HOME/Documents/Arduino/hardware/\" -type f -name esptool.py -print -quit 2>/dev/null`"
+	espota="`\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`/tools/espota.py"
+	esptool="`\"${arduino}\" --get-pref runtime.tools.esptool.path 2>/dev/null`/esptool"
 else
 	arduino="`which arduino`"
 	if [ -z "$arduino" ]; then
 		arduino="`find ~/.local /usr -type f -name arduino -print -quit`"
 	fi
 	buildpath="$HOME/.build"
-	arduinoLocal="`\"${arduino}\" --get-pref runtime.hardware.path 2>/dev/null`"
-	espota="`find \"${arduinoLocal}\" \"~/Arduino/hardware/\" ~/Documents ~/.local /usr -type f -name espota.py -print -quit 2>/dev/null`"
-	esptool="`find \"${arduinoLocal}\" \"~/Arduino/hardware/\" ~/Documents ~/.local /usr -type f -name esptool.py -print -quit 2>/dev/null`"
+	espota="`\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`/tools/espota.py"
+	esptool="`\"${arduino}\" --get-pref runtime.tools.esptool.path 2>/dev/null`/esptool"
 fi
 
 if [ -z "$arduino" ]; then
