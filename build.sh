@@ -64,14 +64,14 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 	arduino="/Applications/Arduino.app/Contents/MacOS/Arduino"
 	buildpath="$HOME/.build"
 	arduinoLocal="`\"${arduino}\" --get-pref runtime.hardware.path 2>/dev/null`"
-	espota="`find \"${arduinoLocal}\" \"~/Documents/Arduino/hardware/\" \"~/Arduino\" -type f -name espota.py -print -quit`"
-	esptool="`find \"${arduinoLocal}\" \"~/Documents/Arduino/hardware/\" \"~/Arduino\" -type f -name esptool.py -print -quit`"
+	espota="`find \"${arduinoLocal}\" \"~/Documents/Arduino/hardware/\" \"~/Arduino\" -type f -name espota.py -print -quit 2>/dev/null`"
+	esptool="`find \"${arduinoLocal}\" \"~/Documents/Arduino/hardware/\" \"~/Arduino\" -type f -name esptool.py -print -quit 2>/dev/null`"
 elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
 	arduino="/c/Program Files (x86)/Arduino/arduino_debug.exe"
 	buildpath="${USERPROFILE}\.build"
 	arduinoLocal="`\"${arduino}\" --get-pref runtime.hardware.path 2>/dev/null`"
-	espota="`find \"${arduinoLocal}\" \"$HOME/Documents/Arduino/hardware/\" -type f -name espota.py -print -quit`"
-	esptool="`find \"${arduinoLocal}\" \"$HOME/Documents/Arduino/hardware/\" -type f -name esptool.py -print -quit`"
+	espota="`find \"${arduinoLocal}\" \"$HOME/Documents/Arduino/hardware/\" -type f -name espota.py -print -quit 2>/dev/null`"
+	esptool="`find \"${arduinoLocal}\" \"$HOME/Documents/Arduino/hardware/\" -type f -name esptool.py -print -quit 2>/dev/null`"
 else
 	arduino="`which arduino`"
 	if [ -z "$arduino" ]; then
@@ -79,8 +79,8 @@ else
 	fi
 	buildpath="$HOME/.build"
 	arduinoLocal="`\"${arduino}\" --get-pref runtime.hardware.path 2>/dev/null`"
-	espota="`find \"${arduinoLocal}\" \"~/Arduino/hardware/\" ~/Documents ~/.local /usr -type f -name espota.py -print -quit`"
-	esptool="`find \"${arduinoLocal}\" \"~/Arduino/hardware/\" ~/Documents ~/.local /usr -type f -name esptool.py -print -quit`"
+	espota="`find \"${arduinoLocal}\" \"~/Arduino/hardware/\" ~/Documents ~/.local /usr -type f -name espota.py -print -quit 2>/dev/null`"
+	esptool="`find \"${arduinoLocal}\" \"~/Arduino/hardware/\" ~/Documents ~/.local /usr -type f -name esptool.py -print -quit 2>/dev/null`"
 fi
 
 if [ -z "$arduino" ]; then
