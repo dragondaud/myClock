@@ -7,6 +7,7 @@ APP="myClock"
 SRC="$APP.ino"
 BIN="$SRC.bin"
 RM=`which rm`
+PYTHON=`which python`
 
 #default board d1_mini
 board="esp8266:esp8266:d1_mini:xtal=160,vt=flash,eesz=4M1M,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600"
@@ -63,22 +64,19 @@ done
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	arduino="/Applications/Arduino.app/Contents/MacOS/Arduino"
 	buildpath="$HOME/.build"
-	espota="python `\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`/tools/espota.py"
-	esptool="`\"${arduino}\" --get-pref runtime.tools.esptool.path 2>/dev/null`/esptool"
 elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
 	arduino="/c/Program Files (x86)/Arduino/arduino_debug.exe"
 	buildpath="${USERPROFILE}\.build"
-	espota="`\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`/tools/espota.py"
-	esptool="`\"${arduino}\" --get-pref runtime.tools.esptool.path 2>/dev/null`/esptool"
 else
 	arduino="`which arduino`"
 	if [ -z "$arduino" ]; then
 		arduino="`find ~/.local /usr -type f -name arduino -print -quit`"
 	fi
 	buildpath="$HOME/.build"
-	espota="`\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`/tools/espota.py"
-	esptool="`\"${arduino}\" --get-pref runtime.tools.esptool.path 2>/dev/null`/esptool"
 fi
+
+espota="`\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`/tools/espota.py"
+esptool="`\"${arduino}\" --get-pref runtime.tools.esptool.path 2>/dev/null`/esptool"
 
 if [ -z "$arduino" ]; then
 	echo "Arduino IDE must be installed" >&2
@@ -94,7 +92,7 @@ else
 	if [ $ret -eq 0 ]; then
 		if [ -f "$espota" ] && [ ! -z "$FLASH" ]; then
 			echo "Flashing ${BIN} to ${FLASH}..." >&2
-			"${espota}" ${debug} --progress --file="${buildpath}/${BIN}" --ip=${FLASH} --port=${port}
+			${PYTHON} "${espota}" ${debug} --progress --file="${buildpath}/${BIN}" --ip=${FLASH} --port=${port}
 		elif [ -f "$esptool" ] && [ ! -z "$SER" ]; then
 			echo "Flashing ${BIN} to ${SER}..." >&2
 			"${esptool}" --port ${SER} --baud 921600 write_flash 0x0 "${buildpath}/${BIN}"
