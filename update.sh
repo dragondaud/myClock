@@ -55,7 +55,7 @@ while getopts "cth" opt; do
 			echo "default: update myClock and required libraries."
 			echo ""
 			echo "Options:"
-			echo -e "\t-c\tUpdate or install latest ESP8266 core"
+			echo -e "\t-c\tUpdate or install latest github version ESP8266 core"
 			echo -e "\t-t\tUpdate or install ESP32 core"
 			echo -e "\t-h\tDisplay usage and exit"
 			exit 0;;
@@ -66,10 +66,10 @@ while getopts "cth" opt; do
 done
 
 cd $SCRIPTPATH  && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
-cd $ARDUINO/libraries/ArduinoJson && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
+cd $ARDUINO/libraries/ArduinoJson && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit && git checkout 5.x -q
 cd $ARDUINO/libraries/Syslog && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
 cd $ARDUINO/libraries/Adafruit-GFX-Library && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
 cd $ARDUINO/libraries/PxMatrix && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
-cd $ARDUINO/libraries/WiFiManager && echo -en "${BOLD}`basename $PWD`: ${NC}" && git checkout development -q && git pull --no-edit
+cd $ARDUINO/libraries/WiFiManager && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit && git checkout development -q
 cd $ARDUINO/libraries/DallasTemperature && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
 cd $ARDUINO/libraries/OneWire && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
