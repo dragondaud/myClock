@@ -24,9 +24,9 @@ else
 	exit 0
 fi
 
-"${arduino}" --pref boardsmanager.additional.urls=http://arduino.esp8266.com/stable/package_esp8266com_index.json --save-prefs
-"${arduino}" --install-boards "esp8266:esp8266:2.5.0"
-"${arduino}" --board "esp8266:esp8266:d1_mini:xtal=160,vt=flash,eesz=4M1M,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600" --save-prefs
+"${arduino}" --pref boardsmanager.additional.urls=http://arduino.esp8266.com/stable/package_esp8266com_index.json --save-prefs 2>/dev/null
+"${arduino}" --install-boards "esp8266:esp8266:2.5.0" 2>/dev/null
+"${arduino}" --board "esp8266:esp8266:d1_mini:xtal=160,vt=flash,eesz=4M1M,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600" --save-prefs 2>/dev/null
 
 esp="`\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`"
 cd $esp && { python ./tools/boards.txt.py --nofloat --boardsgen ; cd - ;}
