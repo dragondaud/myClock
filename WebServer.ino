@@ -235,7 +235,7 @@ void handleReset() {
 void handleDownload() {
   if (!handleAuth()) return reqAuth();
   String payload = getSPIFFS();
-  server.sendHeader(F("Content-Disposition"), F("attachment; filename='config.json'"));
+  server.sendHeader(F("Content-Disposition"), F("attachment; filename=config.json"));
   server.send(200, F("application/json"), payload);
 }
 
