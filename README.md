@@ -1,5 +1,5 @@
 # myClock
-## v0.10.3 PRE-RELEASE
+## v0.10.4 PRE-RELEASE
 ### Copyright 2019 by David M Denney &lt;dragondaud@gmail.com&gt;
 
 Master repository: https://github.com/dragondaud/myClock
@@ -32,11 +32,11 @@ Get current weather data from https://openweathermap.org/api which requires an A
 
 ### Requires
 
-Arduino IDE 1.8.7, for your platform, from https://www.arduino.cc/en/Main/Software
+Arduino IDE 1.8.9, for your platform, from https://www.arduino.cc/en/Main/Software
 
 Arduino core for ESP8266, version 2.5.0: https://github.com/esp8266/Arduino
 
-or Arduino core for ESP32, from: https://github.com/espressif/arduino-esp32
+or Arduino core for ESP32, from: https://github.com/espressif/arduino-esp32/releases/tag/1.0.2
 
 https://github.com/bblanchon/ArduinoJson/tree/5.x
 
@@ -57,3 +57,7 @@ https://github.com/PaulStoffregen/OneWire if DS18B20 used.
 install-Arduino.sh will install necessary components to build myClock on a Linux system.
 
 build.sh will build, update, flash OTA or Serial, myClock on Linux, MacOS or Windows.
+
+### Notes
+
+Switching between ESP8266 and ESP32 platform requires deleting preferences.txt which the update script will do automatically when updating core.

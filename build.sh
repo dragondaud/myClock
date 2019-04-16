@@ -43,8 +43,8 @@ while getopts ":lvf:s:hcwuo" opt; do
 		l)
 			echo -e "Board ${BOLD}lolin32${NC} selected." >&2
 			boardsmanager="https://dl.espressif.com/dl/package_esp32_index.json"
-			boardver="espressif:esp32"
-			board="espressif:esp32:lolin32:PartitionScheme=min_spiffs"
+			boardver="esp32:esp32:1.0.2"
+			board="esp32:esp32:lolin32:PartitionScheme=min_spiffs"
 			port="3232"
 			;;
 		v)
@@ -106,15 +106,27 @@ while getopts ":lvf:s:hcwuo" opt; do
 			fi
 			exit 0;;
 		o)
-			echo -e "${BOLD}Configure boardsmanager URL${NC}" >&2
-			"${arduino}" --pref boardsmanager.additional.urls=${boardsmanager} --save-prefs 2>/dev/null
-			echo -e "${BOLD}Install ${boardver}${NC}" >&2
-			"${arduino}" --install-boards "${boardver}"
 			echo -e "${BOLD}Select ${boardver}${NC}" >&2
-			"${arduino}" --board "${board}" --save-prefs 2>/dev/null
-			tools="`\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`"
-			echo -e "${BOLD}Generate boards.txt${NC}" >&2
-			( cd $tools && ${PYTHON} ./tools/boards.txt.py --nofloat --boardsgen)
+			pref="`\"${arduino}\" --get-pref runtime.hardware.path 2>/dev/null`/../../../../preferences.txt"
+			"${arduino}" --board "${board}" --save-prefs
+			ret=$?
+			if [ $ret -ne 0 ]; then
+				echo -e "${BOLD}Install ${boardver}${NC}" >&2
+				rm -v $pref
+				"${arduino}" --pref boardsmanager.additional.urls=${boardsmanager} --save-prefs &>/dev/null
+				"${arduino}" --install-boards "${boardver}" &>/dev/null
+				"${arduino}" --board "${board}" --save-prefs
+				ret=$?
+				if [ $ret -ne 0 ]; then
+					echo -e "${BOLD}FAILED! Delete preferences.txt and try again.${NC}" >&2
+					exit 1
+				fi
+			fi
+			if [[ $board == esp8266* ]]; then
+				echo -e "${BOLD}Generate boards.txt${NC}" >&2
+				tools="`\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`"
+				( cd $tools && ${PYTHON} ./tools/boards.txt.py --nofloat --boardsgen)
+			fi
 			exit 0;;
 		:)
 			echo "Option -$OPTARG requires an argument." >&2

@@ -28,7 +28,7 @@ WebServer server(80);
 #endif
 
 #define APPNAME "myClock"
-#define VERSION "0.10.3"
+#define VERSION "0.10.4"
 #define ADMIN_USER "admin"
 //#define DS18                      // enable DS18B20 temperature sensor
 //#define SYSLOG                    // enable SYSLOG support
