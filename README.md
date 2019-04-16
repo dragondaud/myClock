@@ -38,7 +38,7 @@ Arduino core for ESP8266, version 2.5.0: https://github.com/esp8266/Arduino
 
 or Arduino core for ESP32, from: https://github.com/espressif/arduino-esp32
 
-https://github.com/bblanchon/ArduinoJson/releases/tag/v5.13.5
+https://github.com/bblanchon/ArduinoJson/tree/5.x
 
 https://github.com/adafruit/Adafruit-GFX-Library
 
@@ -46,16 +46,14 @@ https://github.com/2dom/PxMatrix
 
 https://github.com/tzapu/WiFiManager
 
-https://github.com/arcao/Syslog, if rsyslog functionality desired.
+https://github.com/arcao/Syslog if rsyslog functionality desired.
 
-https://github.com/milesburton/Arduino-Temperature-Control-Library, if DS18B20 used.
+https://github.com/milesburton/Arduino-Temperature-Control-Library if DS18B20 used.
 
-https://github.com/PaulStoffregen/OneWire, if DS18B20 used.
+https://github.com/PaulStoffregen/OneWire if DS18B20 used.
 
 ### Scripts
 
 install-Arduino.sh will install necessary components to build myClock on a Linux system.
 
-build.sh will build, and optionally OTA update, myClock on Linux, MacOS or Windows.
-
-update.sh will update myClock, core, and required libraries.
+build.sh will build, update, flash OTA or Serial, myClock on Linux, MacOS or Windows.

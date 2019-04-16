@@ -69,13 +69,41 @@ while getopts ":lvf:s:hcwuo" opt; do
 			board=${board/wipe=none/wipe=all};;
 		u)
 			echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
-			( cd $SKETCHBOOK/libraries/ArduinoJson && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit && git checkout 5.x -q )
-			( cd $SKETCHBOOK/libraries/Syslog && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
-			( cd $SKETCHBOOK/libraries/Adafruit-GFX-Library && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
-			( cd $SKETCHBOOK/libraries/PxMatrix && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
-			( cd $SKETCHBOOK/libraries/WiFiManager && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit && git checkout development -q )
-			( cd $SKETCHBOOK/libraries/DallasTemperature && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
-			( cd $SKETCHBOOK/libraries/OneWire && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
+			if [ ! -d "$SKETCHBOOK/libraries/ArduinoJson" ]; then
+				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/bblanchon/ArduinoJson.git && cd ArduinoJson && git checkout 5.x -q )
+			else
+				( cd $SKETCHBOOK/libraries/ArduinoJson && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit && git checkout 5.x -q )
+			fi
+			if [ ! -d "$SKETCHBOOK/libraries/Syslog" ]; then
+				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/arcao/Syslog.git )
+			else
+				( cd $SKETCHBOOK/libraries/Syslog && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
+			fi
+			if [ ! -d "$SKETCHBOOK/libraries/Adafruit-GFX-Library" ]; then
+				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/adafruit/Adafruit-GFX-Library.git )
+			else
+				( cd $SKETCHBOOK/libraries/Adafruit-GFX-Library && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
+			fi
+			if [ ! -d "$SKETCHBOOK/libraries/PxMatrix" ]; then
+				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/2dom/PxMatrix.git )
+			else
+				( cd $SKETCHBOOK/libraries/PxMatrix && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
+			fi
+			if [ ! -d "$SKETCHBOOK/libraries/WiFiManager" ]; then
+				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/tzapu/WiFiManager.git && cd WiFiManager && git checkout development -q )
+			else
+				( cd $SKETCHBOOK/libraries/WiFiManager && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit && git checkout development -q )
+			fi
+			if [ ! -d "$SKETCHBOOK/libraries/DallasTemperature" ]; then
+				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/milesburton/Arduino-Temperature-Control-Library DallasTemperature )
+			else
+				( cd $SKETCHBOOK/libraries/DallasTemperature && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
+			fi
+			if [ ! -d "$SKETCHBOOK/libraries/OneWire" ]; then
+				(cd $SKETCHBOOK/libraries/ && git clone https://github.com/PaulStoffregen/OneWire )
+			else
+				( cd $SKETCHBOOK/libraries/OneWire && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
+			fi
 			exit 0;;
 		o)
 			echo -e "${BOLD}Configure boardsmanager URL${NC}" >&2
@@ -104,8 +132,8 @@ while getopts ":lvf:s:hcwuo" opt; do
 			echo -e "\t-h\tDisplay usage and exit"
 			echo -e "\t-c\tClean build directory before building"
 			echo -e "\t-w\tWipe entire flash, instead of sketch only"
-			echo -e "\t-u\tUpdate libraries and exit"
-			echo -e "\t-o\tUpdate core and exit\n"
+			echo -e "\t-u\tUpdate or install required libraries and exit"
+			echo -e "\t-o\tUpdate or install core and exit\n"
 			echo "Arduino: $arduino"
 			echo "Sketchbook: $SKETCHBOOK"
 			echo "Board: $board"
