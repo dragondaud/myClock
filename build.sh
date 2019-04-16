@@ -8,58 +8,14 @@ SRC="$APP.ino"
 BIN="$SRC.bin"
 RM=`which rm`
 PYTHON=`which python`
+BOLD='\033[1;34m'
+NC='\033[0m'
 
 #default board d1_mini
+boardsmanager="http://arduino.esp8266.com/stable/package_esp8266com_index.json"
+boardver="esp8266:esp8266:2.5.0"
 board="esp8266:esp8266:d1_mini:xtal=160,vt=flash,eesz=4M1M,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600"
 port="8266"
-
-while getopts ":lvf:s:hcw" opt; do
-	case $opt in
-		l)
-			echo "Board lolin32 selected." >&2
-			board="espressif:esp32:lolin32:PartitionScheme=min_spiffs"
-			port="3232"
-			;;
-		v)
-			verbose="--verbose"
-			debug="--debug"
-			;;
-		f)
-			FLASH=$OPTARG
-			echo "Uploading to $FLASH after build." >&2
-			;;
-		s)
-			SER=$OPTARG
-			echo "Uploading to $SER after build." >&2
-			;;
-		h)
-			echo "Usage: build.sh [-l] [-v] [-f IP] [-s /dev/ttyX|COMx] [-h] [-c] [-w]"
-			echo ""
-			echo "Build ${APP} and optionally flash device."
-			echo ""
-			echo "Options:"
-			echo -e "\t-l\tBuild for lolin32 instead of d1_mini"
-			echo -e "\t-v\tUse verbose output"
-			echo -e "\t-f\tIP address of ${APP} to update"
-			echo -e "\t-s\tSerial device of ${APP} to update"
-			echo -e "\t-h\tDisplay usage and exit"
-			echo -e "\t-c\tClean build directory before building"
-			echo -e "\t-w\tWipe entire flash, instead of sketch only"
-			exit 0;;
-		c)
-			clean=true;;
-		w)
-			echo "Wipe entire flash on upload." >&2
-			board=${board/wipe=none/wipe=all};;
-		\?)
-			echo "Invalid option -$OPTARG" >&2
-			exit 1;;
-		:)
-			echo "Option -$OPTARG requires an argument." >&2
-			exit 1;;
-		
-	esac
-done
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	arduino="/Applications/Arduino.app/Contents/MacOS/Arduino"
@@ -75,31 +31,102 @@ else
 	buildpath="$HOME/.build"
 fi
 
-espota="`\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`/tools/espota.py"
-esptool="`\"${arduino}\" --get-pref runtime.tools.esptool.path 2>/dev/null`/esptool"
-
 if [ -z "$arduino" ]; then
 	echo "Arduino IDE must be installed" >&2
 	exit 1
-else
-	if [ "$clean" = true ]; then
-		echo "Cleaning ${buildpath}..." >&2
-		"${RM}" ${verbose} --one-file-system -rf "${buildpath}"
-	fi
-	echo "Building ${APP} in ${buildpath}..." >&2
-	"${arduino}" ${verbose} --pref build.path="${buildpath}" --board "${board}" --save-prefs --verify ${SRC}
-	ret=$?
-	if [ $ret -eq 0 ]; then
-		if [ -f "$espota" ] && [ ! -z "$FLASH" ]; then
-			echo "Flashing ${BIN} to ${FLASH}..." >&2
-			${PYTHON} "${espota}" ${debug} --progress --file="${buildpath}/${BIN}" --ip=${FLASH} --port=${port}
-		elif [ -f "$esptool" ] && [ ! -z "$SER" ]; then
-			echo "Flashing ${BIN} to ${SER}..." >&2
-			"${esptool}" -cp ${SER} -cb 921600 -ca 0x0 -cd nodemcu -cf "${buildpath}/${BIN}"
-		fi
-		echo "build complete"
-	else
-		exit $ret
-	fi
 fi
+
+SKETCHBOOK="`\"${arduino}\" --get-pref sketchbook.path 2>/dev/null`"
+
+while getopts ":lvf:s:hcwuo" opt; do
+	case $opt in
+		l)
+			echo -e "Board ${BOLD}lolin32${NC} selected." >&2
+			boardsmanager="https://dl.espressif.com/dl/package_esp32_index.json"
+			boardver="espressif:esp32"
+			board="espressif:esp32:lolin32:PartitionScheme=min_spiffs"
+			port="3232"
+			;;
+		v)
+			verbose="--verbose"
+			debug="--debug"
+			;;
+		f)
+			FLASH=$OPTARG
+			espota="`\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`/tools/espota.py"
+			echo "Uploading to $FLASH with $espota" >&2
+			;;
+		s)
+			SER=$OPTARG
+			esptool="`\"${arduino}\" --get-pref runtime.tools.esptool.path 2>/dev/null`/esptool"
+			echo "Uploading to $SER with $esptool." >&2
+			;;
+		c)
+			echo -e "${BOLD}Cleaning${NC} ${buildpath}..." >&2
+			"${RM}" ${verbose} --one-file-system -rf "${buildpath}";;
+		w)
+			echo "Wipe entire flash on upload." >&2
+			board=${board/wipe=none/wipe=all};;
+		u)
+			echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
+			( cd $SKETCHBOOK/libraries/ArduinoJson && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit && git checkout 5.x -q )
+			( cd $SKETCHBOOK/libraries/Syslog && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
+			( cd $SKETCHBOOK/libraries/Adafruit-GFX-Library && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
+			( cd $SKETCHBOOK/libraries/PxMatrix && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
+			( cd $SKETCHBOOK/libraries/WiFiManager && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit && git checkout development -q )
+			( cd $SKETCHBOOK/libraries/DallasTemperature && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
+			( cd $SKETCHBOOK/libraries/OneWire && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
+			exit 0;;
+		o)
+			echo -e "${BOLD}Configure boardsmanager URL${NC}" >&2
+			"${arduino}" --pref boardsmanager.additional.urls=${boardsmanager} --save-prefs 2>/dev/null
+			echo -e "${BOLD}Install ${boardver}${NC}" >&2
+			"${arduino}" --install-boards "${boardver}"
+			echo -e "${BOLD}Select ${boardver}${NC}" >&2
+			"${arduino}" --board "${board}" --save-prefs 2>/dev/null
+			tools="`\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`"
+			echo -e "${BOLD}Generate boards.txt${NC}" >&2
+			( cd $tools && ${PYTHON} ./tools/boards.txt.py --nofloat --boardsgen)
+			exit 0;;
+		:)
+			echo "Option -$OPTARG requires an argument." >&2
+			exit 1;;
+		*)
+			echo "Usage: build.sh [-l] [-v] [-f IP] [-s /dev/ttyX|COMx] [-h] [-c] [-w]"
+			echo ""
+			echo "Build ${APP} and optionally flash device."
+			echo ""
+			echo "Options:"
+			echo -e "\t-l\tBuild for lolin32 instead of d1_mini"
+			echo -e "\t-v\tUse verbose output"
+			echo -e "\t-f\tIP address of ${APP} to update"
+			echo -e "\t-s\tSerial device of ${APP} to update"
+			echo -e "\t-h\tDisplay usage and exit"
+			echo -e "\t-c\tClean build directory before building"
+			echo -e "\t-w\tWipe entire flash, instead of sketch only"
+			echo -e "\t-u\tUpdate libraries and exit"
+			echo -e "\t-o\tUpdate core and exit\n"
+			echo "Arduino: $arduino"
+			echo "Sketchbook: $SKETCHBOOK"
+			echo "Board: $board"
+			exit 0;;
+	esac
+done
+
+echo -e "${BOLD}Building ${APP}${NC} in ${buildpath}..." >&2
+"${arduino}" ${verbose} --pref build.path="${buildpath}" --board "${board}" --save-prefs --verify ${SRC}
+ret=$?
+if [ $ret -eq 0 ]; then
+	if [ -f "$espota" ] && [ ! -z "$FLASH" ]; then
+		echo "Flashing ${BIN} to ${FLASH}..." >&2
+		${PYTHON} "${espota}" ${debug} --progress --file="${buildpath}/${BIN}" --ip=${FLASH} --port=${port}
+	elif [ -f "$esptool" ] && [ ! -z "$SER" ]; then
+		echo "Flashing ${BIN} to ${SER}..." >&2
+		"${esptool}" -cp ${SER} -cb 921600 -ca 0x0 -cd nodemcu -cf "${buildpath}/${BIN}"
+	fi
+	echo "build complete" >&2
+else
+	exit $ret
+fi
+
 

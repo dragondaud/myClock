@@ -29,16 +29,15 @@ fi
 "${arduino}" --board "esp8266:esp8266:d1_mini:xtal=160,vt=flash,eesz=4M1M,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600" --save-prefs 2>/dev/null
 
 esp="`\"${arduino}\" --get-pref runtime.platform.path 2>/dev/null`"
-cd $esp && { python ./tools/boards.txt.py --nofloat --boardsgen ; cd - ;}
+( cd $esp && python ./tools/boards.txt.py --nofloat --boardsgen )
 
 [ ! -d "myClock" ] && git clone https://github.com/dragondaud/myClock.git
 
 mkdir -p libraries && cd libraries
-[ ! -d "ArduinoJson" ] && { git clone https://github.com/bblanchon/ArduinoJson.git && cd ArduinoJson && git checkout 5.x -q && cd - ;}
+[ ! -d "ArduinoJson" ] && ( git clone https://github.com/bblanchon/ArduinoJson.git && cd ArduinoJson && git checkout 5.x -q )
 [ ! -d "Syslog" ] && git clone https://github.com/arcao/Syslog.git
 [ ! -d "Adafruit-GFX-Library" ] && git clone https://github.com/adafruit/Adafruit-GFX-Library.git
 [ ! -d "PxMatrix" ] && git clone https://github.com/2dom/PxMatrix.git
-[ ! -d "WiFiManager" ] && { git clone https://github.com/tzapu/WiFiManager.git && cd WiFiManager && git checkout development -q && cd - ;}
+[ ! -d "WiFiManager" ] && ( git clone https://github.com/tzapu/WiFiManager.git && cd WiFiManager && git checkout development -q )
 [ ! -d "DallasTemperature" ] && git clone https://github.com/milesburton/Arduino-Temperature-Control-Library DallasTemperature
 [ ! -d "OneWire" ] && git clone https://github.com/PaulStoffregen/OneWire
-
