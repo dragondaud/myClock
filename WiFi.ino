@@ -68,7 +68,7 @@ void startWiFi() {   // if WiFi does not connect, establish AP for configuration
     ESP.restart();
   } );
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    int p = round(progress / (total/100));
+    int p = round(progress / (total / 100));
     if (dim != p) {
       OUT.print(PSTR("OTA Progress: ") + String(p) + PSTR(" \r"));
       dim = p;

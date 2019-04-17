@@ -92,7 +92,7 @@ void getWeather() {    // Using openweathermap.org
                     (int)round(temperature), humidity, (int)round(wind), dir.c_str(), description.c_str());
 #endif
         OUT.printf_P(PSTR("%2dF, %2d%%, %d %s (%d), %s (%d) \r\n"),
-                        (int)round(temperature), humidity, (int)round(wind), dir.c_str(), deg, description.c_str(), id);
+                     (int)round(temperature), humidity, (int)round(wind), dir.c_str(), deg, description.c_str(), id);
       } else {
         display.print(F("json fail"));
 #ifdef SYSLOG

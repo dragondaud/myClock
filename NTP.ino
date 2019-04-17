@@ -31,7 +31,7 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
                     isp.c_str(), region.c_str(), country.c_str(), tz.c_str());
 #endif
         OUT.println(PSTR("getIPlocation: ") + isp + PSTR(", ")
-                       + region + PSTR(", ") + country + PSTR(", ") + tz);
+                    + region + PSTR(", ") + country + PSTR(", ") + tz);
         return zip;
       } else {
 #ifdef SYSLOG

@@ -50,9 +50,19 @@ uint32_t color565to888(uint16_t c) {
   return ((r << 16) | (g << 8) | b);
 }
 
+#if defined (ESP8266)
+// ISR for display refresh
 void display_updater() {
   display.display(70);
 }
+#elif defined (ESP32)
+portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
+void IRAM_ATTR display_updater() {
+  portENTER_CRITICAL_ISR(&timerMux);
+  display.display(15);
+  portEXIT_CRITICAL_ISR(&timerMux);
+}
+#endif
 
 #include "Digit.h"
 const byte row1 = 6;

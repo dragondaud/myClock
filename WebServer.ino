@@ -88,8 +88,12 @@ static const char* serverOptions PROGMEM =
   "<tr><th><label for='softAPpass'>Admin Password</label></th>\n"
   "<td><input type='password' id='softAPpass' name='softAPpass'\n"
   "minlength='8' placeholder='enter new password'></td></tr>\n"
-  "</table><p style='text-align: right'><input type='submit' class='button' value='APPLY CONFIG'>\n"
-  "</form></div><p>\n";
+  "<tr><td style='text-align: right'>Free Heap: %heap%</td>\n"
+#ifdef LIGHT
+  "<td>Light Level: %light%</td>\n"
+#endif
+  "<td><input type='submit' class='button' value='APPLY CONFIG' autofocus></td>\n"
+  "</tr></table></form></div><p>\n";
 
 static const char* serverUpdate PROGMEM =
   "<div><h3>Update Firmware</h3>\n"
@@ -216,6 +220,10 @@ void handleRoot() {
   payload.replace(F("%syslogSrv%"), String(syslogSrv));
   payload.replace(F("%syslogPort%"), String(syslogPort));
 #endif
+  payload.replace(F("%heap%"), String(fh));
+#ifdef LIGHT
+  payload.replace(F("%light%"), String(light));
+#endif
   payload += String(serverUpdate);
   server.send(200, textHtml, payload);
 }
@@ -269,9 +277,9 @@ void startWebServer() {
     if (upload.status == UPLOAD_FILE_START) {
       display_ticker.detach();
 #if defined(ESP8266)
-            WiFiUDP::stopAll();
+      WiFiUDP::stopAll();
 #else
-            MDNS.end();
+      MDNS.end();
 #endif
       OUT.printf_P(PSTR("Update: %s\n"), upload.filename.c_str());
       uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
