@@ -240,7 +240,7 @@ void handleReset() {
   ESP.restart();
 }
 
-void handleDownload() {
+void handleDownload() { // send running config as JSON object to browser
   if (!handleAuth()) return reqAuth();
   String payload = getSPIFFS();
   server.sendHeader(F("Content-Disposition"), F("attachment; filename=config.json"));
@@ -262,7 +262,7 @@ void startWebServer() {
     server.sendHeader(F("Location"), F("https://www.arduino.cc/favicon.ico"));
     server.send(301);
   });
-  server.on(F("/update"), HTTP_POST, []() {
+  server.on(F("/update"), HTTP_POST, []() { // upload and flash new image
     if (!handleAuth()) return reqAuth();
 #ifdef SYSLOG
     syslog.log(F("webServer: update"));
@@ -298,7 +298,7 @@ void startWebServer() {
       }
     }
     yield();
-  });
+  }); // server.on("/update")
   server.onNotFound(handleNotFound);
   server.begin();
   MDNS.addService(F("_http"), F("_tcp"), 80);

@@ -1,7 +1,7 @@
 // obtain and display weather information from openweathermap.org
 
-void getWeather() {    // Using openweathermap.org
-  wDelay = pNow + 900; // delay between weather updates
+void getWeather() {             // Using openweathermap.org
+  wDelay = pNow + WDELAY;       // delay between weather updates
   display.setCursor(0, row4);   // any error displayed in red on bottom row
   display.setTextColor(myRED);
   WiFiClient wifi;
@@ -37,7 +37,7 @@ void getWeather() {    // Using openweathermap.org
         int tc;
         if (celsius) tc = (int)round(temperature * 1.8) + 32;
         else tc = (int)round(temperature);
-        if (tc <= 32) display.setTextColor(myCYAN);
+        if (tc <= 32) display.setTextColor(myCYAN);         // top row color based on temperature
         else if (tc <= 50) display.setTextColor(myLTBLUE);
         else if (tc <= 60) display.setTextColor(myBLUE);
         else if (tc <= 78) display.setTextColor(myGREEN);

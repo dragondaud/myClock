@@ -1,6 +1,6 @@
 // WiFi and WiFiManager
 
-void configModeCallback(WiFiManager *myWiFiManager) {
+void configModeCallback(WiFiManager *myWiFiManager) { // SoftAP mode to configure WiFi
   display.clearDisplay();
   display.setFont(&TomThumb);
   display.setCursor(2, row1);
@@ -26,7 +26,7 @@ String getMacAddress() {
 }
 #endif
 
-void startWiFi() {   // if WiFi does not connect, establish AP for configuration
+void startWiFi() {   // if WiFi does not connect, start SoftAP to configure WiFi
 #if defined(ESP8266)
   String t = WiFi.macAddress();
   t = String(APPNAME) + "-" + t.substring(9, 11) + t.substring(12, 14) + t.substring(15, 17);
@@ -48,12 +48,12 @@ void startWiFi() {   // if WiFi does not connect, establish AP for configuration
     delay(5000);
     ESP.restart();
   }
-  WiFi.mode(WIFI_STA);
+  WiFi.mode(WIFI_STA);  // disable SoftAP after connected
   OUT.print(F("WiFi: "));
   OUT.print(HOST);
   OUT.print(F(" "));
   OUT.println(WiFi.localIP());
-  ArduinoOTA.setHostname(HOST);
+  ArduinoOTA.setHostname(HOST); // mDNS hostname for OTA updates
   ArduinoOTA.onStart([]() {
 #ifdef SYSLOG
     syslog.log(F("OTA Update"));

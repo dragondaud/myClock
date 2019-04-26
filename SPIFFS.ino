@@ -3,9 +3,9 @@
 
 void readSPIFFS() {
 #if defined(ESP8266)
-  if (SPIFFS.begin()) {
+  if (SPIFFS.begin()) {     // default will autoformat SPIFFS
 #else
-  if (SPIFFS.begin(true)) {
+  if (SPIFFS.begin(true)) { // autoformat SPIFFS
 #endif
     OUT.println(F("readSPIFFS: mounted"));
     if (SPIFFS.exists(F("/config.json"))) {
@@ -24,7 +24,7 @@ void readSPIFFS() {
   }
 }
 
-bool parseJson(JsonObject& json) {
+bool parseJson(JsonObject& json) {  // parse JSON object to running config
   if (json.success()) {
     String sp = json["softAPpass"];
     if (sp.length() >= 8) softAPpass = sp;
@@ -51,7 +51,7 @@ bool parseJson(JsonObject& json) {
   }
 }
 
-void writeSPIFFS() {
+void writeSPIFFS() {  // convert running config to JSON object and write flash config file
   DynamicJsonBuffer jsonBuffer;
   JsonObject& json = jsonBuffer.createObject();
   json["softAPpass"] = softAPpass;
@@ -86,7 +86,7 @@ void writeSPIFFS() {
   }
 }
 
-String getSPIFFS() {
+String getSPIFFS() {  // read config file from flash and return JSON object
   String payload;
   if (SPIFFS.exists("/config.json")) {
     File configFile = SPIFFS.open("/config.json", "r");

@@ -49,7 +49,7 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
     }
   }
   http.end();
-  delay(5000);
+  delay(1000);
 } // getIPlocation
 
 int getOffset(const String tz) { // using timezonedb.com, return offset for zone name
@@ -94,12 +94,12 @@ int getOffset(const String tz) { // using timezonedb.com, return offset for zone
 } // getOffset
 
 void setNTP(const String tz) {
-  while (getOffset(tz) != HTTP_CODE_OK) {
+  while (getOffset(tz) != HTTP_CODE_OK) { // wait for valid timezone offset
     delay(1000);
   }
   OUT.print(F("setNTP: configure NTP ..."));
   configTime(offset, 0, PSTR("0.pool.ntp.org"), PSTR("1.pool.ntp.org"));
-  while (time(nullptr) < (30 * 365 * 24 * 60 * 60)) {
+  while (time(nullptr) < (30 * 365 * 24 * 60 * 60)) { // wait for NTP sync
     delay(1000);
     OUT.print(F("."));
   }
@@ -107,8 +107,8 @@ void setNTP(const String tz) {
   time_t now = time(nullptr);
   struct tm * calendar;
   calendar = localtime(&now);
-  calendar->tm_mday++;
-  calendar->tm_hour = 2;
+  calendar->tm_mday++;    // calculate tomorrow
+  calendar->tm_hour = 2;  // at 2am
   calendar->tm_min = 0;
   calendar->tm_sec = 0;
   TWOAM = mktime(calendar);
