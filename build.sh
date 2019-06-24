@@ -70,9 +70,9 @@ while getopts ":lvf:s:hcwuo" opt; do
 		u)
 			echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit
 			if [ ! -d "$SKETCHBOOK/libraries/ArduinoJson" ]; then
-				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/bblanchon/ArduinoJson.git && cd ArduinoJson && git checkout 5.x -q )
+				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/bblanchon/ArduinoJson.git -b 5.x )
 			else
-				( cd $SKETCHBOOK/libraries/ArduinoJson && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit && git checkout 5.x -q )
+				( cd $SKETCHBOOK/libraries/ArduinoJson && echo -en "${BOLD}`basename $PWD`: ${NC}" && git fetch && git checkout 5.x -f )
 			fi
 			if [ ! -d "$SKETCHBOOK/libraries/Syslog" ]; then
 				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/arcao/Syslog.git )
@@ -85,14 +85,14 @@ while getopts ":lvf:s:hcwuo" opt; do
 				( cd $SKETCHBOOK/libraries/Adafruit-GFX-Library && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
 			fi
 			if [ ! -d "$SKETCHBOOK/libraries/PxMatrix" ]; then
-				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/2dom/PxMatrix.git )
+				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/2dom/PxMatrix.git -b v1.3.0 )
 			else
-				( cd $SKETCHBOOK/libraries/PxMatrix && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
+				( cd $SKETCHBOOK/libraries/PxMatrix && echo -en "${BOLD}`basename $PWD`: ${NC}" && git fetch && git checkout v1.3.0 -f )
 			fi
 			if [ ! -d "$SKETCHBOOK/libraries/WiFiManager" ]; then
-				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/tzapu/WiFiManager.git && cd WiFiManager && git checkout development -q )
+				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/tzapu/WiFiManager.git -b development )
 			else
-				( cd $SKETCHBOOK/libraries/WiFiManager && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit && git checkout development -q )
+				( cd $SKETCHBOOK/libraries/WiFiManager && echo -en "${BOLD}`basename $PWD`: ${NC}" && git fetch && git checkout development -f )
 			fi
 			if [ ! -d "$SKETCHBOOK/libraries/DallasTemperature" ]; then
 				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/milesburton/Arduino-Temperature-Control-Library DallasTemperature )
