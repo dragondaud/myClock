@@ -4,7 +4,9 @@
 
 Master repository: https://github.com/dragondaud/myClock
 
-![myClock](/docs/clock+board.png)
+![myClock-box](/docs/myClock-box.jpg | width=100)
+![myClock-front](/docs/myClock-front.jpg | width=100)
+![myClock-back](/docs/myClock-back.jpg | width=100)
 
 Recommended enclosure for myClock made from a [shadowbox frame from Michaels](https://www.michaels.com/black-belmont-shadowbox-by-studio-decor/M10468367.html?dwvar_M10468367_size=9%22%20x%209%22&dwvar_M10468367_color=Black), and [two-way mirror from TAP Plastics](https://www.tapplastics.com/product/plastics/cut_to_size_plastic/two_way_mirrored_acrylic/558).
 
