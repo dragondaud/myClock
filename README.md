@@ -4,9 +4,9 @@
 
 Master repository: https://github.com/dragondaud/myClock
 
-<img src="docs/myClock-box.png" height="100">  <img src="docs/myClock-front.png" height="100">  <img src="docs/myClock-back.png" height="100">
+<img src="docs/myClock-box.png" height="150">  <img src="docs/myClock-front.png" height="150">  <img src="docs/myClock-back.png" height="150">
 
-Recommended enclosure for myClock made from a [shadowbox frame from Michaels](https://www.michaels.com/black-belmont-shadowbox-by-studio-decor/M10468367.html?dwvar_M10468367_size=9%22%20x%209%22&dwvar_M10468367_color=Black), and [two-way mirror from TAP Plastics](https://www.tapplastics.com/product/plastics/cut_to_size_plastic/two_way_mirrored_acrylic/558).
+Recommended enclosure for myClock made of a [shadowbox frame from Michaels](https://www.michaels.com/black-belmont-shadowbox-by-studio-decor/M10468367.html?dwvar_M10468367_size=9%22%20x%209%22&dwvar_M10468367_color=Black), and [two-way mirror from TAP Plastics](https://www.tapplastics.com/product/plastics/cut_to_size_plastic/two_way_mirrored_acrylic/558).
 
 Displays accurate time and current weather on a 64x32 pixel display. Sets timezone automatically from geoIP, uses the ESP's native NTP for time, and accepts OTA updates. Local WebServer allows updating and configuration, including color-picker to set digits color.
 
