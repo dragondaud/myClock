@@ -55,8 +55,8 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
 int getOffset(const String tz) { // using timezonedb.com, return offset for zone name
   WiFiClient wifi;
   HTTPClient http;
-  String URL = PSTR("http://api.timezonedb.com/v2/list-time-zone?key=")
-               + tzKey + PSTR("&format=json&zone=") + tz;
+  String URL = PSTR("http://api.timezonedb.com/v2.1/list-time-zone?key=")
+               + tzKey + PSTR("&format=json&country=") + countryCode + PSTR("&zone=") + tz;
   String payload;
   int stat;
   http.setUserAgent(UserAgent);

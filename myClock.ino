@@ -149,7 +149,8 @@ void setup() {
   display.print(VERSION);
   display.setCursor(32, row4);
   display.setTextColor(myBLUE);
-  OUT.printf_P(PSTR("setup: %s, %s, %s \r\n"), location.c_str(), timezone.c_str(), milTime ? "true" : "false");
+  OUT.printf_P(PSTR("setup: %s, %s, %s, %s \r\n"),
+    location.c_str(), countryCode.c_str(), timezone.c_str(), milTime ? "true" : "false");
 #ifdef SYSLOG
   syslog.logf("setup: %s|%s|%s", location.c_str(), timezone.c_str(), milTime ? "true" : "false");
 #endif
