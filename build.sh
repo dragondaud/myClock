@@ -159,7 +159,7 @@ ret=$?
 if [ $ret -eq 0 ]; then
 	if [ -f "$espota" ] && [ ! -z "$FLASH" ]; then
 		echo "Flashing ${BIN} to ${FLASH}..." >&2
-		${PYTHON} "${espota}" ${debug} --progress --file="${buildpath}/${BIN}" --ip=${FLASH} --port=${port}
+		"${PYTHON}" "${espota}" ${debug} --progress --file="${buildpath}/${BIN}" --ip=${FLASH} --port=${port}
 	elif [ -f "$esptool" ] && [ ! -z "$SER" ]; then
 		echo "Flashing ${BIN} to ${SER}..." >&2
 		"${esptool}" -cp ${SER} -cb 921600 -ca 0x0 -cd nodemcu -cf "${buildpath}/${BIN}"

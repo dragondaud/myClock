@@ -55,8 +55,8 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
 int getOffset(const String tz) { // using timezonedb.com, return offset for zone name
   WiFiClient wifi;
   HTTPClient http;
-  String URL = PSTR("http://api.timezonedb.com/v2.1/list-time-zone?key=")
-               + tzKey + PSTR("&format=json&country=") + countryCode + PSTR("&zone=") + tz;
+  String URL = PSTR("http://api.timezonedb.com/v2.1/get-time-zone?key=")
+               + tzKey + PSTR("&format=json&by=zone&country=") + countryCode + PSTR("&zone=") + tz;
   String payload;
   int stat;
   http.setUserAgent(UserAgent);
@@ -72,8 +72,8 @@ int getOffset(const String tz) { // using timezonedb.com, return offset for zone
       DynamicJsonBuffer jsonBuffer;
       JsonObject& root = jsonBuffer.parseObject(payload);
       if (root.success()) {
-        JsonObject& zones = root["zones"][0];
-        offset = zones["gmtOffset"];
+        offset = root["gmtOffset"];
+        OUT.println(PSTR("getOffset: ") + String(offset));
       } else {
 #ifdef SYSLOG
         syslog.log(F("getOffset JSON parse failed"));
