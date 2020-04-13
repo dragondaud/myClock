@@ -44,8 +44,8 @@ Launch git Bash and run these commands
 	cd Documents/Arduino
 	git clone https://github.com/dragondaud/myClock.git
 	cd myClock
-	./build.sh -o	#install ESP8266 core
-	./build -u		#install required libraries
+	./build.sh -o   #install ESP8266 core
+	./build -u      #install required libraries
 ```
 Open myClock in Arduino, select ESP8266 board, and click Upload button.
 
