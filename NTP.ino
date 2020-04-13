@@ -98,7 +98,7 @@ void setNTP(const String tz) {
     delay(1000);
   }
   OUT.print(F("setNTP: configure NTP ..."));
-  configTime(offset, 0, PSTR("2.pool.ntp.org"), PSTR("1.pool.ntp.org"));
+  configTime(offset, 0, "pool.ntp.org");
   while (time(nullptr) < (30 * 365 * 24 * 60 * 60)) { // wait for NTP sync
     delay(1000);
     OUT.print(F("."));

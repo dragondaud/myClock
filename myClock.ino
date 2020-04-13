@@ -28,7 +28,7 @@ WebServer server(80);
 #endif
 
 #define APPNAME "myClock"
-#define VERSION "0.10.4"
+#define VERSION "0.10.5"
 #define ADMIN_USER "admin"    // WebServer logon username
 //#define DS18                // enable DS18B20 temperature sensor
 //#define SYSLOG              // enable SYSLOG support
@@ -82,10 +82,13 @@ static const char* UserAgent PROGMEM = "myClock/1.0 (Arduino ESP8266)";
 
 time_t TWOAM, pNow, wDelay;
 uint8_t pHH, pMM, pSS;
-uint16_t light = threshold;
 long offset;
 char HOST[20];
 uint8_t dim;
+
+#ifdef LIGHT
+uint16_t light = threshold;
+#endif
 
 void setup() {
 #if myOUT == 0
@@ -192,7 +195,11 @@ void loop() {
       if (m0 != digit2.Value()) digit2.Morph(m0);
       if (m1 != digit3.Value()) digit3.Morph(m1);
       pMM = mm;
-      OUT.printf_P(PSTR("%02d:%02d %d %d \r"), hh, mm, light, ESP.getFreeHeap()); // output debug once per minute
+      OUT.printf_P(PSTR("%02d:%02d %d "), hh, mm, ESP.getFreeHeap()); // output debug once per minute
+#ifdef LIGHT
+      OUT.print(light);
+#endif
+      OUT.print("\r");
     }
     if (hh != pHH) {    // update hours, if changed
       int h0 = hh % 10;

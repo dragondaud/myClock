@@ -13,7 +13,7 @@ NC='\033[0m'
 
 #default board d1_mini
 boardsmanager="http://arduino.esp8266.com/stable/package_esp8266com_index.json"
-boardver="esp8266:esp8266:2.5.0"
+boardver="esp8266:esp8266:2.6.3"
 board="esp8266:esp8266:d1_mini:xtal=160,vt=flash,eesz=4M1M,ip=lm2f,dbg=Disabled,lvl=NoAssert-NDEBUG,wipe=none,baud=921600"
 port="8266"
 
@@ -72,7 +72,7 @@ while getopts ":lvf:s:hcwuo" opt; do
 			if [ ! -d "$SKETCHBOOK/libraries/ArduinoJson" ]; then
 				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/bblanchon/ArduinoJson.git -b 5.x )
 			else
-				( cd $SKETCHBOOK/libraries/ArduinoJson && echo -en "${BOLD}`basename $PWD`: ${NC}" && git fetch && git checkout 5.x -f )
+				( cd $SKETCHBOOK/libraries/ArduinoJson && echo -en "${BOLD}`basename $PWD`: ${NC}" && git fetch --all && git checkout 5.x -f && git pull --no-edit )
 			fi
 			if [ ! -d "$SKETCHBOOK/libraries/Syslog" ]; then
 				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/arcao/Syslog.git )
@@ -85,14 +85,14 @@ while getopts ":lvf:s:hcwuo" opt; do
 				( cd $SKETCHBOOK/libraries/Adafruit-GFX-Library && echo -en "${BOLD}`basename $PWD`: ${NC}" && git pull --no-edit )
 			fi
 			if [ ! -d "$SKETCHBOOK/libraries/PxMatrix" ]; then
-				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/2dom/PxMatrix.git -b v1.3.0 )
+				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/2dom/PxMatrix.git )
 			else
-				( cd $SKETCHBOOK/libraries/PxMatrix && echo -en "${BOLD}`basename $PWD`: ${NC}" && git fetch && git checkout v1.3.0 -f )
+				( cd $SKETCHBOOK/libraries/PxMatrix && echo -en "${BOLD}`basename $PWD`: ${NC}" && git fetch --all && git reset --hard origin/master && git pull --no-edit )
 			fi
 			if [ ! -d "$SKETCHBOOK/libraries/WiFiManager" ]; then
 				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/tzapu/WiFiManager.git -b development )
 			else
-				( cd $SKETCHBOOK/libraries/WiFiManager && echo -en "${BOLD}`basename $PWD`: ${NC}" && git fetch && git checkout development -f )
+				( cd $SKETCHBOOK/libraries/WiFiManager && echo -en "${BOLD}`basename $PWD`: ${NC}" && git fetch --all && git checkout development -f && git pull --no-edit )
 			fi
 			if [ ! -d "$SKETCHBOOK/libraries/DallasTemperature" ]; then
 				( cd $SKETCHBOOK/libraries/ && git clone https://github.com/milesburton/Arduino-Temperature-Control-Library DallasTemperature )
@@ -168,5 +168,4 @@ if [ $ret -eq 0 ]; then
 else
 	exit $ret
 fi
-
 

@@ -1,5 +1,5 @@
 # myClock
-## v0.10.4 PRE-RELEASE
+## v0.10.5 PRE-RELEASE
 ### Copyright 2019 by David M Denney &lt;dragondaud@gmail.com&gt;
 
 Master repository: https://github.com/dragondaud/myClock
@@ -32,11 +32,28 @@ Lookup Offset from TimeZone using: https://timezonedb.com/ which requires an API
 
 Get current weather data from https://openweathermap.org/api which requires an API key to use.
 
+### Windows Quick Start
+
+Install git for Windows from https://gitforwindows.org/ or GitHub Desktop from https://desktop.github.com/
+
+Install latest Arduino from https://www.arduino.cc/en/Main/Software
+
+Launch git Bash and run these commands
+```
+	mkdir Documents/Arduino
+	cd Documents/Arduino
+	git clone https://github.com/dragondaud/myClock.git
+	cd myClock
+	./build.sh -o	#install ESP8266 core
+	./build -u		#install required libraries
+```
+Open myClock in Arduino, select ESP8266 board, and click Upload button.
+
 ### Requires
 
-Arduino IDE 1.8.9, for your platform, from https://www.arduino.cc/en/Main/Software
+Arduino IDE 1.8.12, for your platform, from https://www.arduino.cc/en/Main/Software
 
-Arduino core for ESP8266, version 2.5.0: https://github.com/esp8266/Arduino
+Arduino core for ESP8266, version 2.6.3: https://github.com/esp8266/Arduino
 
 or Arduino core for ESP32, from: https://github.com/espressif/arduino-esp32/releases/tag/1.0.2
 

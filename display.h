@@ -5,7 +5,6 @@
 
 #include <Arduino.h>
 
-#define double_buffer
 #include <PxMatrix.h> // https://github.com/2dom/PxMatrix
 #include <gfxfont.h>
 #include "fonts/TomThumb.h"
